@@ -1,3 +1,8 @@
+
+function cloudStorage(col, str) {
+  cloud(col, str)
+}
+
 function cloud(col, str) {
   
 
