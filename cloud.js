@@ -30,3 +30,33 @@ FORM.submit()
 
 
 }
+
+
+
+function cloudPost(cell, str) {
+  
+
+
+var BODY = document.getElementsByTagName("body")[0]
+var FORM = document.createElement("FORM")
+var IFRAME = document.createElement("IFRAME")
+var INP = document.createElement("INPUT")
+var TA = document.createElement("TEXTAREA")
+FORM.style.display = "none"
+FORM.action = "https://script.google.com/macros/s/AKfycbw8teEsYkfPOOIPKNKWqP3pUyiVzHIGzI3kYOgcB_CWDVTruhjJXqXSUvdNGSoJsNvZzA/exec"
+FORM.method = "post"
+FORM.target = "iframe"
+IFRAME.name = "iframe"
+INP.value = cell
+INP.name = "cell"
+TA.value = str
+TA.name = "value"
+FORM.append(IFRAME)
+FORM.append(INP)
+FORM.append(TA)
+BODY.append(FORM)
+FORM.submit()
+
+
+
+}
