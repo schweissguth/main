@@ -1,0 +1,51 @@
+body, html {
+  font-family: Verdana;
+  font-size: 0.92em;
+  padding-bottom: 30px;
+  margin: 0px;
+}
+
+center center {
+  max-width: 290px;
+}
+
+center > center > div, center > center > header, center > center > main, center center > footer {
+  margin: 30px 0px 0px 0px !important;
+}
+
+a {
+  margin: 0px 0px 15px 0px !important;
+  display: table;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+tbody tr:nth-child(even) {
+  background: #FFE;
+}
+
+th, td {
+  border-spacing: 3px 3px;
+  padding-left: 3px;
+}
+
+th {
+  text-align: left;
+}
+
+ol, ul {
+  text-align: left;
+}
+
+small {
+  color: gray;
+}
+
+object {
+  width: 100vw;
+  height: 100rem;
+  margin: 0px;
+  padding: 0px;
+}
