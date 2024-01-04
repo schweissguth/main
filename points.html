@@ -1,0 +1,418 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Results - SF Players</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <script
+    type="text/javascript"
+    src="/js/lib/dummy.js"
+
+  ></script>
+
+    <link rel="stylesheet" type="text/css" href="css.css">
+
+
+  <style id="compiled-css" type="text/css">
+    center center {
+  max-width: 290px;
+}
+
+tbody tr:nth-child(even) {
+  //background: whitesmoke;
+}
+
+
+    /* EOS */
+  </style>
+
+  <script id="insert"></script>
+
+</head>
+<body>
+    <center>
+  <center>
+    <header>
+    <a href="../" class="banner" width="100%">
+      <img src="./sfbanner.png" width="100%">
+    </a>
+      </header>
+    Select race:
+    <select name="race_select" id="selectrace" onchange="getLiveRace()"></select>
+
+    <div id="divraceinfo"></div>
+    <br>
+
+    <main>
+    <table width="100%">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Driver</th>
+          <th>Pl</th>
+          <th>Pt</th>
+          <th>+</th>
+          <th>Σ</th>
+        </tr>
+      </thead>
+      <tbody id="tscores"></tbody>
+    </table>
+</main>
+
+  </center>
+</center>
+
+
+    <script type="text/javascript">//<![CDATA[
+
+
+
+
+
+var CURRENTRACEID = []
+var SCHEDULE = []
+var CURRENTRACE = []
+var CURRENTRACEID = 0
+var PICKS = []
+var PLAYERS = []
+var FLAG = ""
+var STAGES = []
+var RACEFEED = []
+      var LIVERACE = {}
+      var RACE = {}
+
+
+
+
+
+
+
+
+
+
+function getCurrentRace() {
+  fetch("https://cf.nascar.com/cacher/live/live-feed.json").then(function(item) {
+    return item.json()
+  }).then(function(item) {
+    CURRENTRACE = item
+    console.log("CURRENTRACE", CURRENTRACE)
+    CURRENTRACEID = CURRENTRACE.race_id
+    console.log("CURRENTRACEID", CURRENTRACEID)
+
+    getSchedule()
+
+  })
+}
+getCurrentRace()
+
+
+
+function getSchedule() {
+  fetch("https://cf.nascar.com/cacher/2023/race_list_basic.json").then(function(x) {
+    return x.json()
+  }).then(function(result) {
+    SCHEDULE = result.series_1
+    console.log("SCHED:", SCHEDULE)
+
+    SCHEDULE.forEach(function(item) {
+      var option = document.createElement("OPTION")
+      option.value = item.race_id
+      option.text = item.track_name
+      selectrace.append(option)
+    })
+    selectrace.value = CURRENTRACEID
+
+    getLiveRace()
+  })
+}
+
+
+
+function getLiveRace() {
+  tscores.innerHTML = ""
+  divraceinfo.innerHTML = ""
+  fetch("https://cf.nascar.com/live/feeds/series_1/" + selectrace.value + "/live_feed.json").then(function(item) {
+    return item.json()
+  }).then(function(item) {
+    LIVERACE = item
+    console.log("LIVERACE", LIVERACE)
+    //console.log("CURRENTRACEID", CURRENTRACEID)
+
+    divraceinfo.innerHTML += "<h3>" + LIVERACE.track_name + "</h3>"
+    divraceinfo.innerHTML += LIVERACE.lap_number + " / " +
+      LIVERACE.laps_in_race + " laps (" +
+      LIVERACE.laps_to_go + " laps to go)" + "<br>"
+    divraceinfo.innerHTML += getFlagData(LIVERACE.flag_state) + "<br>"
+    divraceinfo.innerHTML += "Stage " + LIVERACE.stage.stage_num + "<br>"
+
+    getRace()
+
+  })
+}
+
+
+
+      function getRace() {
+        fetch("https://cf.nascar.com/cacher/2023/1/" + selectrace.value + "/weekend-feed.json").then(function(item) {
+          return item.json()
+        }).then(function(item) {
+          RACE = item.weekend_race[0]
+          console.log("RACE", RACE)
+
+          getStages()
+
+        })
+      }
+
+
+function getStages() {
+  fetch("https://cf.nascar.com/cacher/2023/1/" + RACE.race_id + "/live-stage-points.json").then(function(item) {
+    return item.json()
+  }).then(function(result) {
+    STAGES = result
+    console.log("STAGES", STAGES)
+    RACE.results.map(function(item) {
+      item.BONUS = 0
+    })
+
+    STAGES.forEach(function(item) {
+      var carno = item.results[0].vehicle_number
+      var find = RACE.results.find(function(jtem) {
+        return jtem.car_number == carno
+      })
+      console.log("FIND", find)
+      find.BONUS++
+    })
+
+    RACE.results[0].BONUS += 2
+
+    console.log("RACE", RACE)
+
+    getPicks()
+  })
+}
+
+
+
+
+
+function getPicks() {
+  fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/SCORING?alt=json&key=AIzaSyDhLaELifRHh1xemqXD92dXajIdevmltSQ").then(function(item) {
+    return item.json()
+  }).then(function(item) {
+    var header = item.values.shift()
+    PICKS = item.values.map(function(jtem) {
+      return jtem.reduce(function(total, ktem, index) {
+        total[header[index]] = ktem
+        return total
+      }, {})
+    })
+    
+    PICKS = PICKS.filter(function(jtem) {
+      return jtem.RACEID == selectrace.value
+    }).reverse()
+
+    console.log("PICKS", PICKS)
+
+    RACE.results.map(function(jtem) {
+      var find = PICKS.find(function(ktem) {
+        return jtem.car_number == ktem.DRIVERID.split("c")[1]
+      }) || {
+        PLAYERID: null
+      }
+      jtem.PLAYERID = find.PLAYERID
+
+    })
+
+    var count = 1
+    RACE.results.reverse().map(function(jtem) {
+      if (jtem.PLAYERID) {
+        jtem.PTS = count++
+      } else {
+        jtem.PTS = null
+      }
+      jtem.TOTAL = jtem.PTS + jtem.BONUS
+    })
+    RACE.results.reverse()
+
+    console.log("RACE (PTS)", RACE)
+    getPlayers()
+
+  })
+}
+
+
+
+function getPlayers() {
+  fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PLAYERS?alt=json&key=AIzaSyDhLaELifRHh1xemqXD92dXajIdevmltSQ").then(function(item) {
+    return item.json()
+  }).then(function(item) {
+    var header = item.values.shift()
+    PLAYERS = item.values.map(function(jtem) {
+      return jtem.reduce(function(total, ktem, index) {
+        total[header[index]] = ktem
+        return total
+      }, {})
+    })
+    PLAYERS = PLAYERS.filter(function(jtem) {
+      return jtem.ACTIVE == "TRUE"
+    })
+
+    console.log("PLAYERS", PLAYERS)
+
+    RACE.results.map(function(jtem) {
+      var find = PLAYERS.find(function(ktem) {
+        return jtem.PLAYERID == ktem.PLAYERID
+      }) || {
+        PLAYERNAME: ""
+      }
+      jtem.PLAYERNAME = find.PLAYERNAME
+
+    })
+
+    PLAYERS.map(function(item) {
+      var filter = RACE.results.filter(function(jtem) {
+        return jtem.PLAYERID == item.PLAYERID
+      }, [])
+      item.PICKS = filter
+    })
+
+
+    console.log("PLAYERS", PLAYERS)
+
+    mapPts()
+
+  })
+
+}
+
+
+
+
+function mapPts() {
+
+PLAYERS.map(function(item) {
+  item.BONUS = 0
+  item.TOTAL = 0
+
+  item.PICKS.forEach(function(jtem) {
+    item.BONUS += jtem.BONUS
+    item.TOTAL += jtem.TOTAL
+  })
+})
+
+PLAYERS.sort(function(a, b) {
+  return b.TOTAL - a.TOTAL
+})
+
+
+
+
+
+  PLAYERS.forEach(function(item, index) {
+
+    var tr = tscores.insertRow()
+    tr.insertCell().innerHTML = item.PLAYERNAME
+
+    var td1 = tr.insertCell()
+    item.PICKS.forEach(function(jtem) {
+      td1.innerHTML += "<div>" + jtem.driver_fullname
+      .split("(")[0]
+      .split(" Jr.")[0]
+      .split(" Jr")[0]
+      + "</div>"
+    })
+
+    var td2 = tr.insertCell()
+    item.PICKS.forEach(function(jtem) {
+      td2.innerHTML += "<div>" + jtem.finishing_position + "</div>"
+    })
+
+    var td3 = tr.insertCell()
+    item.PICKS.forEach(function(jtem) {
+      td3.innerHTML += "<div>" + jtem.TOTAL + "</div>"
+    })
+
+    var td4 = tr.insertCell()
+    item.PICKS.forEach(function(jtem) {
+      if (jtem.BONUS) {
+      td4.innerHTML += "<div><small>(" + jtem.BONUS + ")</small></div>"
+      } else {
+      td4.innerHTML += "<div>&nbsp;</div>"  
+      }
+    })
+
+    tr.insertCell().innerHTML = "<b>" + item.TOTAL + "<b>"
+  })
+
+
+  getHeight()
+
+}
+
+
+
+
+function getHeight() {
+  var ht = window.document.body.clientHeight + 100
+  window.parent.parent.postMessage(ht, "*")
+}
+
+
+
+
+function getFlagData(flagstatus) {
+
+    switch (flagstatus) {
+      case 8:
+        FLAG = "🏴 black"
+        break;
+
+      case 1:
+        FLAG = "🟢 green"
+        break;
+
+      case 2:
+        FLAG = "🟡 caution"
+        break;
+
+      case 4:
+        FLAG = "🏁 checkered"
+        break;
+
+      case 9:
+        FLAG = "🏁 checkered"
+        break;
+    }
+    //console.log("FLAG", FLAG)
+    return FLAG
+}
+getFlagData()
+
+
+
+
+  //]]></script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "cu4d0vfg"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+
+</body>
+</html>

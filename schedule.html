@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Stupid-Fast - NASCAR Schedule</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <script
+    type="text/javascript"
+    src="/js/lib/dummy.js"
+
+  ></script>
+
+    <link rel="stylesheet" type="text/css" href="css.css">
+
+
+  <style id="compiled-css" type="text/css">
+    center center {
+  width: 100%;
+  max-width: 290px;
+}
+
+select {
+  width: 100%;
+}
+
+
+    /* EOS */
+  </style>
+
+  <script id="insert"></script>
+
+</head>
+<body>
+    <center>
+<center>
+
+  <div>
+  <a href="https://stupid-fast.com" class="banner" width="290">
+    <img src="./sfbanner.png" width="100%">
+  </a></div>
+
+<h1>2023 NASCAR Schedule</h1>
+
+<script src="https://stupid-fast.com/gviz.js"></script>
+
+
+<form action="https://script.google.com/macros/s/AKfycbxg87yiTCT-D6RaUMcP7b1alWfATjv3iIGbVNZfPXfT6ucjUC4UAT7ZfQnN3gJw83qYtA/exec" method="get" target="iframe">
+  <select name="race_select" id="raceselect" size="45"></select>
+  <br><br>
+  <details>
+    <summary>Admin</summary>
+    <br>
+    Submit status:
+<iframe name="iframe" frameborder="1" height="50"></iframe>
+<br><br>
+  <legend>
+  <input type="radio" name="radio" value="CURRENTRACE" checked>Next race</legend><br>
+  <legend>
+  <input type="radio" name="radio" value="PREVRACE">Prev race</legend>
+   <br>
+  <input type="submit">
+  </details>
+</form>
+
+
+<footer>
+<br>
+<small>https://jsfiddle.net/schweissguth/3hk9cvLu/</small>
+<br><br><br><br>
+</footer>
+
+</center>
+</center>
+
+    <script type="text/javascript">//<![CDATA[
+
+
+var RACES = []
+var CURRENTRACE = ""
+
+function getCurrentRace() {
+  gviz("https://docs.google.com/spreadsheets/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/edit#gid=2062292820", "INFO", "select A", function(result) {
+    result.shift()
+    CURRENTRACE = result[0]
+    getRaceList()
+  })
+}
+
+getCurrentRace()
+
+function getRaceList() {
+fetch("https://cf.nascar.com/cacher/2023/race_list_basic.json").then(function(x) {
+  return x.text()
+}).then(function(y) {
+  var parse = JSON.parse(y)
+  RACES = parse.series_1
+  console.log(parse)
+  assignRaces()
+})
+
+}
+
+
+
+function assignRaces() {
+  RACES.forEach(function(item) {
+    var opt = document.createElement("OPTION")
+    opt.value = item.race_id
+    var trackname = item.track_name.replace("Motor", "").replace("Speedway", "").replace("International", "").replace("Raceway", "").replace("Superspeedway", "")
+    opt.text = new Date(item.date_scheduled).toLocaleDateString().replace("/2023", "") + " - " + trackname + " - " + new Date(item.date_scheduled).toLocaleTimeString().split(":")[0] + "PM" + " - " + item.radio_broadcaster + " - " + item.television_broadcaster + " - " + item.race_id
+    raceselect.add(opt)
+  })
+  raceselect.value = CURRENTRACE
+}
+
+
+  //]]></script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "3hk9cvLu"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+
+</body>
+</html>

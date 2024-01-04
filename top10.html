@@ -1,0 +1,55 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css.css">
+  <style>
+    
+  </style>
+
+</head>
+<body>
+  <center>
+    <center>
+      <header>
+
+        <a href="../" width="100%">
+          <img src="./sfbanner.png" alt="" width="100%">
+        </a>
+
+      </header>
+      <h3>Driver standings</h3>
+      <table>
+        <tbody id="tbody">
+          
+        </tbody>
+      </table>
+
+
+
+      <script>
+
+        var STANDINGS = []
+
+
+        fetch("https://cf.nascar.com/cacher/2023/1/final/1-drivers-points.json").then(function(item) {
+          return item.json()
+        }).then(function(result) {
+          STANDINGS = result
+          console.log("STANDINS+GS:", STANDINGS)
+          STANDINGS.sort(function(a, b) {
+            return a.position - b.position
+          })
+
+          STANDINGS.forEach(function(item) {
+            var tr = tbody.insertRow()
+            tr.insertCell().innerHTML = item.position
+            tr.insertCell().innerHTML = item.driver_name
+            tr.insertCell().innerHTML = item.points
+            tr.insertCell().innerHTML = item.delta_leader
+          })
+        })
+
+        
+      </script>
+    </center>
+  </center>
+</body>

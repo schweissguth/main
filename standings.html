@@ -1,0 +1,100 @@
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="css.css">
+<style>
+  tr th:nth-child(n+3),
+  tr td:nth-child(n+3) {
+    text-align: center;
+  }
+</style>
+
+
+<center>
+  <center>
+    <div>
+      <a href="../" class="banner" width="100%">
+        <img src="./sfbanner.png" width="100%">
+      </a>
+    </div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>Season</th>
+            <th>Δ</th>
+          </tr>
+        </thead>
+        <tbody id="tseason">
+
+        </tbody>
+        <tr>
+          <th>&nbsp;</th>
+          <th>&nbsp;</th>
+          <th>&nbsp;</th>
+          <th>&nbsp;</th>
+        </tr>
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>Chase</th>
+            <th>Δ</th>
+          </tr>
+        </thead>
+        <tbody id="tchase">
+
+        </tbody>
+
+
+      </table>
+
+    </div>
+  </center>
+</center>
+
+<script>
+  var STANDINGS = []
+
+  fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/STANDINGS?alt=json&key=AIzaSyDhLaELifRHh1xemqXD92dXajIdevmltSQ").then(function (item) {
+    return item.json()
+  }).then(function (item) {
+    var header = item.values.shift()
+    STANDINGS = item.values.map(function (jtem) {
+      return jtem.reduce(function (total, ktem, index) {
+        total[header[index]] = ktem
+        return total
+      }, {})
+    })
+
+    STANDINGS.sort(function (a, b) {
+      return b.SEASON - a.SEASON
+    })
+    STANDINGS.forEach(function (item, i) {
+      var tr = tseason.insertRow()
+      tr.insertCell().innerHTML = i + 1
+      tr.insertCell().innerHTML = item.PLAYERNAME
+      tr.insertCell().innerHTML = item.SEASON
+      tr.insertCell().innerHTML = item.DIFFSEASON
+
+    })
+
+
+    STANDINGS.sort(function (a, b) {
+      return b.CHASE - a.CHASE
+    })
+
+    STANDINGS.forEach(function (item, i) {
+      var tr = tchase.insertRow()
+      tr.insertCell().innerHTML = i + 1
+      tr.insertCell().innerHTML = item.PLAYERNAME
+      tr.insertCell().innerHTML = item.CHASE
+      tr.insertCell().innerHTML = item.DIFFCHASE
+
+    })
+
+
+  })
+</script>

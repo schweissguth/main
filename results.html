@@ -1,0 +1,174 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="css.css">
+
+
+<body>
+  <center>
+    <center>
+
+      <header>
+        <a href="../" class="banner" width="100%">
+          <img src="./sfbanner.png" width="100%">
+        </a>
+      </header>
+
+      <h3>Race results</h3>
+      <div>
+      <p>Select your race from the menu to see race results:</p>
+</div>
+      <div>
+      <select name="" id="selectrace" onchange="lookupRace(this.value)">
+      </select>
+</div>
+      
+      <main>
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Driver</th>
+              <th>Player</th>
+              <th>Pts</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+
+          </tbody>
+        </table>
+      </main>
+
+    </center>
+  </center>
+
+  <script>
+    var CURRENTRACE = {}
+    var SCHEDULE = []
+    var RACE = {}
+    var SCORING = []
+    var PLAYERS = []
+
+    function getSchedule() {
+      fetch("https://cf.nascar.com/cacher/2023/race_list_basic.json").then(function (item) {
+        return item.json()
+      }).then(function (result) {
+        SCHEDULE = result.series_1
+        console.log("SCHEDULE", SCHEDULE)
+        SCHEDULE.forEach(function (item) {
+          var opt = document.createElement("OPTION")
+          opt.text = item.track_name + " (" + item.race_id + ")"
+          opt.value = item.race_id
+          selectrace.add(opt)
+
+        })
+
+        SCHEDULE.reverse()
+        var find = SCHEDULE.find(function (item) {
+          return item.winner_driver_id
+        }) || {race_id: 0}
+        CURRENTRACE = find
+        selectrace.value = CURRENTRACE.race_id
+        lookupRace()
+      })
+
+    }
+    getSchedule()
+
+
+
+    function lookupRace() {
+      tbody.innerHTML = ""
+
+      fetch("https://cf.nascar.com/live/feeds/series_1/" + selectrace.value + "/live_feed.json").then(function (item) {
+        return item.json()
+      }).then(function (result) {
+        RACE = result
+        console.log("RACE", RACE)
+
+        RACE.vehicles.forEach(function (item) {
+          var tr = tbody.insertRow()
+          tr.insertCell().innerHTML = item.running_position
+          tr.insertCell().innerHTML = item.driver.full_name
+            .split(" (")[0]
+            .split(" Jr.")[0]
+          .split(" Jr")[0]
+          .split("(i)")[0]
+          .split(" #")[0]
+
+          tr.insertCell().id = "c" + item.vehicle_number
+        })
+        getPicks()
+      })
+    }
+
+
+    function getPicks() {
+      fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/SCORING?alt=json&key=AIzaSyDhLaELifRHh1xemqXD92dXajIdevmltSQ").then(function (result) {
+        return result.json()
+      }).then(function (result) {
+        var header = result.values.shift()
+        SCORING = result.values.map(function (item) {
+          return item.reduce(function (total, jtem, index) {
+            total[header[index]] = jtem
+            return total
+          }, {})
+        })
+
+        SCORING = SCORING.filter(function(item) {
+          return item.RACEID == RACE.race_id
+        })
+
+        console.log("SCORING", SCORING)
+
+        SCORING.forEach(function (item) {
+          try {
+            var td = document.getElementById(item.DRIVERID)
+            td.classList.add(item.PLAYERID)
+            td.innerHTML = item.PLAYERID
+          } catch(err) {
+            
+          }
+        })
+        getPlayers()
+      })
+    }
+    
+    function getPlayers() {
+      fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PLAYERS?alt=json&key=AIzaSyDhLaELifRHh1xemqXD92dXajIdevmltSQ").then(function (item) {
+        return item.json()
+      }).then(function (result) {
+        var header = result.values.shift()
+        PLAYERS = result.values.map(function (item) {
+          return item.reduce(function (total, jtem, index) {
+            total[header[index]] = jtem
+            return total
+          }, {})
+        })
+
+        console.log("PLAYERS", PLAYERS)
+
+        PLAYERS.forEach(function (item) {
+          try {
+            var tds = document.getElementsByClassName(item.PLAYERID)
+            for (var i of tds) {
+              i.innerHTML = "<b>" + item.PLAYERNAME + "</b>"
+            }
+          } catch(err) {
+            
+          }
+        })
+
+        var trs = tbody.getElementsByTagName("TR")
+        var count = 22
+        for (var i of trs) {
+          var td = i.insertCell()
+          if (i.getElementsByTagName("TD")[2].innerHTML) {
+            td.innerHTML = count--
+          }
+        }
+
+
+      })
+    }
+
+
+  </script>

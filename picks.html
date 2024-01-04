@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Stupid-Fast Picks</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" type="text/css" href="./css.css">
+
+
+
+
+
+
+  <style>
+    select {
+      width: 100%;
+      display: flex;
+    }
+
+    table img {
+      width: 40px;
+    }
+  </style>
+
+  <script src="https://stupid-fast.com/gviz.js"></script>
+
+
+</head>
+
+<body>
+  <center>
+    <center>
+      <header>
+
+        <a href="../" width="100%">
+          <img src="./sfbanner.png" alt="" width="100%">
+        </a>
+
+      </header>
+
+      <main>
+
+        <table id="table">
+          <tbody id="tbody">
+            <tr>
+              <td>
+                <center>
+                  <code>LOADING...</code>
+                </center>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </main>
+
+      <form
+        action="https://script.google.com/macros/s/AKfycby5Lbz4bLQCqU-tdkG7idtj-ob2SrFk6mUuJa0KYLfVIan2KdcVOQ4grFiJ-igZAeU/exec"
+        method="post" id="form" target="iframe">
+        <iframe name="iframe" frameborder="1" height="30" width="100%" style="display: none;"></iframe>
+        <input type="hidden" name="input_race" id="input_race">
+        <input type="hidden" name="input_driver" id="input_driver">
+        <input type="hidden" name="input_player" id="input_player">
+      </form>
+
+
+      <footer>
+        <small>https://jsfiddle.net/schweissguth/oe6hvd5q/</small>
+      </footer>
+    </center>
+  </center>
+
+
+
+  <script type="text/javascript">
+
+
+    var CURRENTRACE = 0
+    var PLAYERS = []
+    var DRIVERS = []
+    var PICKS = []
+
+
+    gviz("1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU", "INFO", "SELECT A", function (result) {
+      result.shift()
+      CURRENTRACE = result
+      getDrivers()
+    })
+
+    function getDrivers() {
+      gviz("1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU", "DRIVERS", "SELECT A, B, C, D", function (result) {
+        result.shift()
+        DRIVERS = result
+        assignDrivers()
+      })
+    }
+
+
+    function assignDrivers() {
+      tbody.innerHTML = ""
+      DRIVERS.forEach(function (item) {
+        var tr = tbody.insertRow()
+        tr.insertCell().innerHTML = "<img src='" + item[2] + "' />"
+        tr.insertCell().innerHTML = item[1]
+        var td2 = tr.insertCell()
+        var select = document.createElement("SELECT")
+        select.id = item[0]
+        select.classList.add("playerselect")
+        select.setAttribute("onchange", "selectDriver(CURRENTRACE, this.id, this.value)")
+        td2.append(select)
+      })
+      getPlayerNames()
+    }
+
+
+    function getPlayerNames() {
+      gviz("1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU", "PLAYERS", "SELECT A, B, C, D where C = TRUE", function (result) {
+        result.shift()
+        PLAYERS = result
+        assignPlayers()
+      })
+
+    }
+
+
+    function assignPlayers() {
+      var opt = "<option>"
+      PLAYERS.forEach(function (item) {
+        opt += "<option value='" + item[0] + "'>" + item[1] + "</option>"
+      })
+      opt += "</option>"
+
+      var sels = document.getElementsByClassName("playerselect")
+      for (var i in sels) {
+        sels[i].innerHTML = opt
+      }
+      getPicks()
+    }
+
+
+    function getPicks() {
+      gviz("1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU", "PICKS", "SELECT A, B, C, D, E where B = " + CURRENTRACE, function (result) {
+        result.shift()
+        PICKS = result
+        assignPicks()
+      })
+
+    }
+
+
+    function assignPicks() {
+      PICKS.forEach(function (item) {
+        var sel = document.getElementById(item[2])
+        sel.value = item[3]
+      })
+      addSeparator()
+    }
+
+    function addSeparator() {
+      var td = tbody.insertRow(12).insertCell()
+      td.setAttribute("colspan", 3)
+      td.innerHTML = "<br><br><br><hr><br><br><br>"
+    }
+
+
+    function selectDriver(raceid, driverid, playerid) {
+      input_race.value = raceid
+      input_driver.value = driverid
+      input_player.value = playerid
+      form.submit()
+    }
+
+  </script>
+
+
+
+
+</body>
+
+</html>
