@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>HOME - Stupid-Fast.com</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <link rel="stylesheet" type="text/css" href="./css.css">
+
+
+  <style id="compiled-css" type="text/css">
+
+
+.heading {
+  color: darkgoldenrod;
+  font-size: 1.2em;
+}
+
+#tplayers tr {
+  height: 40px;
+}
+
+object {
+    width: 100vw;
+    height: 100rem;
+  display: inline-block;
+  
+}
+
+  </style>
+
+
+</head>
+<body>
+    <center>
+  <center>
+
+    <div>
+    <a href="../" class="banner" width="100%">
+      <img src="./sfbanner.png" width="100%">
+    </a></div>
+
+    <a href="./files/2023winnings.jpg" width="100%"><img src="./files/2023winnings.jpg" alt="" width="100%"></a>
+
+    <div id="links">
+    </div>
+
+
+    <div>
+    <table>
+      <tbody id="tplayers" width="100%"></tbody>
+    </table>
+      
+    </div>
+
+    <div>
+      <iframe src="https://stupid-fast.com/live.html" frameborder="0" height="3000" width="100%"></iframe>
+    </div>
+
+
+  </center>
+
+</center>
+
+
+    <script type="text/javascript">//<![CDATA[
+
+
+var HOMEPAGE = []
+
+function getHomepage() {
+	fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/HOMEPAGE?alt=json&key=AIzaSyDhLaELifRHh1xemqXD92dXajIdevmltSQ").then(function(item) {
+  	return item.json()
+  }).then(function(item) {
+    var header = item.values.shift()
+    HOMEPAGE = item.values.map(function(jtem) {
+      return jtem.reduce(function(total, ktem, index) {
+        total[header[index]] = ktem
+        return total
+      }, {})
+    })
+
+  	//console.log("HOMEPAGE", HOMEPAGE)
+    
+    HOMEPAGE = HOMEPAGE.filter(function(jtem) {
+    	return jtem.ACTIVE == "TRUE"
+    })
+    
+    HOMEPAGE.forEach(function(jtem) {
+    	var tag = document.createElement(jtem.TAG)
+      tag.href = jtem.HREF
+      tag.innerHTML = jtem.TEXT
+      tag.target = jtem.TARGET
+      tag.style = jtem.STYLE
+      tag.id = jtem.id
+      tag.className = jtem.CLASS
+      links.append(tag)
+
+    })
+  })
+}
+
+getHomepage()
+
+
+
+
+
+var CURRENTRACE = ""
+var PICKS = []
+var PLAYERS = []
+var PICKORDER = []
+var DRIVERS = []
+var INFO = []
+
+
+
+
+function getPlayers() {
+  fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PLAYERS?alt=json&key=AIzaSyDhLaELifRHh1xemqXD92dXajIdevmltSQ").then(function(item) {
+    return item.json()
+  }).then(function(result) {
+    var header = result.values.shift()
+    PLAYERS = result.values.map(function(item) {
+      return item.reduce(function(total, jtem, j) {
+        total[header[j]] = jtem
+        return total
+      }, {})
+    })
+    //console.log("PLAYERS", PLAYERS)
+
+    PLAYERS = PLAYERS.filter(function(item) {
+      return item.ACTIVE == "TRUE"
+    })
+
+
+    getPickOrder()
+
+
+  })
+}
+
+getPlayers()
+
+
+
+
+function getPickOrder() {
+  fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKORDER?alt=json&key=AIzaSyDhLaELifRHh1xemqXD92dXajIdevmltSQ").then(function(item) {
+    return item.json()
+  }).then(function(result) {
+    var header = result.values.shift()
+    PICKORDER = result.values.map(function(item) {
+      return item.reduce(function(total, jtem, j) {
+        total[header[j]] = jtem
+        return total
+      }, {})
+    })
+    //console.log("PICKORDER", PICKORDER)
+
+    PLAYERS.map(function(item, index) {
+      var find = PICKORDER.find(function(jtem) {
+        return jtem.PLAYERID == item.PLAYERID
+      }) || {
+        BLEND: null,
+        ["SUM of TOTAL"]: null
+      }
+      item.BLEND = find.BLEND
+      item.TOTAL = find["SUM of TOTAL"]
+    })
+
+    getCurrentRace()
+
+
+
+  })
+
+}
+
+
+function getCurrentRace() {
+  fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/INFO?alt=json&key=AIzaSyDhLaELifRHh1xemqXD92dXajIdevmltSQ").then(function(item) {
+    return item.json()
+  }).then(function(result) {
+    var header = result.values.shift()
+    INFO = result.values.map(function(item) {
+      return item.reduce(function(total, jtem, j) {
+        total[header[j]] = jtem
+        return total
+      }, {})
+    })[0]
+
+    //console.log("INFO", INFO)
+
+    getPicks()
+
+  })
+
+}
+
+
+function getPicks() {
+  fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKS?alt=json&key=AIzaSyDhLaELifRHh1xemqXD92dXajIdevmltSQ").then(function(item) {
+    return item.json()
+  }).then(function(result) {
+    var header = result.values.shift()
+    PICKS = result.values.map(function(item) {
+      return item.reduce(function(total, jtem, j) {
+        total[header[j]] = jtem
+        return total
+      }, {})
+    })
+
+    PICKS = PICKS.filter(function(item) {
+      return item.RACEID == INFO.CURRENTRACE
+    }).reverse()
+
+    //console.log("PICKS", PICKS)
+
+    getDrivers()
+
+  })
+
+}
+
+
+function getDrivers() {
+  fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/DRIVERS?alt=json&key=AIzaSyDhLaELifRHh1xemqXD92dXajIdevmltSQ").then(function(item) {
+    return item.json()
+  }).then(function(result) {
+    var header = result.values.shift()
+    DRIVERS = result.values.map(function(item) {
+      return item.reduce(function(total, jtem, j) {
+        total[header[j]] = jtem
+        return total
+      }, {})
+    })
+
+    DRIVERS.map(function(item) {
+      var find = PICKS.find(function(jtem) {
+        return jtem.DRIVERID == item.DRIVERID
+      }) || {
+        PLAYERID: null
+      }
+
+      item.PLAYERID = find.PLAYERID
+    })
+
+    //console.log("DRIVERS", DRIVERS)
+
+    PLAYERS.map(function(item) {
+      var filter = DRIVERS.filter(function(jtem) {
+        return jtem.PLAYERID == item.PLAYERID
+      }) || []
+
+      item.PICKS = filter
+    })
+
+    buildTable()
+
+
+
+  })
+
+}
+
+
+
+
+function buildTable() {
+  PLAYERS = PLAYERS.sort(function(a, b) {
+    return a.BLEND - b.BLEND
+  })
+
+  PLAYERS.forEach(function(item) {
+    var tr = tplayers.insertRow()
+    tr.insertCell().innerHTML = "<b>" + item.PLAYERNAME + "</b>" +
+      " <small>(" + item.TOTAL + ")</small>"
+    var td = tr.insertCell()
+    item.PICKS.forEach(function(jtem) {
+      td.innerHTML += "<div>" + jtem.DRIVERNAME + "</div>"
+    })
+  })
+  
+  setHeight()
+}
+
+
+	    
+	window.addEventListener('message', function(e) {
+	//alert(e.data)
+  iframe.height = e.data
+});
+
+
+
+function setHeight() {
+}
+
+
+  //]]></script>
+
+
+
+</body>
+</html>
