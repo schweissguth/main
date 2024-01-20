@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>JFLIDDLE</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <script
+    type="text/javascript"
+    src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"
+    
+  ></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+
+
+  <style id="compiled-css" type="text/css">
+    
+
+* {
+  font-size: 1.0em;
+}
+
+body {
+  margin: auto;
+  width: 300px;
+  font-family: monospace, sans-serif;
+  font-size: 1.0em;
+}
+
+hr {
+  margin: 20px;
+}
+
+iframe {
+  height: 1000px;
+}
+
+iframe * {
+  display: block;
+}
+
+form {
+  display: block;
+}
+
+    /* EOS */
+  </style>
+
+  <script id="insert"></script>
+
+</head>
+<body>
+    <center>
+<h1>JFLIDDLE</h1>
+<h3>Welcome to JFLIDDLE</h3>
+
+<header id="header">
+  
+</header>
+
+</center>
+
+
+<hr>
+<center>
+<button onclick="runCode()">Run code</button>
+<button onclick="saveCode()">Save code</button>
+<button onclick="getCode()">Get code</button>
+</center>
+
+
+<h4>HTML:</h4>
+<div id="div" contenteditable style="outline: 1px solid; padding: 20px;">
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</div>
+
+
+
+
+
+
+
+
+
+    <script type="text/javascript">//<![CDATA[
+
+
+var TAGS = []
+
+function init() {
+	fetch("https://script.google.com/macros/s/AKfycbwNXh7Aqdl7SomInVkhxJzOowewAHSgy1oepqbX4Yb8UeGTJqdZdeAOitEG-gIry7GeyA/exec?key=jfliddle").then(function(res) {
+  	return res.json()
+  }).then(function(res) {
+  	console.log(res)
+    TAGS = res.sort(function (a, b) {
+    	return a.ID.localeCompare(b.ID)
+    })
+    makeButtons()
+  })
+}
+
+init()
+
+function makeButtons() {
+	TAGS.forEach(function(item) {
+  	var button = document.createElement("BUTTON")
+    button.innerText = item.ID
+    button.value = item.VALUE
+    button.setAttribute("onclick", "createTag(this.value)")
+    header.append(button)
+  })
+}
+
+
+function createTag(val) {
+document.execCommand("insertText", false, val)
+}
+
+
+function runCode() {
+/*
+	var html = div.innerText.split("<script>")
+
+	iframe.contentDocument.body.innerHTML = html[0]
+
+	var script = document.createElement("SCRIPT")
+  
+  script.append(html[1])
+	iframe.contentDocument.body.append(script)
+  */
+  var win = window.open("")
+  win.document.write(div.innerText)
+  
+  
+}
+
+
+function saveCode() {
+	localStorage.setItem("savecode", JSON.stringify(div.innerHTML))
+  alert("Code saved.")
+}
+
+function getCode() {
+	div.innerHTML = JSON.parse(localStorage.getItem("savecode"))
+
+}
+
+
+
+  //]]></script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "u9qazckt"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+
+</body>
+</html>
