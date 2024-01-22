@@ -17,18 +17,16 @@
 
 
 
-var href = window.location.href
-var pos = href.lastIndexOf("/")
-var substring = href.substring(pos + 1, href.length)
-      alert(substring)
-//substring = "test123"
+var href = window.location.search
+
+let params = new URLSearchParams(href);
+var key = params.get("show")
 
 fetch("https://script.google.com/macros/s/AKfycbwNXh7Aqdl7SomInVkhxJzOowewAHSgy1oepqbX4Yb8UeGTJqdZdeAOitEG-gIry7GeyA/exec?key=jjjdb").then(function(res) {
   return res.json()
 }).then(function(res) {
-  console.log(res)
   var find = res.find(function(item) {
-  	return item.ID == substring
+    return item.ID == key
   })
   var js = "<scriptqq>" + find.JAVASCRIPT + "</scriptqq>"
   js = js.replace(/scriptqq/g, "script")
@@ -45,6 +43,7 @@ fetch("https://script.google.com/macros/s/AKfycbwNXh7Aqdl7SomInVkhxJzOowewAHSgy1
     `</body></html>`
   document.write(htmlcode)
 })
+
 
 
 
