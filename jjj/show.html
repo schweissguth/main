@@ -19,7 +19,8 @@
 
 var href = window.location.href
 var pos = href.lastIndexOf("/")
-var substring = href.substring(pos, href.length)
+var substring = href.substring(pos + 1, href.length)
+      alert(substring)
 //substring = "test123"
 
 fetch("https://script.google.com/macros/s/AKfycbwNXh7Aqdl7SomInVkhxJzOowewAHSgy1oepqbX4Yb8UeGTJqdZdeAOitEG-gIry7GeyA/exec?key=jjjdb").then(function(res) {
