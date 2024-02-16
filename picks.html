@@ -1,6 +1,4 @@
 
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,12 +17,9 @@
   ></script>
 
     <link rel="stylesheet" type="text/css" href="/css/result-light.css">
-  
-  <link rel="stylesheet" type="text/css" href="./css.css">
 
 
   <style id="compiled-css" type="text/css">
-    
     center center {
   max-width: 290px;
   width: 100%;
@@ -44,11 +39,11 @@ tr td {
 
 
 tr:nth-child(12) td {
-  border-bottom: 50px solid white !important;
+  border-bottom: 50px solid white;
 }
 
 tr:nth-child(13) td {
-  border-top: 50px solid white !important;
+  border-top: 50px solid white;
 }
 
 tr:nth-child(even) {
@@ -68,12 +63,10 @@ tr:nth-child(even) {
   
   
   <center>
-
-	  <div>
   
   <a href="../" class="banner" width="100%">
       <img src="./sfbanner.png" width="100%">
-    </a></div>
+    </a>
     
     <table id="table">
       <tbody id="tbody">
@@ -96,7 +89,7 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
 	return res.json()
 }).then(function(res) {
 	console.log(res)
-  DRIVERS = res.drivers
+  DRIVERS = res.standings
   PLAYERS = res.players
   makeTable()
 })
@@ -107,7 +100,15 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
 function makeTable() {
 	DRIVERS.forEach(function(item) {
   	var tr = tbody.insertRow()
-    tr.insertCell().innerHTML = item.DRIVERNAME
+    
+    var tdimg = tr.insertCell()
+    var img = document.createElement("IMG")
+    img.src = item.IMAGE
+    img.style.width = "50px"
+    tdimg.append(img)
+    
+    tr.insertCell().innerHTML = item.first_name + " " + item.last_name
+    
     var td = tr.insertCell()
     
     var form = document.createElement("form")
@@ -130,9 +131,15 @@ function makeTable() {
     
     var inp = document.createElement("input")
     inp.name = "driverid"
-    inp.value = item.ID
+    inp.value = item.driver_id
     inp.type = "hidden"
     form.append(inp)
+    
+    var inprid = document.createElement("input")
+    inprid.name = "raceid"
+    inprid.value = item.RACEID
+    inprid.type = "hidden"
+    form.append(inprid)
     
     var select = document.createElement("select")
     select.name = "playerid"
@@ -141,6 +148,7 @@ function makeTable() {
     }
     var option = document.createElement("option")
     select.append(option)
+    
     PLAYERS.forEach(function(player) {
     	var opt = document.createElement("OPTION")
       opt.text = player.NAME
