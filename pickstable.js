@@ -5,7 +5,6 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
 }).then(function(res) {
 	console.log(res)
 
-  t.append(tbody)
 	res.forEach(function(item) {
   	var tr = tbody.insertRow()
     tr.insertCell().innerHTML = "<b>" + item.PLAYER + "</b>" + " <small> (" + item.PTS + ") + </small>"
