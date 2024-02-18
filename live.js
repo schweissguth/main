@@ -6,7 +6,7 @@ function getLiveRace() {
     tlive.innerHTML = ""
     res.vehicles.forEach(function(item, index) {
     	var tr = tlive.insertRow()
-      tr.insertCell().innerHTML = item.index + 1
+      tr.insertCell().innerHTML = index + 1
       tr.insertCell().innerHTML = item.driver.full_name
       tr.insertCell().innerHTML = item.PTS
       tr.insertCell().innerHTML = item.PLAYER
