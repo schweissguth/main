@@ -14,6 +14,7 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
 
 
 function makeTable() {
+	tbody.innerHTML = null
 	DRIVERS.forEach(function(item) {
   	var tr = tbody.insertRow()
     
