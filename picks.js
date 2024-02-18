@@ -77,7 +77,7 @@ function makeTable() {
     
   })
 var tr = tbody.insertRow(12)
-  tr.insertCell()
-  tr.insertCell()
-  tr.insertCell()
+  var td = tr.insertCell()
+	td.setAttribute("colspan", "3")
+	td.innerHTML = "<hr>"
 }
