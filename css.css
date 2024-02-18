@@ -9,10 +9,6 @@ center center {
   max-width: 290px;
 }
 
-center > center > div, center > center > header, center > center > main, center center > footer {
-  margin: 30px 0px 0px 0px !important;
-}
-
 a {
   margin: 0px 0px 15px 0px !important;
   display: table;
@@ -43,9 +39,3 @@ small {
   color: gray;
 }
 
-object {
-  width: 100vw;
-  height: 100rem;
-  margin: 0px;
-  padding: 0px;
-}
