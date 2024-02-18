@@ -7,7 +7,7 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
 	tpicks.innerHTML = null;
 	res.forEach(function(item) {
   	var tr = tpicks.insertRow()
-    tr.insertCell().innerHTML = "<b>" + item.PLAYER + "</b>" + " <small>" + (" + item.PTS + ") + "</small>"
+    tr.insertCell().innerHTML = "<b>" + item.PLAYER + "</b>" + " <small> + (" + item.PTS + ") + </small>"
     tr.insertCell().innerHTML = item.DRIVER1
     tr.insertCell().innerHTML = item.DRIVER2
   })
