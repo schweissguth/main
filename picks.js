@@ -75,4 +75,8 @@ function makeTable() {
     select.value = item.PLAYERID
     
   })
+var tr = tbody.insertRow(12)
+  tr.insertCell()
+  tr.insertCell()
+  tr.insertCell()
 }
