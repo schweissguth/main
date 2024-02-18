@@ -4,8 +4,7 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
 	return res.json()
 }).then(function(res) {
 	console.log(res)
-  var t = document.createElement("TABLE")
-  var tbody = document.createElement("TBODY")
+
   t.append(tbody)
 	res.forEach(function(item) {
   	var tr = tbody.insertRow()
@@ -13,6 +12,5 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
     tr.insertCell().innerHTML = item.DRIVER1
     tr.insertCell().innerHTML = item.DRIVER2
   })
-	document.getElementById("main").append(t)
 })
 
