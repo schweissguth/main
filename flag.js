@@ -23,5 +23,4 @@ var flag = document.getElementById("pflag")
       plaps.innerHTML = res.laps_to_go + " laps to go"
       ptrack.innerHTML = res.track_name
     
-
 })
