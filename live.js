@@ -5,9 +5,14 @@ function getLiveRace() {
     console.log(res)
     tlive.innerHTML = ""
     res.vehicles.forEach(function(item, index) {
-    	var tr = tlive.insertRow()
+      item.delta = parseFloat(item.delta).toFixed(2)
+      if (index == 0) {
+        item.delta = ""
+
+      }
+      var tr = tlive.insertRow()
       tr.insertCell().innerHTML = index + 1
-      tr.insertCell().innerHTML = item.driver.full_name
+      tr.insertCell().innerHTML = item.driver.full_name + "<small> " + item.delta +"</small>"
       tr.insertCell().innerHTML = item.PTS
       tr.insertCell().innerHTML = item.PLAYER
     })
