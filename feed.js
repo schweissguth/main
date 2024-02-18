@@ -2,6 +2,7 @@
         return item.json()
       }).then(function (item) {
         console.log(item.laps)
+            tfeed.innerHTML = null
 
         for (var i in item.laps) {
           item.laps[i].forEach(function (jtem) {
