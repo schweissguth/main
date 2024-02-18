@@ -5,8 +5,6 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
 }).then(function(res) {
 	console.log(res)
   var t = document.createElement("TABLE")
-  t.border = "1"
-  t.setAttribute("cellspacing", "2")
   var tbody = document.createElement("TBODY")
   t.append(tbody)
 	res.forEach(function(item) {
