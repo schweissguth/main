@@ -1,30 +1,27 @@
 fetch("https://cf.nascar.com/cacher/live/live-feed.json").then(res => res.json()).then(function(res) {
 	console.log(res)
-  raceno = res.flag_state
-var FLAG = 0
+var flag = document.getElementById("pflag")
       switch (res.flag_state) {
         case 8:
-          FLAG = "🏴 black"
+          flag.innerHTML = "<big>🏴 black</big>"
           break;
-
         case 1:
-          FLAG = "🟢 green"
+          flag.innerHTML = "<big>🟢 green</big>"
           break;
-
         case 2:
-          FLAG = "🟡 caution"
+          flag.innerHTML = "<big>🟡 caution</big>"
           break;
-
         case 4:
-          FLAG = "🏁 checkered"
+          flag.innerHTML = "<big>🏁 checkered</big>"
           break;
-
         case 9:
-          FLAG = "🏁"
+          flag.innerHTML = "<big>🏁</big>"
           break;
       }
-      document.getElementById("pflag").innerHTML = FLAG
+      
+      pstage.innerHTML = "Stage " + res.stage.stage_num
+      plaps.innerHTML = res.laps_to_go + " laps to go"
+      ptrack.innerHTML = res.track_name
     
 
 })
-
