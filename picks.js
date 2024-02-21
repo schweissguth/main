@@ -76,7 +76,7 @@ function makeTable() {
     select.value = item.PLAYERID
     
   })
-var tr = tbody.insertRow(12)
+var tr = tbody.insertRow(13)
   var td = tr.insertCell()
 	td.setAttribute("colspan", "3")
 	td.innerHTML = "<hr>"
