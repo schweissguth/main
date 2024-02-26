@@ -13,8 +13,13 @@ function getLiveRace() {
       var tr = tlive.insertRow()
       tr.insertCell().innerHTML = index + 1
       tr.insertCell().innerHTML = item.driver.full_name + "<small> " + item.delta +"</small>"
+      if (item.PTS > 0) {
       tr.insertCell().innerHTML = item.PTS
-      tr.insertCell().innerHTML = item.PLAYER
+      } else {
+      tr.insertCell().innerHTML = ""
+        
+      }
+      tr.insertCell().innerHTML = "<b>" + item.PLAYER + "</b>"
     })
   })
 }
