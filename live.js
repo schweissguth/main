@@ -25,3 +25,8 @@ function getLiveRace() {
 }
 
 getLiveRace()
+
+
+setTimeout(function(){
+  getLiveRace()
+}, 30000)
