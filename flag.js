@@ -30,6 +30,8 @@ var flag = document.getElementById("pflag")
 
 }
 
+flagData()
+
 setTimeout(function(){
   flagData()
 }, 30000)
