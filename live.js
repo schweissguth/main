@@ -27,6 +27,6 @@ function getLiveRace() {
 getLiveRace()
 
 
-setTimeout(function(){
+setInterval(function(){
   getLiveRace()
 }, 30000)
