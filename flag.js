@@ -32,6 +32,6 @@ var flag = document.getElementById("pflag")
 
 flagData()
 
-setTimeout(function(){
+setInterval(function(){
   flagData()
 }, 30000)
