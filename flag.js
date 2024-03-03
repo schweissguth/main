@@ -1,3 +1,6 @@
+
+function flagData() {
+
 fetch("https://cf.nascar.com/cacher/live/live-feed.json").then(res => res.json()).then(function(res) {
 	console.log(res)
 var flag = document.getElementById("pflag")
@@ -24,3 +27,9 @@ var flag = document.getElementById("pflag")
       ptrack.innerHTML = res.track_name
     
 })
+
+}
+
+setTimeout(function(){
+  flagData()
+}, 30000)
