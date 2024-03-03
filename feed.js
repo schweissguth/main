@@ -33,6 +33,6 @@ fetch("https://cf.nascar.com/cacher/2024/1/" + raceno + "/lap-notes.json").then(
 
 getFeed()
 
-setTimeout(function(){
+setInterval(function(){
   getFeed()
 }, 30000)
