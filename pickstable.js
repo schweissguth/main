@@ -25,11 +25,14 @@ function makeObj(contents) {
 function picksTable() {
   fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=INFO&tqx=out:json&tq=SELECT A, B").then(result => result.text()).then(function(result) {
   	result = makeObj(result)
+    var PREVRACE = 0
     var RACENO = 0
     var RESULTS = []
     var STAGES = []
     var PLAYERS = []
     var PICKS = []
+    var STANDINGS = []
+    PREVRACE = result[1].VALUE
     RACENO = result[0].VALUE
     //console.log(RACENO)
     getResults()
@@ -49,7 +52,7 @@ function picksTable() {
 
 
     function getPlayers() {
-      fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKORDER&tqx=out:json&tq=SELECT A, B, C").then(res => res.text()).then(function(res) {
+      fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKORDER&tqx=out:json&tq=SELECT A, B, C order by B").then(res => res.text()).then(function(res) {
       	res = makeObj(res)
         PLAYERS = res
         //console.log("raw players", PLAYERS)
@@ -64,9 +67,44 @@ function picksTable() {
         res = makeObj(res)
         PICKS = res
         //console.log("raw picks", PICKS)
-        mapPicks()
+        getStandings()
       })
 
+    }
+
+
+    function getStandings() {
+      fetch("https://cf.nascar.com/live/feeds/series_1/" + PREVRACE + "/live_points.json").then(res => res.json()).then(function(res) {
+      RESULTS = res
+      //console.log("raw RESULTS", RESULTS)
+      RESULTS.map(driver => {
+      	driver.driver_fullname = driver.first_name + " " + driver.last_name
+      	var find = PICKS.find(function(pick) {
+        	return pick.DRIVERID == driver.driver_id
+        }) || {PLAYER: "", PLAYERID: ""}
+        driver.PLAYER = find.PLAYER
+        driver.PLAYERID = find.PLAYERID
+      })
+      //console.log(RESULTS)
+      mapStandings()
+      	
+      })
+
+    }
+    
+    
+    function mapStandings() {
+    PLAYERS.map(function(player) {
+    	var filter = RESULTS.filter(function(driver) {
+      	return player.ID == driver.PLAYERID
+      }) || [
+          [""],
+          [""]
+        ]
+      player.picks = filter
+    })
+    //console.log("PLAYERS", PLAYERS)
+      makeTable()
     }
 
 
@@ -121,7 +159,7 @@ function picksTable() {
           return sum + item.PTS + item.BONUS
         }, 0)
         atem.picks = filter
-        atem.TOTAL = total
+        atem.SUM = total
 
       })
       //console.log("map results", PLAYERS)
@@ -133,6 +171,7 @@ function picksTable() {
 
 
     function makeTable() {
+    //console.log("make table players", PLAYERS)
     	pt.innerHTML = null;
       PLAYERS.forEach(function(item) {
         var tr = pt.insertRow()
@@ -147,14 +186,19 @@ function picksTable() {
           var itr = t.insertRow()
           var itd1 = itr.insertCell()
             itd1.innerHTML = jtem.driver_fullname
+          if (jtem.PTS) {
           var itd2 = itr.insertCell()
             itd2.style.width = "20px"
             itd2.innerHTML = jtem.finishing_position
           var itd3 = itr.insertCell()
             itd3.style.width = "20px"
             itd3.innerHTML = jtem.PTS
+          }
         })
-        tr.insertCell().innerHTML = "<b>" + item.TOTAL + "</b>"
+        if (item.SUM) {
+        tr.insertCell().innerHTML = "<b>" + item.SUM + "</b>"
+        
+        }
       })
     }
 
