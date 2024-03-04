@@ -115,6 +115,7 @@ function mapResults() {
 
 
 function makeTable() {
+	pt.innerHTML = null;
 	PLAYERS.forEach(function(item) {
   	var tr = pt.insertRow()
     tr.insertCell().innerHTML = item.PLAYER + " <small>(" + parseFloat(item.TOTAL).toFixed(0) + ")</small>"
