@@ -1,11 +1,36 @@
+function makeObj(contents) {
+  contents = contents.split('"table":')[1]
+  contents = contents.split("});")[0]
+  contents = JSON.parse(contents)
+
+  const arr = []
+  contents.rows.forEach(function(item, i) {
+    var obj = {}
+    item.c.forEach(function(jtem, j) {
+      var val = ""
+      try {
+        val = jtem.f
+        val = jtem.v
+      } catch(err) {
+        val = ""
+      }
+      obj[contents.cols[j].label] = val
+    })
+    arr.push(obj)
+  })
+  return arr
+}
+
+
 function picksTable() {
-  fetch("https://script.google.com/macros/s/AKfycbzRaoRSjPSsUMnMb5UJNBIXeppcNiASFhy8TPHtt5Vg5JYagnkgRYoMGRVJnZ-Iymkm/exec?fetch=" + encodeURIComponent("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=INFO&tqx=out:json&tq=SELECT A, B")).then(res => res.json()).then(function(res) {
+  fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=INFO&tqx=out:json&tq=SELECT A, B").then(result => result.text()).then(function(result) {
+  	result = makeObj(result)
     var RACENO = 0
     var RESULTS = []
     var STAGES = []
     var PLAYERS = []
     var PICKS = []
-    RACENO = res[0].VALUE
+    RACENO = result[0].VALUE
     console.log(RACENO)
     getResults()
 
@@ -24,7 +49,8 @@ function picksTable() {
 
 
     function getPlayers() {
-      fetch("https://script.google.com/macros/s/AKfycbzRaoRSjPSsUMnMb5UJNBIXeppcNiASFhy8TPHtt5Vg5JYagnkgRYoMGRVJnZ-Iymkm/exec?fetch=" + encodeURIComponent("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKORDER&tqx=out:json&tq=SELECT A, B, C")).then(res => res.json()).then(function(res) {
+      fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKORDER&tqx=out:json&tq=SELECT A, B, C").then(res => res.text()).then(function(res) {
+      	res = makeObj(res)
         PLAYERS = res
         console.log("raw players", PLAYERS)
         getPicks()
@@ -34,7 +60,8 @@ function picksTable() {
 
 
     function getPicks() {
-      fetch("https://script.google.com/macros/s/AKfycbzRaoRSjPSsUMnMb5UJNBIXeppcNiASFhy8TPHtt5Vg5JYagnkgRYoMGRVJnZ-Iymkm/exec?fetch=" + encodeURIComponent("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKS&tqx=out:json&tq=SELECT * where B = " + RACENO + " order by A DESC")).then(res => res.json()).then(function(res) {
+      fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKS&tqx=out:json&tq=SELECT * where B = " + RACENO + " order by A DESC").then(res => res.text()).then(function(res) {
+        res = makeObj(res)
         PICKS = res
         console.log("raw picks", PICKS)
         mapPicks()
@@ -109,7 +136,7 @@ function picksTable() {
     	pt.innerHTML = null;
       PLAYERS.forEach(function(item) {
         var tr = pt.insertRow()
-        tr.insertCell().innerHTML = item.PLAYER + " <small>(" + parseFloat(item.TOTAL).toFixed(0) + ")</small>"
+        tr.insertCell().innerHTML = "<b>" + item.PLAYER + "</b> <small>(" + parseFloat(item.TOTAL).toFixed(0) + ")</small>"
         var td = tr.insertCell()
         td.style.width = "200px"
         var t = document.createElement("table")
@@ -118,7 +145,7 @@ function picksTable() {
         td.append(t)
         item.picks.forEach(function(jtem) {
           var itr = t.insertRow()
-          itr.insertCell().innerHTML = "<b>" + jtem.driver_fullname + "</b>"
+          itr.insertCell().innerHTML = jtem.driver_fullname
           itr.insertCell().innerHTML = jtem.finishing_position
           itr.insertCell().innerHTML = jtem.PTS
           var btd = itr.insertCell()
