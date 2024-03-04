@@ -165,6 +165,10 @@ function picksTable() {
 
   })
 
+setInterval(function(){
+  picksTable()
+}, 30000)
+
 }
 
 picksTable()
