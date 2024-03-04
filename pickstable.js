@@ -147,7 +147,7 @@ function picksTable() {
           var itr = t.insertRow()
           var itd1 = itr.insertCell()
             itd1.innerHTML = jtem.driver_fullname
-          var itd2 = itr.insertCell()x
+          var itd2 = itr.insertCell()
             itd2.style.width = "20px"
             itd2.innerHTML = jtem.finishing_position
           var itd3 = itr.insertCell()
