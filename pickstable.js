@@ -148,11 +148,6 @@ function picksTable() {
           itr.insertCell().innerHTML = jtem.driver_fullname
           itr.insertCell().innerHTML = jtem.finishing_position
           itr.insertCell().innerHTML = jtem.PTS
-          var btd = itr.insertCell()
-          if (jtem.BONUS > 0) {
-            btd.innerHTML = jtem.BONUS
-          }
-
         })
         tr.insertCell().innerHTML = item.TOTAL
       })
