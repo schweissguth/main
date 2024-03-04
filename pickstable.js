@@ -111,11 +111,14 @@ function picksTable() {
         var tr = pt.insertRow()
         tr.insertCell().innerHTML = item.PLAYER + " <small>(" + parseFloat(item.TOTAL).toFixed(0) + ")</small>"
         var td = tr.insertCell()
+        td.style.width = "200px"
         var t = document.createElement("table")
+        t.style.width = "100%"
+        t.style.boxSizing = "border-box"
         td.append(t)
         item.picks.forEach(function(jtem) {
           var itr = t.insertRow()
-          itr.insertCell().innerHTML = jtem.driver_fullname
+          itr.insertCell().innerHTML = "<b>" + jtem.driver_fullname + "</b>
           itr.insertCell().innerHTML = jtem.finishing_position
           itr.insertCell().innerHTML = jtem.PTS
           var btd = itr.insertCell()
