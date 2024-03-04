@@ -154,7 +154,7 @@ function picksTable() {
             itd3.style.width = "20px"
             itd3.innerHTML = jtem.PTS
         })
-        tr.insertCell().innerHTML = "<b>" + item.TOTAL + "</b>
+        tr.insertCell().innerHTML = "<b>" + item.TOTAL + "</b>"
       })
     }
 
