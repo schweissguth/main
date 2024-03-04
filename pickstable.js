@@ -145,11 +145,16 @@ function picksTable() {
         td.append(t)
         item.picks.forEach(function(jtem) {
           var itr = t.insertRow()
-          itr.insertCell().innerHTML = jtem.driver_fullname
-          itr.insertCell().innerHTML = jtem.finishing_position
-          itr.insertCell().innerHTML = jtem.PTS
+          var itd1 = itr.insertCell()
+            itd1.innerHTML = jtem.driver_fullname
+          var itd2 = itr.insertCell()x
+            itd2.style.width = "20px"
+            itd2.innerHTML = jtem.finishing_position
+          var itd3 = itr.insertCell()
+            itd3.style.width = "20px"
+            itd3.innerHTML = jtem.PTS
         })
-        tr.insertCell().innerHTML = item.TOTAL
+        tr.insertCell().innerHTML = "<b>" + item.TOTAL + "</b>
       })
     }
 
