@@ -118,7 +118,7 @@ function picksTable() {
         td.append(t)
         item.picks.forEach(function(jtem) {
           var itr = t.insertRow()
-          itr.insertCell().innerHTML = "<b>" + jtem.driver_fullname + "</b>
+          itr.insertCell().innerHTML = "<b>" + jtem.driver_fullname + "</b>"
           itr.insertCell().innerHTML = jtem.finishing_position
           itr.insertCell().innerHTML = jtem.PTS
           var btd = itr.insertCell()
