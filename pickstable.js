@@ -175,7 +175,7 @@ function picksTable() {
     	pt.innerHTML = null;
       PLAYERS.forEach(function(item) {
         var tr = pt.insertRow()
-        tr.insertCell().innerHTML = "<b>" + item.PLAYER + "</b> <small>(" + parseFloat(item.TOTAL).toFixed(0) + ")</small>"
+        tr.insertCell().innerHTML = "<b>" + item.PLAYER + "</b><br><small>(" + parseFloat(item.TOTAL).toFixed(0) + ")</small>"
         var td = tr.insertCell()
         td.style.width = "200px"
         var t = document.createElement("table")
