@@ -31,7 +31,7 @@ function picksTable() {
     var PLAYERS = []
     var PICKS = []
     RACENO = result[0].VALUE
-    console.log(RACENO)
+    //console.log(RACENO)
     getResults()
 
     function getResults() {
@@ -39,9 +39,9 @@ function picksTable() {
         return res.json()
       }).then(function(res) {
         RESULTS = res.weekend_race[0].results.filter(item => item.finishing_position > 0)
-        console.log("raw results", RESULTS)
+        //console.log("raw results", RESULTS)
         STAGES = res.weekend_race[0].stage_results
-        console.log("raw stages", STAGES)
+        //console.log("raw stages", STAGES)
         getPlayers()
       });
 
@@ -52,7 +52,7 @@ function picksTable() {
       fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKORDER&tqx=out:json&tq=SELECT A, B, C").then(res => res.text()).then(function(res) {
       	res = makeObj(res)
         PLAYERS = res
-        console.log("raw players", PLAYERS)
+        //console.log("raw players", PLAYERS)
         getPicks()
       })
 
@@ -63,7 +63,7 @@ function picksTable() {
       fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKS&tqx=out:json&tq=SELECT * where B = " + RACENO + " order by A DESC").then(res => res.text()).then(function(res) {
         res = makeObj(res)
         PICKS = res
-        console.log("raw picks", PICKS)
+        //console.log("raw picks", PICKS)
         mapPicks()
       })
 
@@ -94,7 +94,7 @@ function picksTable() {
       RESULTS[0].BONUS++
       RESULTS[0].BONUS++
 
-      console.log("RESUTS + BONUNS", RESULTS)
+      //console.log("RESUTS + BONUNS", RESULTS)
 
       RESULTS.reverse()
       var count = 0
@@ -124,7 +124,7 @@ function picksTable() {
         atem.TOTAL = total
 
       })
-      console.log("map results", PLAYERS)
+      //console.log("map results", PLAYERS)
       makeTable()
 
     }
