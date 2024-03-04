@@ -1,24 +1,16 @@
 
+
+
+function picksTable() {
+	fetch("https://script.google.com/macros/s/AKfycbzRaoRSjPSsUMnMb5UJNBIXeppcNiASFhy8TPHtt5Vg5JYagnkgRYoMGRVJnZ-Iymkm/exec?fetch=" + encodeURIComponent("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=INFO&tqx=out:json&tq=SELECT A, B")).then(res => res.json()).then(function(res) {
 var RACENO = 0
 var RESULTS = []
 var STAGES = []
 var PLAYERS = []
 var PICKS = []
-
-
-function raceNumber() {
-	fetch("https://script.google.com/macros/s/AKfycbzRaoRSjPSsUMnMb5UJNBIXeppcNiASFhy8TPHtt5Vg5JYagnkgRYoMGRVJnZ-Iymkm/exec?fetch=" + encodeURIComponent("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=INFO&tqx=out:json&tq=SELECT A, B")).then(res => res.json()).then(function(res) {
     RACENO = res[0].VALUE
     console.log(RACENO)
     getResults()
-  })
-
-}
-
-raceNumber()
-
-
-
 
 function getResults() {
 fetch("https://cf.nascar.com/cacher/2024/1/" + RACENO + "/weekend-feed.json").then(function(res) {
@@ -34,8 +26,6 @@ fetch("https://cf.nascar.com/cacher/2024/1/" + RACENO + "/weekend-feed.json").th
 }
 
 
-
-
 function getPlayers() {
 	fetch("https://script.google.com/macros/s/AKfycbzRaoRSjPSsUMnMb5UJNBIXeppcNiASFhy8TPHtt5Vg5JYagnkgRYoMGRVJnZ-Iymkm/exec?fetch=" + encodeURIComponent("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKORDER&tqx=out:json&tq=SELECT A, B, C")).then(res => res.json()).then(function(res) {
     PLAYERS = res
@@ -44,7 +34,6 @@ function getPlayers() {
   })
 
 }
-
 
 
 function getPicks() {
@@ -114,8 +103,9 @@ function mapResults() {
 }
 
 
+
+
 function makeTable() {
-	pt.innerHTML = null;
 	PLAYERS.forEach(function(item) {
   	var tr = pt.insertRow()
     tr.insertCell().innerHTML = item.PLAYER + " <small>(" + parseFloat(item.TOTAL).toFixed(0) + ")</small>"
@@ -136,3 +126,17 @@ function makeTable() {
     tr.insertCell().innerHTML = item.TOTAL
   })
 }
+    
+    
+    
+    
+    
+    
+  })
+
+}
+
+picksTable()
+
+
+
