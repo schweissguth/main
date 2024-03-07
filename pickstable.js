@@ -174,8 +174,6 @@ function picksTable() {
         var tr = pt.insertRow()
         tr.insertCell().innerHTML = "<b>" + item.PLAYER + "</b><br><small>(" + parseFloat(item.TOTAL).toFixed(0) + ")</small>"
         var td = tr.insertCell()
-        td.style.width = "200px"
-
         item.PICKS.forEach(function(jtem) {
         	try {
           var p = document.createElement("DIV")
