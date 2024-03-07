@@ -35,20 +35,7 @@ function picksTable() {
     PREVRACE = result[1].VALUE
     RACENO = result[0].VALUE
     //console.log(RACENO)
-    getResults()
-
-    function getResults() {
-      fetch("https://cf.nascar.com/cacher/2024/1/" + RACENO + "/weekend-feed.json").then(function(res) {
-        return res.json()
-      }).then(function(res) {
-        RESULTS = res.weekend_race[0].results.filter(item => item.finishing_position > 0)
-        //console.log("raw results", RESULTS)
-        STAGES = res.weekend_race[0].stage_results
-        //console.log("raw stages", STAGES)
-        getPlayers()
-      });
-
-    }
+    getPlayers()
 
 
     function getPlayers() {
@@ -64,11 +51,60 @@ function picksTable() {
 
     function getPicks() {
       fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKS&tqx=out:json&tq=SELECT * where B = " + RACENO + " order by A DESC").then(res => res.text()).then(function(res) {
-        res = makeObj(res)
-        PICKS = res
-        //console.log("raw picks", PICKS)
-        getStandings()
+        PICKS = makeObj(res)
+        console.log("PICKS", PICKS)
+        getDrivers()
       })
+
+    }
+    
+    
+
+
+    function getDrivers() {
+      fetch("https://cf.nascar.com/live/feeds/series_1/" + PREVRACE + "/live_points.json").then(res => res.json()).then(function(res) {
+      RESULTS = res
+      //console.log("raw RESULTS", RESULTS)
+      console.log("PICKS IN DRIERS", PICKS)
+      RESULTS.map(driver => {
+      	driver.driver_fullname = driver.first_name + " " + driver.last_name
+      	var find = PICKS.find(function(pick) {
+        	return pick.DRIVERID == driver.driver_id
+        }) || {PLAYER: "", PLAYERID: ""}
+        driver.PLAYER = find.PLAYER
+        driver.PLAYERID = find.PLAYERID
+      })
+      console.log("mapped results", RESULTS)
+      mapPicks()
+      	
+      })
+
+    }
+
+
+    function mapPicks() {
+      PLAYERS.map(function(atem) {
+      	var filter = RESULTS.filter(function(jtem) {
+        	return jtem.PLAYERID == atem.ID
+        })
+        atem.PICKS = filter
+        
+
+      })
+      console.log("PLAYERS", PLAYERS)
+      makeTable()
+    }
+
+    function getResults() {
+      fetch("https://cf.nascar.com/cacher/2024/1/" + RACENO + "/weekend-feed.json").then(function(res) {
+        return res.json()
+      }).then(function(res) {
+        RESULTS = res.weekend_race[0].results.filter(item => item.finishing_position > 0)
+        //console.log("raw results", RESULTS)
+        STAGES = res.weekend_race[0].stage_results
+        //console.log("raw stages", STAGES)
+        //getPlayers()
+      });
 
     }
 
@@ -86,7 +122,7 @@ function picksTable() {
         driver.PLAYERID = find.PLAYERID
       })
       //console.log(RESULTS)
-      mapStandings()
+      //mapStandings()
       	
       })
 
@@ -104,46 +140,7 @@ function picksTable() {
       player.picks = filter
     })
     //console.log("PLAYERS", PLAYERS)
-      makeTable()
-    }
-
-
-    function mapPicks() {
-      RESULTS.map(function(atem) {
-        atem.BONUS = 0
-        var find = PICKS.find(function(btem) {
-          return atem.driver_id == btem.DRIVERID
-        }) || {
-          PLAYERID: "",
-          PLAYER: ""
-        }
-        Object.assign(atem, find)
-
-        if (atem.driver_id == STAGES[0].results[0].driver_id) {
-          atem.BONUS++
-        }
-
-        if (atem.driver_id == STAGES[1].results[0].driver_id) {
-          atem.BONUS++
-        }
-
-      })
-
-      RESULTS[0].BONUS++
-      RESULTS[0].BONUS++
-
-      //console.log("RESUTS + BONUNS", RESULTS)
-
-      RESULTS.reverse()
-      var count = 0
-      RESULTS.map(function(item) {
-        if (item.PLAYERID) {
-          item.PTS = ++count
-        }
-      })
-      RESULTS.reverse()
-
-      mapResults()
+      //makeTable()
     }
 
 
@@ -178,33 +175,17 @@ function picksTable() {
         tr.insertCell().innerHTML = "<b>" + item.PLAYER + "</b><br><small>(" + parseFloat(item.TOTAL).toFixed(0) + ")</small>"
         var td = tr.insertCell()
         td.style.width = "200px"
-        var t = document.createElement("table")
-        t.style.width = "100%"
-        t.style.boxSizing = "border-box"
-        td.append(t)
-        item.picks.forEach(function(jtem) {
-          var itr = t.insertRow()
-          var itd1 = itr.insertCell()
-            itd1.innerHTML = jtem.driver_fullname
-          if (jtem.PTS) {
-          var itd2 = itr.insertCell()
-            itd2.style.width = "20px"
-            itd2.innerHTML = jtem.finishing_position
-          var itd3 = itr.insertCell()
-            itd3.style.width = "20px"
-            itd3.innerHTML = jtem.PTS
+
+        item.PICKS.forEach(function(jtem) {
+        	try {
+          var p = document.createElement("DIV")
+          p.innerHTML = jtem.driver_fullname
+          td.append(p)
+          } catch(err) {
           }
         })
-        if (item.SUM) {
-        tr.insertCell().innerHTML = "<b>" + item.SUM + "</b>"
-        
-        }
       })
     }
-
-
-
-
 
 
   })
@@ -212,7 +193,3 @@ function picksTable() {
 }
 
 picksTable()
-
-setInterval(function(){
-  picksTable()
-}, 30000)
