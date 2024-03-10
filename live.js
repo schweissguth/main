@@ -2,7 +2,7 @@ function getLiveRace() {
   fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?page=liverace").then(function(res) {
     return res.json()
   }).then(function(res) {
-    console.log(res)
+    //console.log(res)
     tlive.innerHTML = ""
     res.vehicles.forEach(function(item, index) {
       item.delta = parseFloat(item.delta).toFixed(2)
