@@ -2,7 +2,7 @@
 function flagData() {
 
 fetch("https://cf.nascar.com/cacher/live/live-feed.json").then(res => res.json()).then(function(res) {
-	console.log(res)
+	//console.log(res)
 var flag = document.getElementById("pflag")
       switch (res.flag_state) {
         case 8:
