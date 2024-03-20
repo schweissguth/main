@@ -80,6 +80,8 @@ function picksTable() {
       })
 
     }
+    
+    fetch("")
 
 
     function mapPicks() {
@@ -92,77 +94,28 @@ function picksTable() {
 
       })
       console.log("PLAYERS", PLAYERS)
+      altDrivers()
+    }
+    
+    
+    function altDrivers() {
+    fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=DRIVERS&tqx=out:json&tq=SELECT A, B, C").then(function(alts) {
+    	return alts.text()
+    }).then(function(alts) {
+    	alts = makeObj(alts)
+    	console.log(alts)
+      alts.forEach(function(item) {
+      	var find = RESULTS.find(function(jtem) {
+        	return jtem.driver_id == item.ID
+        })
+        find.driver_id = item.DRIVERID
+        find.driver_fullname = item.DRIVERNAME
+      })
+      //console.log("RESULTS AFTER ALT", RESULTS)
       makeTable()
-    }
-
-    function getResults() {
-      fetch("https://cf.nascar.com/cacher/2024/1/" + RACENO + "/weekend-feed.json").then(function(res) {
-        return res.json()
-      }).then(function(res) {
-        RESULTS = res.weekend_race[0].results.filter(item => item.finishing_position > 0)
-        //console.log("raw results", RESULTS)
-        STAGES = res.weekend_race[0].stage_results
-        //console.log("raw stages", STAGES)
-        //getPlayers()
-      });
-
-    }
-
-
-    function getStandings() {
-      fetch("https://cf.nascar.com/live/feeds/series_1/" + PREVRACE + "/live_points.json").then(res => res.json()).then(function(res) {
-      RESULTS = res
-      //console.log("raw RESULTS", RESULTS)
-      RESULTS.map(driver => {
-      	driver.driver_fullname = driver.first_name + " " + driver.last_name
-      	var find = PICKS.find(function(pick) {
-        	return pick.DRIVERID == driver.driver_id
-        }) || {PLAYER: "", PLAYERID: ""}
-        driver.PLAYER = find.PLAYER
-        driver.PLAYERID = find.PLAYERID
-      })
-      //console.log(RESULTS)
-      //mapStandings()
-      	
-      })
-
-    }
-    
-    
-    function mapStandings() {
-    PLAYERS.map(function(player) {
-    	var filter = RESULTS.filter(function(driver) {
-      	return player.ID == driver.PLAYERID
-      }) || [
-          [""],
-          [""]
-        ]
-      player.picks = filter
     })
-    //console.log("PLAYERS", PLAYERS)
-      //makeTable()
     }
 
-
-    function mapResults() {
-      PLAYERS.map(function(atem) {
-        var filter = RESULTS.filter(function(btem) {
-          return btem.PLAYERID == atem.ID
-        }) || [
-          [""],
-          [""]
-        ]
-        var total = filter.reduce(function(sum, item) {
-          return sum + item.PTS + item.BONUS
-        }, 0)
-        atem.picks = filter
-        atem.SUM = total
-
-      })
-      //console.log("map results", PLAYERS)
-      makeTable()
-
-    }
 
 
 
