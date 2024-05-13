@@ -1,9 +1,297 @@
 
-
+<!DOCTYPE html>
 <html>
-  <head>
-  <script type="text/javascript">
-    location.replace("https://jsfiddle.net/schweissguth/r0x98yLt/show");
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Calc - StupidFast</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <script
+    type="text/javascript"
+    src="/js/lib/dummy.js"
+    
+  ></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+
+
+  <style id="compiled-css" type="text/css">
+    
+
+    /* EOS */
+  </style>
+
+  <script id="insert"></script>
+
+</head>
+<body>
+    
+<form action="https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec" target="iframe">
+
+<br><br>
+
+<input type="hidden" name="page" value="nextrace">
+
+<br><br>
+
+<select name="raceid" id="selectrace"></select>
+Next race: <input type="submit">
+
+<br><br>
+
+</form>
+
+<button onclick="getResults()">Get results</button>
+
+<br><br>
+
+<button onclick="getPicks()">Get picks</button>
+
+<br><br>
+
+<button onclick="assignPts()">Assign pts</button>
+
+<br><br>
+
+<button onclick="getStages()">Get stages</button>
+
+<br><br>
+
+<button onclick="sumTotal()">Sum total</button>
+
+<br><br>
+
+<button onclick="pasteResults()" style="background-color: green">Paste results</button>
+
+<br><br>
+
+<table border cellpadding="2">
+  <tbody id="tbody"></tbody>
+</table>
+
+<br><br>
+
+<form action="https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?page=calc" target="iframe" id="form">
+<br><br>
+<input type="hidden" name="page" value="calc">
+<br><br>
+  <textarea name="value" id="ta" cols="45" rows="24"></textarea>
+  <br><br>
+  <input type="submit">
+  <br><br>
+  <iframe name="iframe" frameborder="0" width="100%" height="500"></iframe>
+  <br><br>
+</form>
+
+
+
+
+<br><br>
+
+
+
+    <script type="text/javascript">
+
+var SCHEDULE = []
+var RESULTS = []
+var PICKS = []
+var STAGES = []
+
+
+
+
+fetch("https://cf.nascar.com/cacher/2024/race_list_basic.json").then(function(res) {
+  return res.json()
+}).then(function(res) {
+  SCHEDULE = res.series_1
+  SCHEDULE.shift()
+  SCHEDULE.shift()
+  console.log(SCHEDULE)
+  makeSelect()
+});
+
+
+
+function makeSelect() {
+SCHEDULE.forEach(function(item) {
+	var opt = document.createElement("OPTION")
+  opt.text = item.track_name
+  opt.value = item.race_id
+  selectrace.add(opt)
+})
+}
+
+
+function getResults() {
+fetch("https://cf.nascar.com/cacher/2024/1/" + selectrace.value + "/weekend-feed.json").then(function(res) {
+  return res.json()
+}).then(function(res) {
+  RESULTS = res.weekend_race[0].results.filter(item => item.finishing_position > 0)
+  STAGES = res.weekend_race[0].stage_results
+  console.log(RESULTS)
+  console.log("stages", STAGES)
+  makeTable()
+});
+
+}
+
+
+function getPicks() {
+console.log(selectrace.value)
+	fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKS&tqx=out:csv&tq=SELECT A, B, C, D, E where B = " + selectrace.value + "order by A DESC").then(function(res) {
+  	return res.text()
+  }).then(function(res) {
+  console.log("PICKS raw", res)
+  	//res = res.split("setResponse(")[1]
+  	//res = res.split(");")[0]
+    //PICKS = JSON.parse(res)
+    PICKS = res.split("\n")
+    
+    PICKS.forEach(function(item, i) {
+    	var str = item.replace(/"/g, "")
+    	str = str.split(",")
+      PICKS[i] = str
+      
+      
+    })
+    
+  	console.log("PICKS", PICKS)
+    mapPicks()
+    
+  })
+}
+
+function mapPicks() {
+	RESULTS.map(function(item) {
+  	var find = PICKS.find(jtem => jtem[2] == item.driver_id) || ["","","","",""]
+    item.PLAYERID = find[3]
+    item.PLAYER = find[4]
+  })
+  console.log(RESULTS)
+  makeTable()
+}
+
+function assignPts() {
+	RESULTS.reverse()
+  var counter = 1
+	RESULTS.map(function(item) {
+  	if (item.PLAYERID) {
+    	item.PTS = counter++
+    } else {
+    item.PTS = ""
+    }
+  })
+  RESULTS.reverse()
+  makeTable()
+}
+
+
+function getStages() {
+	RESULTS.map(item => item.BONUS = 0)
+  RESULTS[0].BONUS = 2
+	STAGES.forEach(function(item) {
+  	var driverid = item.results[0].driver_id
+    var find = RESULTS.find(jtem => jtem.driver_id == driverid)
+    find.BONUS++
+  })
+  console.log("RESULTS WITH STAGES", RESULTS)
+  makeTable()
+}
+
+function sumTotal() {
+	RESULTS.map(item => item.TOTAL = "")
+  
+	RESULTS.map(item => {
+  	if (item.PTS > 0) {
+    	item.TOTAL = item.BONUS + item.PTS
+    }
+  })
+  makeTable()
+}
+
+function assignDollas() {
+	var f1 = RESULTS.filter(function(item) {
+  	return item.TOTAL == RESULTS[0].TOTAL
+  })
+	var f2 = RESULTS.filter(function(item) {
+  	return item.TOTAL !== RESULTS[0].TOTAL
+  })
+  
+  if (f1.length > 1) {
+  	var amount = 4 / f1.length
+  	f1.forEach(function(item, index) {
+    	RESULTS[index].W = amount
+    })
+  } else {
+  	RESULTS[0].W = 2.5
+  }
+  
+  if (f2.length > 1 && f1.length == 1) {
+  	var amount = 1.5 / f1.length
+  	f2.forEach(function(item, index) {
+    	RESULTS[1 + index].W = amount
+    })
+  	
+  }
+  makeTable()
+  
+}
+
+
+function makeTable() {
+	tbody.innerHTML = null
+	RESULTS.map(function(item, index) {
+  	var tr = tbody.insertRow()
+    tr.insertCell().innerHTML = item.finishing_position
+    tr.insertCell().innerHTML = item.driver_fullname
+    tr.insertCell().innerHTML = item.race_id
+    tr.insertCell().innerHTML = item.driver_id
+    tr.insertCell().innerHTML = item.PLAYERID || ""
+    tr.insertCell().innerHTML = item.PTS || ""
+    tr.insertCell().innerHTML = item.BONUS || ""
+    tr.insertCell().innerHTML = item.TOTAL || ""
+  })
+  
+}
+
+
+function pasteResults() {
+	var filter = RESULTS.filter(item => item.PLAYERID)
+  var ARR = []
+  filter.forEach(function(item) {
+  	var arr = [
+    item.race_id,
+    item.PLAYERID,
+    item.driver_id,
+    item.finishing_position,
+    item.PTS,
+    item.BONUS,
+    item.TOTAL
+    ]
+    ARR.push(arr)
+  })
+  ta.value = JSON.stringify(ARR)
+}
+
   </script>
-  </head>
-</html>      
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "r0x98yLt"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+
+</body>
+</html>
