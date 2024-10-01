@@ -56,7 +56,7 @@
 
 
 
-	fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=SCORES&tqx=out:csv&tq=SELECT I, sum(G) WHERE A > 5410 group by I order by sum(G) DESC label I 'Player', sum(G) 'Total'").then(function(res) {
+	fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=SCORES&tqx=out:csv&tq=SELECT%20I,%20sum(G)%20WHERE%20A%20=%205417%20or%20A%20=%205421%20or%20A%20=%205428%20or%20A%20=%205427%20or%20A%20=%205426%20or%20A%20=%205425%20or%20A%20=%205424%20or%20A%20=%205423%20or%20A%20=%205420%20or%20A%20=%205421%20or%20A%20=%205411%20group%20by%20I%20order%20by%20sum(G)%20DESC%20label%20I%20%27Player%27,%20sum(G)%20%27Total%27").then(function(res) {
   	return res.text()
   }).then(function(res) {
   console.log("PICKS raw", res)
