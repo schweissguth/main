@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <button onclick="getCode()">Get code</button>
+
+
+
+
+
+
+
+
+
+    <script>
+
+
+      function getCode() {
+        // Extract the authorization code from the URL
+const urlParams = new URLSearchParams(window.location.search);
+const authorizationCode = urlParams.get('code');
+alert(urlParams)
+
+      }
+      getCode()
+
+
+
+      </script>
+  </body>
+</html>
