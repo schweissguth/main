@@ -21,7 +21,7 @@
 
     <style id="compiled-css" type="text/css">
       html, body {
-  font-family: Verdana, Tahoma, sans-serif;
+  font-family: Tahoma;
 }
 
       /* EOS */
@@ -50,6 +50,14 @@
 <main id="1HDXHhGslttcyYRA3D18W0pTr12wh8aW2">
   
 </main>
+
+<br><br><br>
+
+<button id="rbutton" onclick="getRandom()"><br>Get 5 random toys<br><br></button>
+
+<br>
+
+<iframe src="" frameborder="0"></iframe>
 
 <dialog id="dia">
   <a href="javascript:" onclick="(function() { dia.close() })()" style="display: block; float: right; padding: 10px;">X</a>
@@ -128,6 +136,19 @@ res.forEach(function(item) {
   }
 	document.getElementById(loc).append(div)
 })
+}
+
+
+
+function getRandom() {
+fetch("https://script.google.com/macros/s/AKfycbxqXdF4_lCKlyD59FO0IQk90WCuiX2X83hu6UsOhY2aOrgDlBEiqsYtTw_K55VHu2QNJg/exec?random").then(function(res) {
+    	return true
+    }).then(function() {
+    	window.location.reload()
+    })
+    rbutton.innerHTML = "<br>LOADING...<br><br>"
+    rbutton.disabled = true
+    alert("Please make sure all toys are put away and wait for the page to reload")
 }
 
 
