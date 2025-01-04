@@ -46,7 +46,8 @@
 <a href="javascript:" onclick="(function() { dia.showModal(); })()">Show checked out toys</a>
 <br><br><br>
 
-
+<main id="1-mrLtig6t1dv2UZ9sZF0FK69qHNprzpe"></main>
+<br><hr><br>
 <main id="1HDXHhGslttcyYRA3D18W0pTr12wh8aW2">
   
 </main>
@@ -59,99 +60,109 @@
 
 <iframe src="" frameborder="0"></iframe>
 
-<dialog id="dia">
-  <a href="javascript:" onclick="(function() { dia.close() })()" style="display: block; float: right; padding: 10px;">X</a>
-  <main id="1-mrLtig6t1dv2UZ9sZF0FK69qHNprzpe"></main>
-</dialog>
-
 </center>
   </body>
 
     <script type="text/javascript">
 
-
 function init() {
-"1-mrLtig6t1dv2UZ9sZF0FK69qHNprzpe".innerHTML = null
+  "1-mrLtig6t1dv2UZ9sZF0FK69qHNprzpe".innerHTML = null
 
-fetch("https://script.google.com/macros/s/AKfycbxqXdF4_lCKlyD59FO0IQk90WCuiX2X83hu6UsOhY2aOrgDlBEiqsYtTw_K55VHu2QNJg/exec").then(function(res) {
-	return res.json()
-}).then(function(res) {
-console.log(res)
-listToys("1HDXHhGslttcyYRA3D18W0pTr12wh8aW2", res)
-next()
-
-})
-
+  fetch(
+    "https://script.google.com/macros/s/AKfycbxqXdF4_lCKlyD59FO0IQk90WCuiX2X83hu6UsOhY2aOrgDlBEiqsYtTw_K55VHu2QNJg/exec",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      console.log(res)
+      listToys("1HDXHhGslttcyYRA3D18W0pTr12wh8aW2", res)
+      next()
+    })
 }
 
 init()
 
 function next() {
-	fetch("https://script.google.com/macros/s/AKfycbxqXdF4_lCKlyD59FO0IQk90WCuiX2X83hu6UsOhY2aOrgDlBEiqsYtTw_K55VHu2QNJg/exec?checkout").then(function(res) {
-  	return res.json()
-  }).then(function(res) {
-  	console.log(res)
-    listToys("1-mrLtig6t1dv2UZ9sZF0FK69qHNprzpe", res)
+  fetch(
+    "https://script.google.com/macros/s/AKfycbxqXdF4_lCKlyD59FO0IQk90WCuiX2X83hu6UsOhY2aOrgDlBEiqsYtTw_K55VHu2QNJg/exec?checkout",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      console.log(res)
+      listToys("1-mrLtig6t1dv2UZ9sZF0FK69qHNprzpe", res)
+    })
+}
+
+function listToys(loc, res) {
+  res.sort(function (a, b) {
+    return a.name.localeCompare(b.name)
+  })
+
+  res.forEach(function (item) {
+    var div = document.createElement("DIV")
+    var img = document.createElement("IMG")
+    var center = document.createElement("CENTER")
+    div.style.display = "inline-block"
+    div.style.margin = "5px 10px 0px 5px"
+    img.src =
+      "https://lh3.googleusercontent.com/d/" + item.id + "=w150?authuser=0"
+    img.title = item.id
+    img.style.borderRadius = "10px"
+    center.innerText = item.name.split(".")[0]
+    div.append(img)
+    div.append(center)
+    img.onclick = function () {
+      var c = confirm(
+        "Do you want to check in/out " + item.name.split(".")[0] + "?",
+      )
+      if (c) {
+        var currentloc = div.parentElement.id
+        var newloc = ""
+        if (currentloc == "1-mrLtig6t1dv2UZ9sZF0FK69qHNprzpe") {
+          document
+            .getElementById("1HDXHhGslttcyYRA3D18W0pTr12wh8aW2")
+            .append(div)
+          newloc = "1HDXHhGslttcyYRA3D18W0pTr12wh8aW2"
+        } else {
+          document
+            .getElementById("1-mrLtig6t1dv2UZ9sZF0FK69qHNprzpe")
+            .append(div)
+          newloc = "1-mrLtig6t1dv2UZ9sZF0FK69qHNprzpe"
+        }
+        fetch(
+          "https://script.google.com/macros/s/AKfycbxqXdF4_lCKlyD59FO0IQk90WCuiX2X83hu6UsOhY2aOrgDlBEiqsYtTw_K55VHu2QNJg/exec",
+          {
+            method: "post",
+            body: item.id + "::" + newloc,
+          },
+        ).then(function (res) {
+          return res.text()
+        })
+      }
+    }
+    document.getElementById(loc).append(div)
   })
 }
 
-
-function listToys(loc, res) {
-
-res.sort(function(a, b) {
-	return a.name.localeCompare(b.name)
-})
-
-res.forEach(function(item) {
-	var div = document.createElement("DIV")
-	var img = document.createElement("IMG")
-	var center = document.createElement("CENTER")
-  div.style.display = "inline-block"
-  div.style.margin = "5px 10px 0px 5px"
-  img.src = "https://lh3.googleusercontent.com/d/" + item.id + "=w150?authuser=0"
-  img.title = item.id
-  img.style.borderRadius = "10px"
-  center.innerText = item.name.split(".")[0]
-  div.append(img)
-  div.append(center)
-  img.onclick = function() {
-  	var c = confirm("Do you want to check in/out " + item.name.split(".")[0] + "?")
-  if (c) {
-  var currentloc = div.parentElement.id
-  var newloc = ""
-  if (currentloc == "1-mrLtig6t1dv2UZ9sZF0FK69qHNprzpe") {
-    document.getElementById("1HDXHhGslttcyYRA3D18W0pTr12wh8aW2").append(div)
-    newloc = "1HDXHhGslttcyYRA3D18W0pTr12wh8aW2"
-  } else {
-  	document.getElementById("1-mrLtig6t1dv2UZ9sZF0FK69qHNprzpe").append(div)
-    newloc = "1-mrLtig6t1dv2UZ9sZF0FK69qHNprzpe"
-  }
-  	fetch("https://script.google.com/macros/s/AKfycbxqXdF4_lCKlyD59FO0IQk90WCuiX2X83hu6UsOhY2aOrgDlBEiqsYtTw_K55VHu2QNJg/exec", {
-    method: "post",
-    body: item.id + "::" + newloc
-    }).then(function(res) {
-    	return res.text()
-    })
-  }
-  }
-	document.getElementById(loc).append(div)
-})
-}
-
-
-
 function getRandom() {
-fetch("https://script.google.com/macros/s/AKfycbxqXdF4_lCKlyD59FO0IQk90WCuiX2X83hu6UsOhY2aOrgDlBEiqsYtTw_K55VHu2QNJg/exec?random").then(function(res) {
-    	return true
-    }).then(function() {
-    	window.location.reload()
+  fetch(
+    "https://script.google.com/macros/s/AKfycbxqXdF4_lCKlyD59FO0IQk90WCuiX2X83hu6UsOhY2aOrgDlBEiqsYtTw_K55VHu2QNJg/exec?random",
+  )
+    .then(function (res) {
+      return true
     })
-    rbutton.innerHTML = "<br>LOADING...<br><br>"
-    rbutton.disabled = true
-    alert("Please make sure all toys are put away and wait for the page to reload")
+    .then(function () {
+      window.location.reload()
+    })
+  rbutton.innerHTML = "<br>LOADING...<br><br>"
+  rbutton.disabled = true
+  alert(
+    "Please make sure all toys are put away and wait for the page to reload",
+  )
 }
-
-
 
 
   </script>
