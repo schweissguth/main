@@ -1,0 +1,264 @@
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>IM LEARNING</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <script
+      type="text/javascript"
+      src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"
+      
+    ></script>
+
+
+
+    <style id="compiled-css" type="text/css">
+      * {
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 3em;
+}
+
+select {
+  width: 100%;
+  font-size: 1.5em;
+  text-align: center;
+}
+
+center center {
+  //outline: 1px solid;
+  width: 100%;
+  //max-width: 500px;
+  padding: 30px 0px 30px 0px;
+}
+
+audio {
+  display: none;
+}
+
+img {
+  width: auto;
+  height: auto;
+  max-width: 280px;
+  max-height: 280px;
+  margin: 5px;
+  //border: 1px solid gray;
+  //border-radius: 15px;
+
+}
+
+img:active {
+  opacity: 50%;
+}
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+  </head>
+  <body>
+      <meta name="referrer" content="no-referrer">
+  <center><center>
+  <img src="https://lh3.googleusercontent.com/d/1-Gra-16t0NR2SfvWB4eXbBrCjerRc-uE=w200-h200?authuser=0" alt="">
+  <br><br>
+  <i><b>Learn all things.</b>
+  <br>
+  Easy learning app for toddlers and kids.</i>
+  <br><br>
+
+<header>
+  <select name="" id="select" onchange="getData(this.value)">
+    <option disabled selected>Select a category</option>
+  </select>
+</header>
+
+<br><br>
+Image size: <input type="range" id="inpsize" min=1 max=3 value="2" step="1" onchange="changeImgSize(this.value)">
+<br><br>
+
+<small>Click a picture for audio.</small>
+
+<br><br>
+<hr>
+<br><br>
+<main></main>
+
+
+
+<audio id="audio" src=""></audio>
+
+
+<script>
+
+function gviz(KEY, SHEET, TQ, CALLBACK) {
+
+  var SPLIT1 = KEY.split("/edit")[0]
+  var SPLIT2 = SPLIT1.split("/d/").reverse()[0]
+
+  var URL = "https://docs.google.com/spreadsheets/d/" + SPLIT2 + "/gviz/tq?tqx=out:html&sheet=" + SHEET + "&" + "tq=" + TQ
+  console.log(URL)
+  
+  fetch(URL).then(function(x) {
+  	return x.text();
+  }).then(function(result) {
+  	//console.log(result)
+    var RESPONSETEXT = result
+      var TEMPLATE = document.createElement("DIV")
+      TEMPLATE.innerHTML = RESPONSETEXT
+
+      var ARR = []
+      var TRS = TEMPLATE.getElementsByTagName("TR")
+
+      for (var i = 0; i < TRS.length; i++) {
+        var SUBARR = []
+        var TDS = TRS[i].getElementsByTagName("TD")
+        for (var j = 0; j < TDS.length; j++) {
+          SUBARR.push(TDS[j].textContent)
+        }
+        ARR.push(SUBARR)
+      }
+
+
+      CALLBACK(ARR)
+  })
+
+}
+
+function init() {
+  console.log("init")
+}
+
+
+</script>
+</center></center>
+<br><br><br><br><br><br>
+  </body>
+
+    <script type="text/javascript">
+
+
+
+var key = "1uMoQYR2qzgK-edKNNiaCDVrpXIzXOcni_6KY0pdZI08"
+var main = document.getElementsByTagName("main")[0]
+
+function getApps() {
+gviz(key, "MT", "select A", function(data) {
+	data.shift()
+	var arr = []
+	data.forEach(function(item) {
+  	var io = arr.indexOf(item[0])
+    if (io < 0) {
+    	arr.push(item[0])
+    }
+  })
+  
+  arr.forEach(function(item) {
+  	select.innerHTML += "<option>" + item + "</option"
+  })
+})
+}
+
+getApps()
+
+function getData(input) {
+main.innerHTML = ""
+gviz(key, "LEARNINGAPP", "select B, C, D where A = '" + input + "'", function(data) {
+console.log(data)
+data.shift()
+
+data.forEach(function(item) {
+
+  var img = document.createElement("IMG")
+  if (item[1].includes("file/d/") || item[1].includes("open?id=")) {
+  	var split = item[1].split("file/d/")[1]
+  	var split = item[1].split("open?id=")[1]
+    split = split.split("/view")[0]
+    split = split.split("&usp=")[0]
+    console.log("split", split)
+    img.src = "https://drive.google.com/thumbnail?id=" + split + "&sz=w200-h200"
+  } else {
+  	img.src = item[1]
+  }
+
+  img.alt = item[0]
+  img.style.width = 270/item[2] + "px"
+  img.setAttribute("onclick", "playAudio(this.alt, this)")
+  main.append(img)
+  inpsize.value = 4 - item[2]
+
+  
+  
+})	
+})
+}
+
+
+
+
+
+
+function playAudio(text) {
+  audio.src = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=" + text
+  audio.play()
+}
+
+
+$("center").on("click", "img", function(e) {
+	$("img").css("opacity", "100%")
+ 	$(this).css("opacity", "50%")
+
+})
+
+
+function changeImgSize(val) {
+	$("img").css("width", 270/(3-val+1) + "px")
+}
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "fo1yewrx"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+  </script>
+</html>
