@@ -30,8 +30,8 @@ function makeTable() {
     
     var form = document.createElement("form")
     td.append(form)
-    form.action = "https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec"
-    form.method = "get"
+    form.action = "https://script.google.com/macros/s/AKfycbwyx5JZpneWX4L_GyEike2Z8Bqjmgy-8qrNOTVORBSi1ErN6AWO7E8rNM8HIc5bS2nW/exec?PICKS"
+    form.method = "post"
     form.target = "iframe"
     form.id = "form"
     
