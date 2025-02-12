@@ -43,8 +43,6 @@ function makeTable() {
     	fetch("https://script.google.com/macros/s/AKfycbwyx5JZpneWX4L_GyEike2Z8Bqjmgy-8qrNOTVORBSi1ErN6AWO7E8rNM8HIc5bS2nW/exec?PICKS", {
       	method: "post",
         body: JSON.stringify({
-        	ID: Date.now(),
-          RACEID: item.RACEID,
           DRIVERID: item.driver_id,
           PLAYERID: this.value,
         })
