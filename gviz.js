@@ -3,6 +3,7 @@ function gviz(res) {
   res = res.replace(");", "")
   res = JSON.parse(res)
   res = res.table.rows
+  console.log(res)
   res = res.map(function(row) {
   	return row.c.map(function(cell) {
     	return cell.v
