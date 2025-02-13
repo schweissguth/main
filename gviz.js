@@ -6,7 +6,7 @@ function gviz(res) {
   console.log(res)
   res = res.map(function(row) {
   	return row.c.map(function(cell) {
-    	return cell.v
+    	return cell.v || cell.f
     })
   })
   var header = res.shift()
