@@ -1,6 +1,7 @@
 var RACEID = 0
 var PREVRACE = 0
 var PLAYERS = []
+//buffer
 
 function getRaceId() {
   fetch(
