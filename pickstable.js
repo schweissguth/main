@@ -1,7 +1,7 @@
 var RACEID = 0
 var PREVRACE = 0
 var PLAYERS = []
-//getraceid
+
 function getRaceId() {
   fetch(
     "https://script.google.com/macros/s/AKfycbzbY9NDapp1MxzkVxDR9XI6uj-TnDwnkZMupshwY7M3uOl8uyaJrBYCzYY5au9XdobO/exec?sheet=PLAYERS&ACTIVE=1",
@@ -14,7 +14,7 @@ function getRaceId() {
       res.sort(function (a, b) {
         return a.PICKORDER - b.PICKORDER
       })
-      table.innerHTML = null
+      pt.innerHTML = null
       PREVRACE = res[0].PREVRACE
       RACEID = res[0].RACENO
       PLAYERS = res
@@ -35,7 +35,6 @@ function getDrivers(players) {
       return res.json()
     })
     .then(function (res) {
-      pt.innerHTML = null
       res.splice(13, 0, {
       	driver_id: "9999",
         first_name: "",
