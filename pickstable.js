@@ -1,146 +1,100 @@
-function makeObj(contents) {
-  contents = contents.split('"table":')[1]
-  contents = contents.split("});")[0]
-  contents = JSON.parse(contents)
+var RACEID = 0
+var PREVRACE = 0
+var PLAYERS = []
 
-  const arr = []
-  contents.rows.forEach(function(item, i) {
-    var obj = {}
-    item.c.forEach(function(jtem, j) {
-      var val = ""
-      try {
-        val = jtem.f
-        val = jtem.v
-      } catch(err) {
-        val = ""
-      }
-      obj[contents.cols[j].label] = val
+function getRaceId() {
+  fetch(
+    "https://script.google.com/macros/s/AKfycbzbY9NDapp1MxzkVxDR9XI6uj-TnDwnkZMupshwY7M3uOl8uyaJrBYCzYY5au9XdobO/exec?sheet=PLAYERS&ACTIVE=1",
+  )
+    .then(function (res) {
+      return res.json()
     })
-    arr.push(obj)
-  })
-  return arr
+    .then(function (res) {
+      console.log(res)
+      res.sort(function (a, b) {
+        return a.PICKORDER - b.PICKORDER
+      })
+      table.innerHTML = null
+      PREVRACE = res[0].PREVRACE
+      RACEID = res[0].RACENO
+      PLAYERS = res
+      getDrivers(res)
+    })
 }
 
+getRaceId()
 
-function picksTable() {
-  fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=INFO&tqx=out:json&tq=SELECT A, B").then(result => result.text()).then(function(result) {
-  	result = makeObj(result)
-    var PREVRACE = 0
-    var RACENO = 0
-    var RESULTS = []
-    var STAGES = []
-    var PLAYERS = []
-    var PICKS = []
-    var STANDINGS = []
-    PREVRACE = result[1].VALUE
-    RACENO = result[0].VALUE
-    //console.log(RACENO)
-    getPlayers()
+function getDrivers(players) {
 
-
-    function getPlayers() {
-      fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKORDER&tqx=out:json&tq=SELECT A, B, C order by B").then(res => res.text()).then(function(res) {
-      	res = makeObj(res)
-        PLAYERS = res
-        //console.log("raw players", PLAYERS)
-        getPicks()
+  fetch(
+    "https://cf.nascar.com/live/feeds/series_1/" +
+      PREVRACE +
+      "/live_points.json",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      pt.innerHTML = null
+      res.splice(13, 0, {
+      	driver_id: "9999",
+        first_name: "",
+        last_name: ""
       })
-
-    }
-
-
-    function getPicks() {
-      fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKS&tqx=out:json&tq=SELECT * where B = " + RACENO + " order by A DESC").then(res => res.text()).then(function(res) {
-        PICKS = makeObj(res)
-        console.log("PICKS", PICKS)
-        getDrivers()
-      })
-
-    }
-    
-    
-
-
-    function getDrivers() {
-      fetch("https://cf.nascar.com/live/feeds/series_1/" + PREVRACE + "/live_points.json").then(res => res.json()).then(function(res) {
-      RESULTS = res
-      //console.log("raw RESULTS", RESULTS)
-      console.log("PICKS IN DRIERS", PICKS)
-      RESULTS.map(driver => {
-      	driver.driver_fullname = driver.first_name + " " + driver.last_name
-      	var find = PICKS.find(function(pick) {
-        	return pick.DRIVERID == driver.driver_id
-        }) || {PLAYER: "", PLAYERID: ""}
-        driver.PLAYER = find.PLAYER
-        driver.PLAYERID = find.PLAYERID
-      })
-      console.log("mapped results", RESULTS)
-      mapPicks()
-      	
-      })
-
-    }
-    
-    fetch("")
-
-
-    function mapPicks() {
-      PLAYERS.map(function(atem) {
-      	var filter = RESULTS.filter(function(jtem) {
-        	return jtem.PLAYERID == atem.ID
+      players.forEach(function(player) {
+      	player.PICKS = player.PICKS.split(",")
+        player.PICKS.length = 2
+        res = res.map(function(driver) {
+        	player.PICKS.forEach(function(pick) {
+          	if (pick == driver.driver_id) {
+            	console.log("found")
+            	driver.membership_id = "disabled"
+            }
+          })
+          return driver
         })
-        atem.PICKS = filter
+      })
+      console.log(res)
+    	players.forEach(function(player) {
+      	var tr = pt.insertRow()
+        tr.insertCell().innerText = player.NAME
+        var td1 = tr.insertCell()
         
-
-      })
-      console.log("PLAYERS", PLAYERS)
-      altDrivers()
-    }
-    
-    
-    function altDrivers() {
-    fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=DRIVERS&tqx=out:json&tq=SELECT A, B, C").then(function(alts) {
-    	return alts.text()
-    }).then(function(alts) {
-    	alts = makeObj(alts)
-    	console.log(alts)
-      alts.forEach(function(item) {
-      	var find = RESULTS.find(function(jtem) {
-        	return jtem.driver_id == item.ID
-        })
-        find.driver_id = item.DRIVERID
-        find.driver_fullname = item.DRIVERNAME
-      })
-      //console.log("RESULTS AFTER ALT", RESULTS)
-      makeTable()
-    })
-    }
-
-
-
-
-
-    function makeTable() {
-    //console.log("make table players", PLAYERS)
-    	pt.innerHTML = null;
-      PLAYERS.forEach(function(item) {
-        var tr = pt.insertRow()
-        tr.insertCell().innerHTML = "<b>" + item.PLAYER + "</b><br><small>(" + parseFloat(item.TOTAL).toFixed(0) + ")</small>"
-        var td = tr.insertCell()
-        item.PICKS.forEach(function(jtem) {
-        	try {
-          var p = document.createElement("DIV")
-          p.innerHTML = jtem.driver_fullname
-          td.append(p)
-          } catch(err) {
+        var sel1 = document.createElement("SELECT")
+        var opt1 = document.createElement("OPTION")
+        sel1.append(opt1)
+        res.forEach(function(driver, i) {
+        	var opt = document.createElement("OPTION")
+          opt.value = driver.driver_id
+          opt.text = driver.first_name + " " + driver.last_name
+          opt[driver.membership_id] = true
+          if (player.PICKS[0] == driver.driver_id) {
+          	opt.selected = true
+            //driver.membership_id = "disabled"
+            //res.splice(i, 1)
+            //player.PICKS.shift()
           }
+          sel1.append(opt)
         })
+        td1.append(sel1)
+        var td2 = tr.insertCell()
+        var sel2 = document.createElement("SELECT")
+        var opt2 = document.createElement("OPTION")
+        sel2.append(opt2)
+        res.forEach(function(driver, i) {
+        	var opt = document.createElement("OPTION")
+          opt.value = driver.driver_id
+          opt.text = driver.first_name + " " + driver.last_name
+          opt[driver.membership_id] = true
+          if (player.PICKS[1] == driver.driver_id) {
+          	opt.selected = true
+            //driver.membership_id = "disabled"
+            //res.splice(i, 1)
+            //player.PICKS.shift()
+          }
+          sel2.append(opt)
+        })
+        td1.append(sel2)
       })
-    }
-
-
-  })
-
+    })
 }
-
-picksTable()
