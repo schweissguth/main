@@ -1,7 +1,7 @@
 var RACEID = 0
 var PREVRACE = 0
 var PLAYERS = []
-
+//getraceid
 function getRaceId() {
   fetch(
     "https://script.google.com/macros/s/AKfycbzbY9NDapp1MxzkVxDR9XI6uj-TnDwnkZMupshwY7M3uOl8uyaJrBYCzYY5au9XdobO/exec?sheet=PLAYERS&ACTIVE=1",
