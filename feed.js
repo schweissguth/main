@@ -12,7 +12,7 @@ fetch("https://cf.nascar.com/cacher/live/live-feed.json").then(res => res.json()
 }
 
 function getRace() {
-fetch("https://cf.nascar.com/cacher/2024/1/" + raceno + "/lap-notes.json").then(function (item) {
+fetch("https://cf.nascar.com/cacher/2025/1/" + raceno + "/lap-notes.json").then(function (item) {
         return item.json()
       }).then(function (item) {
         //console.log(item.laps)
