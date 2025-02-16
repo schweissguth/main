@@ -5,12 +5,12 @@ function getLiveRace() {
   	return res.json()
   }).then(function(feeds) {
   	//console.log(feeds)
-    getDrivers(feeds)
+    getDriverPicks(feeds)
   })
 }
 getLiveRace()
 
-function getDrivers(feeds) {
+function getDriverPicks(feeds) {
 	fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?DRIVERS").then(function(res) {
   	return res.json()
   }).then(function(drivers) {
@@ -35,13 +35,13 @@ function getDrivers(feeds) {
       return feed
     })
     feeds.reverse()
-    getPlayers(feeds)
+    getPlayerPicks(feeds)
   })
 }
 
 
 
-function getPlayers(feeds) {
+function getPlayerPicks(feeds) {
 	fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PLAYERS").then(function(players) {
   	return players.json()
   }).then(function(players) {
@@ -64,12 +64,12 @@ function getPlayers(feeds) {
       })
       return player
     })
-    makeTable(players)
+    makePicksTable(players)
   })
 }
 
 
-function makeTable(players) {
+function makePicksTable(players) {
   	pt.innerHTML = null
 	players.sort(function(a, b) {
   	return a.PICKORDER - b.PICKORDER
