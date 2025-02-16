@@ -35,8 +35,8 @@ function getDrivers(feeds) {
 function makeTable(feeds) {
 	feeds.vehicles.forEach(function(feed) {
   	var tr = tlive.insertRow()
-    tr.insertCell().innerText = feed.running_position
+    tr.insertCell().innerText = feed.running_position + ")"
     tr.insertCell().innerText = feed.driver.full_name
-    tr.insertCell().innerHTML = feed.PLAYERNAME
+    tr.insertCell().innerHTML = "<b>" + feed.PLAYERNAME + "</b>"
   })
 }
