@@ -88,12 +88,6 @@ function makePicksTable(players) {
       div.innerText = driver
       td1.append(div)
     })
-    var td2 = tr.insertCell()
-    player.RUNORDER.forEach(function(pos) {
-    	var div = document.createElement("DIV")
-      div.innerText = pos
-      td2.append(div)
-    })
     tr.insertCell().innerHTML = "<b>" + player.SUM + "</b>"
     
   })
