@@ -40,8 +40,6 @@ function getDrivers(feeds) {
 }
 
 
-getLiveRace()
-
 
 function getPlayers(feeds) {
 	fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PLAYERS").then(function(players) {
@@ -74,15 +72,14 @@ function getPlayers(feeds) {
 function makeTable(players) {
   	pt.innerHTML = null
 	players.sort(function(a, b) {
-  	return b.SUM - a.SUM
+  	return a.PICKORDER - b.PICKORDER
   })
   players = players.filter(function(player) {
   	return player.ACTIVE
   })
 	console.log(players)
-  tlpicks.innerHTML = null
   players.forEach(function(player) {
-  	var tr = tlpicks.insertRow()
+  	var tr = pt.insertRow()
     tr.insertCell().innerText = player.NAME
     player.DRIVERS = player.DRIVERS.split(",")
     var td1 = tr.insertCell()
@@ -101,4 +98,3 @@ function makeTable(players) {
     
   })
 }
-
