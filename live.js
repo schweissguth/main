@@ -6,14 +6,14 @@ function getLiveRace() {
   }).then(function(feeds) {
   	tlive.innerHTML = null
   	console.log(feeds)
-    getDrivers(feeds)
+    getLiveDrivers(feeds)
   })
 }
 
 getLiveRace()
 
 
-function getDrivers(feeds) {
+function getLiveDrivers(feeds) {
 	fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?DRIVERS").then(function(drivers) {
   	return drivers.json()
   }).then(function(drivers) {
@@ -27,12 +27,12 @@ function getDrivers(feeds) {
       feed.PLAYERNAME = find.PLAYERNAME
       return feed
     })
-    makeTable(feeds)
+    makeLiveTable(feeds)
   })
 }
 
 
-function makeTable(feeds) {
+function makeLiveTable(feeds) {
 	feeds.vehicles.forEach(function(feed) {
   	var tr = tlive.insertRow()
     tr.insertCell().innerText = feed.running_position + " "
