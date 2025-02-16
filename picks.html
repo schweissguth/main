@@ -1,136 +1,85 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Picks - StupidFast</title>
+function init() {
+  pt.innerHTML = null
+  getPlayers()
+}
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+init()
 
-    <link rel="stylesheet" type="text/css" href="./css.css" />
+function getPlayers() {
+  fetch(
+    "https://script.google.com/macros/s/AKfycbwyx5JZpneWX4L_GyEike2Z8Bqjmgy-8qrNOTVORBSi1ErN6AWO7E8rNM8HIc5bS2nW/exec?PLAYERS",
+  )
+    .then(function (players) {
+      return players.json()
+    })
+    .then(function (players) {
+      console.log(players)
+      players = players.sort(function (a, b) {
+        return a.PICKORDER - b.PICKORDER
+      })
+      getDrivers(players)
+    })
+}
 
-    <style>
-      tr {
-        height: 80px;
+function getDrivers(players) {
+  fetch(
+    "https://script.google.com/macros/s/AKfycbwyx5JZpneWX4L_GyEike2Z8Bqjmgy-8qrNOTVORBSi1ErN6AWO7E8rNM8HIc5bS2nW/exec?DRIVERS",
+  )
+    .then(function (drivers) {
+      return drivers.json()
+    })
+    .then(function (drivers) {
+      console.log(drivers)
+      drivers = drivers.filter(function(driver) {
+      	return !driver.PLAYERID
+      })
+      drivers.push({
+    "POS": 12.5,
+    "DRIVERID": 0,
+    "FIRSTNAME": "",
+    "LASTNAME": "",
+    "CARNO": "000",
+    "PLAYERID": "",
+    "PLAYERNAME": "",
+    "DRIVERNAME": "--------------"
+})
+drivers.sort(function(a, b) {
+	return a.POS - b.POS
+})
+      makeTable(players, drivers)
+    })
+}
+
+function makeTable(players, drivers) {
+  players.forEach(function (player) {
+    var tr = pt.insertRow()
+    var td0 = tr.insertCell()
+    td0.innerHTML = player.NAME + "<small> (" + Math.round(player.PICKORDER) + ")</small>"
+    var td1 = tr.insertCell()
+    player.PICKS = player.PICKS.split(",")
+    player.PICKS.length = 2
+    player.DRIVERS = player.DRIVERS.split(",")
+    player.DRIVERS.length = 2
+    for (let i = 0; i < 2; i++) {
+      if (player.DRIVERS[i]) {
+        var c = document.createElement("DIV")
+        c.innerText = player.DRIVERS[i]
+        td1.append(c)
+      } else {
+        var select = document.createElement("SELECT")
+        var option = document.createElement("OPTION")
+        option.selected = true
+        select.add(option)
+        drivers.forEach(function (driver) {
+          var opt = document.createElement("OPTION")
+          opt.text = driver.DRIVERNAME
+          opt.value = driver.DRIVERID
+          select.add(opt)
+        })
+      td1.append(select)
       }
-    </style>
-  </head>
-  <body>
-    <center>
-      <br /><br />
+    	
+    }
 
-      <a href="../" class="banner" width="100%">
-        <img src="./sfbanner.png" width="100%" />
-      </a>
-
-      <br /><br />
-      <table id="table" cellpadding="3">
-        <tr>
-          <td>LOADING...</td>
-        </tr>
-      </table>
-    </center>
-
-    <script>
-      var RACEID = 0
-      var PREVRACE = 0
-      var PLAYERS = []
-
-      function getRaceId() {
-        fetch(
-          "https://script.google.com/macros/s/AKfycbzbY9NDapp1MxzkVxDR9XI6uj-TnDwnkZMupshwY7M3uOl8uyaJrBYCzYY5au9XdobO/exec?sheet=PLAYERS&ACTIVE=1",
-        )
-          .then(function (res) {
-            return res.json()
-          })
-          .then(function (res) {
-            console.log(res)
-            res.sort(function (a, b) {
-              return a.PICKORDER - b.PICKORDER
-            })
-            table.innerHTML = null
-            PREVRACE = res[0].PREVRACE
-            RACEID = res[0].RACENO
-            PLAYERS = res
-            getDrivers()
-          })
-      }
-
-      getRaceId()
-
-      function getDrivers() {
-        fetch(
-          "https://cf.nascar.com/live/feeds/series_1/" +
-            PREVRACE +
-            "/live_points.json",
-        )
-          .then(function (res) {
-            return res.json()
-          })
-          .then(function (res) {
-            console.log(res)
-            res.forEach(function (driver) {
-              var tr = table.insertRow()
-              var td0 = tr.insertCell()
-              td0.id = driver.driver_id
-              tr.insertCell().innerText =
-                driver.first_name + " " + driver.last_name
-              var td = tr.insertCell()
-              var select = document.createElement("SELECT")
-              var option = document.createElement("OPTION")
-              select.append(option)
-              PLAYERS.forEach(function (player) {
-                var opt = document.createElement("OPTION")
-                opt.text = player.NAME
-                opt.value = player.ID
-                if (
-                  player.PICKS.includes(driver.driver_id) &&
-                  driver.driver_id != 0
-                ) {
-                  opt.selected = true
-                }
-                select.add(opt)
-              })
-              select.onchange = function () {
-                fetch(
-                  "https://script.google.com/macros/s/AKfycbwyx5JZpneWX4L_GyEike2Z8Bqjmgy-8qrNOTVORBSi1ErN6AWO7E8rNM8HIc5bS2nW/exec?PICKS",
-                  {
-                    method: "post",
-                    body: JSON.stringify({
-                      PLAYERID: select.value,
-                      DRIVERID: driver.driver_id,
-                    }),
-                  },
-                )
-                  .then(function (res) {
-                    return res.text()
-                  })
-                  .then(function (res) {
-                    alert(res)
-                  })
-              }
-              td.append(select)
-            })
-            var td13 = table.insertRow(13).insertCell()
-            td13.setAttribute("colspan", 3)
-            td13.innerHTML = "<hr>"
-            getImages()
-          })
-      }
-
-      function getImages() {
-        fetch("https://cf.nascar.com/cacher/drivers.json")
-          .then(function (res) {
-            return res.json()
-          })
-          .then(function (images) {
-            images.response.forEach(function (image) {
-              try {
-                var td = document.getElementById(image.Nascar_Driver_ID)
-                td.innerHTML =
-                  "<img src='" + image.Image_Small + "' width='50' />"
-              } catch (err) {}
-            })
-          })
-      }
-    </script>
-  </body>
-</html>
+  })
+}
