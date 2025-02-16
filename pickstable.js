@@ -4,7 +4,6 @@ function getLiveRace() {
 	fetch("https://cf.nascar.com/cacher/live/live-feed.json").then(function(res) {
   	return res.json()
   }).then(function(feeds) {
-  	pt.innerHTML = null
   	//console.log(feeds)
     getDrivers(feeds)
   })
@@ -72,6 +71,7 @@ function getPlayers(feeds) {
 
 
 function makeTable(players) {
+  	pt.innerHTML = null
 	players.sort(function(a, b) {
   	return b.SUM - a.SUM
   })
