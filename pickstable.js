@@ -1,100 +1,88 @@
-var RACEID = 0
-var PREVRACE = 0
-var PLAYERS = []
-//buffer
+function init() {
+  pt.innerHTML = null
+  getPlayers()
+}
 
-function getRaceId() {
+init()
+
+function getPlayers() {
   fetch(
-    "https://script.google.com/macros/s/AKfycbzbY9NDapp1MxzkVxDR9XI6uj-TnDwnkZMupshwY7M3uOl8uyaJrBYCzYY5au9XdobO/exec?sheet=PLAYERS&ACTIVE=1",
+    "https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PLAYERS",
   )
-    .then(function (res) {
-      return res.json()
+    .then(function (players) {
+      return players.json()
     })
-    .then(function (res) {
-      console.log(res)
-      res.sort(function (a, b) {
+    .then(function (players) {
+      console.log(players)
+      players = players.filter(function(player) {
+      	return player.ACTIVE
+      })
+      players = players.sort(function (a, b) {
         return a.PICKORDER - b.PICKORDER
       })
-      pt.innerHTML = null
-      PREVRACE = res[0].PREVRACE
-      RACEID = res[0].RACENO
-      PLAYERS = res
-      getDrivers(res)
+      getDrivers(players)
     })
 }
 
-getRaceId()
-
 function getDrivers(players) {
-
   fetch(
-    "https://cf.nascar.com/live/feeds/series_1/" +
-      PREVRACE +
-      "/live_points.json",
+    "https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?DRIVERS",
   )
-    .then(function (res) {
-      return res.json()
+    .then(function (drivers) {
+      return drivers.json()
     })
-    .then(function (res) {
-      res.splice(13, 0, {
-      	driver_id: "9999",
-        first_name: "",
-        last_name: ""
+    .then(function (drivers) {
+      console.log(drivers)
+      drivers = drivers.filter(function(driver) {
+      	return !driver.PLAYERID
       })
-      players.forEach(function(player) {
-      	player.PICKS = player.PICKS.split(",")
-        player.PICKS.length = 2
-        res = res.map(function(driver) {
-        	player.PICKS.forEach(function(pick) {
-          	if (pick == driver.driver_id) {
-            	console.log("found")
-            	driver.membership_id = "disabled"
-            }
-          })
-          return driver
-        })
-      })
-      console.log(res)
-    	players.forEach(function(player) {
-      	var tr = pt.insertRow()
-        tr.insertCell().innerText = player.NAME
-        var td1 = tr.insertCell()
-        
-        var sel1 = document.createElement("SELECT")
-        var opt1 = document.createElement("OPTION")
-        sel1.append(opt1)
-        res.forEach(function(driver, i) {
-        	var opt = document.createElement("OPTION")
-          opt.value = driver.driver_id
-          opt.text = driver.first_name + " " + driver.last_name
-          opt[driver.membership_id] = true
-          if (player.PICKS[0] == driver.driver_id) {
-          	opt.selected = true
-            //driver.membership_id = "disabled"
-            //res.splice(i, 1)
-            //player.PICKS.shift()
-          }
-          sel1.append(opt)
-        })
-        td1.append(sel1)
-        var td2 = tr.insertCell()
-        var sel2 = document.createElement("SELECT")
-        var opt2 = document.createElement("OPTION")
-        sel2.append(opt2)
-        res.forEach(function(driver, i) {
-        	var opt = document.createElement("OPTION")
-          opt.value = driver.driver_id
-          opt.text = driver.first_name + " " + driver.last_name
-          opt[driver.membership_id] = true
-          if (player.PICKS[1] == driver.driver_id) {
-          	opt.selected = true
-            //driver.membership_id = "disabled"
-            //res.splice(i, 1)
-            //player.PICKS.shift()
-          }
-          sel2.append(opt)
-        })
-        td1.append(sel2)
-      })
+      drivers.push({
+    "POS": 12.5,
+    "DRIVERID": 0,
+    "FIRSTNAME": "",
+    "LASTNAME": "",
+    "CARNO": "000",
+    "PLAYERID": "",
+    "PLAYERNAME": "",
+    "DRIVERNAME": "--------------"
+})
+drivers.sort(function(a, b) {
+	return a.POS - b.POS
+})
+      makeTable(players, drivers)
     })
+}
+
+function makeTable(players, drivers) {
+  players.forEach(function (player) {
+    var tr = pt.insertRow()
+    var td0 = tr.insertCell()
+    td0.innerHTML = player.NAME + "<small> (" + Math.round(player.PICKORDER) + ")</small>"
+    var td1 = tr.insertCell()
+    player.PICKS = player.PICKS.split(",")
+    player.PICKS.length = 2
+    player.DRIVERS = player.DRIVERS.split(",")
+    player.DRIVERS.length = 2
+    for (let i = 0; i < 2; i++) {
+      if (player.DRIVERS[i]) {
+        var c = document.createElement("DIV")
+        c.innerText = player.DRIVERS[i]
+        td1.append(c)
+      } else {
+        var select = document.createElement("SELECT")
+        var option = document.createElement("OPTION")
+        option.selected = true
+        select.add(option)
+        drivers.forEach(function (driver) {
+          var opt = document.createElement("OPTION")
+          opt.text = driver.DRIVERNAME
+          opt.value = driver.DRIVERID
+          select.add(opt)
+        })
+      td1.append(select)
+      }
+    	
+    }
+
+  })
 }
