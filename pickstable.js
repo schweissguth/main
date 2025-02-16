@@ -8,6 +8,7 @@ function getLiveRace() {
     getDrivers(feeds)
   })
 }
+getLiveRace()
 
 function getDrivers(feeds) {
 	fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?DRIVERS").then(function(res) {
