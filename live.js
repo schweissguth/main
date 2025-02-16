@@ -1,5 +1,5 @@
 function getLiveRace() {
-  fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?page=liverace").then(function(res) {
+  fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?LIVERACE").then(function(res) {
     return res.json()
   }).then(function(res) {
     //console.log(res)
