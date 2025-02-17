@@ -29,192 +29,66 @@
 
 </head>
 <body>
-    <center>
 <center>
-<h1>Results</h1>
-  <select id="selectrace" onchange="getResults(this.value)">
-
+  <select id="select" onchange="getRaceResults(this.value)">
+    <option id="option" disabled selected>LOADING...</option>
   </select>
 
-  <br><br>
-  <hr>
-
-  <br>
+  <br /><br />
 
   <table>
-    <thead>
+    <thead id="thead" style="display: none">
       <tr>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th>Pts</th>
+        <th>LOADING...</th>
       </tr>
     </thead>
-    <tbody id="table">
-
-    </tbody>
+    <tbody id="table"></tbody>
   </table>
-  </center>
 </center>
 
 
-    <script type="text/javascript">//<![CDATA[
+    <script type="text/javascript">
+
+	    
 
 
-var RACENO = ""
-var SCHEDULE = []
-var PLAYERS = []
-var PICKS = []
-var RESULTS = []
-
-
-function makeObj(arr) {
-  var header = arr.shift()
-  console.log("header", header)
-  var newarr = []
-  arr.forEach(function(item) {
-    var obj = {}
-    item.forEach(function(jtem, j) {
-      obj[header[j]] = jtem
-    })
-    newarr.push(obj)
+fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SCHEDULE").then(function(schedules) {
+	return schedules.json()
+}).then(function(schedules) {
+	console.log(schedules)
+  schedules = schedules.filter(function(schedule) {
+  	return schedule.is_qualifying_race == false
   })
-  return newarr
-}
-
-
-function currentRace() {
-  fetch("https://cf.nascar.com/cacher/live/live-feed.json").then(res => res.json()).then(function(res) {
-    console.log(res)
-    RACENO = res.race_id
-    console.log(RACENO)
-    raceSchedule()
+  option.text = "Select race"
+  schedules.forEach(function(schedule) {
+  	var opt = document.createElement("OPTION")
+    opt.text = schedule.track_name + " (" + schedule.race_id + ")"
+    opt.value = schedule.race_id
+    select.add(opt)
   })
-}
-currentRace()
+})
 
 
-function raceSchedule() {
-  fetch("https://cf.nascar.com/cacher/2024/race_list_basic.json").then(res => res.json()).then(res => {
-    console.log(res)
-    SCHEDULE = res.series_1
-    SCHEDULE.shift()
-    SCHEDULE.shift()
-    SCHEDULE.shift()
-    SCHEDULE.forEach(function(item) {
-      var opt = document.createElement("OPTION")
-      opt.text = item.track_name
-      opt.value = item.race_id
-      selectrace.add(opt)
-    })
-    selectrace.value = RACENO
-    getResults(RACENO)
-  })
-}
-
-
-
-
-
-function getResults(x) {
-  fetch("https://cf.nascar.com/cacher/2024/1/" + x + "/weekend-feed.json").then(function(res) {
-    return res.json()
-  }).then(function(res) {
-    console.log(res)
-    RESULTS = res.weekend_race[0].results
-    RESULTS = RESULTS.filter(item => item.finishing_position > 0)
-    console.log("RESULTS", RESULTS)
-    getPicks(x)
-  })
-}
-
-
-
-function getPicks(x) {
-  fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKS&tqx=out:csv&tq=SELECT C, D, E where B = " + x + " label C 'DRIVERID', D 'PLAYERID', E 'PLAYER'").then(res => res.text()).then(res => {
-    console.log("raw picks", res)
-    res = res.split("\n")
-    res = res.map(function(item, i) {
-      return JSON.parse("[" + item + "]")
-    })
-    console.log("raw picks", res)
-    res = makeObj(res)
-    PICKS = res.reverse()
-    console.log("MakeObj PICKS", PICKS)
-    mapPicks()
-  })
-
-}
-
-
-
-function mapPicks() {
-  console.log("RESULTS", RESULTS)
-  RESULTS.map(item => {
-    var find = PICKS.find(atem => atem.DRIVERID == item.driver_id) || {
-    	DRIVERID: "",
-      PLAYERID: "",
-      PLAYER: ""
-    }
-    Object.assign(item, find)
-  })
-  console.log("FINAL REUSLTS", RESULTS)
-  assignPts()
-}
-
-
-
-function assignPts() {
-	var counter = 0
-	RESULTS.reverse().map(atem => {
-  	if (atem.PLAYERID) {
-    	atem.PTS = ++counter
-    } else {
-    	atem.PTS = ""
-    }
-  })
-  RESULTS.reverse()
-  makeTable()
-}
-
-
-
-
-
-
-
-
-function makeTable() {
+function getRaceResults(x) {
+	thead.style.display = ""
   table.innerHTML = null
-  RESULTS.forEach(function(item) {
-    var tr = table.insertRow()
-    tr.insertCell().innerHTML = item.finishing_position
-    tr.insertCell().innerHTML = item.driver_fullname
-    tr.insertCell().innerHTML = "<b>" + item.PLAYER + "</b>"
-    tr.insertCell().innerHTML = item.PTS
+	fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?RACERESULTS=" + x).then(function(raceresults) {
+  	return raceresults.json()
+  }).then(function(raceresults) {
+  	console.log(raceresults)
+    thead.style.display = "none"
+    raceresults.weekend_race[0].results = raceresults.weekend_race[0].results.filter(function(raceresult) {
+    	return raceresult.finishing_position
+    })
+    raceresults.weekend_race[0].results.forEach(function(raceresult) {
+    	var tr = table.insertRow()
+      tr.insertCell().innerText = raceresult.finishing_position
+      tr.insertCell().innerText = raceresult.driver_fullname
+      tr.insertCell().innerText = raceresult.diff_time/1000 || "-" + raceresult.diff_laps
+      tr.insertCell().innerHTML = "<i>" + raceresult.PLAYER + "</i>"
+    })
   })
 }
-
-
-
-
-
-
-
-
-  //]]></script>
-
-  <script>
-    // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent){
-      window.parent.parent.postMessage(["resultsFrame", {
-        height: document.body.getBoundingClientRect().height,
-        slug: "1eca6zt9"
-      }], "*")
-    }
-
-    // always overwrite window.name, in case users try to set it manually
-    window.name = "result"
   </script>
 
 
