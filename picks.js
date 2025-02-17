@@ -22,6 +22,7 @@ function getPlayers(standings) {
     })
     .then(function (players) {
       //console.log(players)
+      table.innerHTML = null
       standings.forEach(function (standing) {
         var tr = table.insertRow()
         var td0 = tr.insertCell().id = standing.driver_id
