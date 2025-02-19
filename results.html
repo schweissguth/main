@@ -1,4 +1,7 @@
 
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -50,6 +53,12 @@
     </thead>
     <tbody id="table"></tbody>
   </table>
+  
+  <details>
+    <summary>Admin</summary>
+    <button id="button" onclick="submitRace()">Submit</button>
+  </details>
+  
 </center>
 
 
@@ -78,6 +87,7 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
 function getRaceResults(x) {
 	thead.style.display = ""
   table.innerHTML = null
+  button.innerText = select.value
 	fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?RACERESULTS=" + x).then(function(raceresults) {
   	return raceresults.json()
   }).then(function(raceresults) {
@@ -95,6 +105,22 @@ function getRaceResults(x) {
     })
   })
 }
+
+
+function submitRace() {
+	fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?INFO=raceno", {
+  	method: "post",
+    body: JSON.stringify({
+    	VALUE: select.value
+    })
+  }).then(function(success) {
+  	alert("Success")
+  })
+}
+
+
+
+
   </script>
 
 
