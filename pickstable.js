@@ -28,7 +28,7 @@ function makePicksTable(players) {
 	console.log(players)
   players.forEach(function(player) {
   	var tr = pt.insertRow()
-    tr.insertCell().innerText = player.PLAYERNAME
+    tr.insertCell().innerHTML = player.PLAYERNAME + "<small> (" + Math.round(player.PICKORDER) + ")</small>"
     var td = tr.insertCell()
     td.innerHTML = "<div>" + player.DRIVERNAME1 + "</div>"
     td.innerHTML += "<div>" + player.DRIVERNAME2 + "</div>"
