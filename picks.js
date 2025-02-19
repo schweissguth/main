@@ -1,4 +1,5 @@
-function getStandings() {
+var cutoff = 13
+  function getStandings() {
   fetch(
     "https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?STANDINGS",
   )
@@ -27,6 +28,7 @@ function getPlayers(standings) {
       	return player.ACTIVE
       })
       standings.forEach(function (standing) {
+        cutoff = standing.CUTOFF
         var tr = table.insertRow()
         var td0 = tr.insertCell().id = standing.driver_id
         tr.insertCell().innerText =
@@ -54,7 +56,7 @@ function getPlayers(standings) {
         select.value = standing.PLAYERID
         td.append(select)
       })
-      var td13 = table.insertRow(13).insertCell()
+      var td13 = table.insertRow(cutoff).insertCell()
       td13.setAttribute("colspan", 3)
       td13.innerHTML = "<hr>"
       getImages()
