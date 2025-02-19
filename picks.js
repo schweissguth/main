@@ -21,7 +21,7 @@ function getPlayers(standings) {
       return players.json()
     })
     .then(function (players) {
-      //console.log(players)
+      console.log(players)
       table.innerHTML = null
       players = players.filter(function(player) {
       	return player.ACTIVE
@@ -37,8 +37,8 @@ function getPlayers(standings) {
         select.add(option)
         players.forEach(function (player) {
           var opt = document.createElement("OPTION")
-          opt.text = player.NAME
-          opt.value = player.ID
+          opt.text = player.PLAYERNAME
+          opt.value = player.PLAYERID
           select.add(opt)
         })
         select.onchange = function() {
@@ -46,7 +46,8 @@ function getPlayers(standings) {
           	method: "post",
             body: JSON.stringify({
             	DRIVERID: standing.driver_id,
-              PLAYERID: this.value
+              PLAYERID: this.value,
+              DRIVERNAME: standing.first_name + " " + standing.last_name
             })
           })
         }
