@@ -101,7 +101,7 @@ function getRaceResults(x) {
       tr.insertCell().innerText = raceresult.finishing_position
       tr.insertCell().innerText = raceresult.driver_fullname
       tr.insertCell().innerText = raceresult.diff_time/1000 || "-" + raceresult.diff_laps
-      tr.insertCell().innerHTML = "<i>" + raceresult.PLAYER + "</i>"
+      tr.insertCell().innerHTML = "<i>" + raceresult.PLAYERNAME + "</i>"
     })
   })
 }
