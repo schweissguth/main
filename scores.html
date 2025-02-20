@@ -48,6 +48,8 @@
   <select id="select" onchange="getScores(this.value)">
     <option id="option" disabled selected>LOADING...</option>
   </select>
+
+	    <br><br>
   
   <table id="table"></table>
     </center>
@@ -79,11 +81,12 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
 
 
 function getScores(x) {
-  table.innerHTML = null
+  table.innerHTML = "<tr><td>LOADING...</td></tr>"
 	fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SCORES=" + x).then(function(scores) {
   	return scores.json()
   }).then(function(scores) {
   	console.log(scores)
+		table.innerHTML = null
     scores.sort(function(a, b) {
     	return b.SUM - a.SUM
     })
