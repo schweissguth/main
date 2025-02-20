@@ -44,33 +44,19 @@
       </a>
 
       <br /><br />
+  
   <select id="select" onchange="getScores(this.value)">
     <option id="option" disabled selected>LOADING...</option>
   </select>
-
-  <br /><br />
-
-  <table>
-    <thead id="thead" style="display: none">
-      <tr>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th>Pos1</th>
-        <th>Pos2</th>
-        <th>Pts1</th>
-        <th>Pts2</th>
-        <th>B</th>
-        <th>Sum</th>
-      </tr>
-    </thead>
-    <tbody id="table"></tbody>
-  </table>
-</center>
+  
+  <table id="table"></table>
+    </center>
 
   </body>
 
     <script type="text/javascript">
+
+
 
 
 
@@ -93,7 +79,6 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
 
 
 function getScores(x) {
-	thead.style.display = ""
   table.innerHTML = null
 	fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SCORES=" + x).then(function(scores) {
   	return scores.json()
@@ -102,10 +87,9 @@ function getScores(x) {
     scores.sort(function(a, b) {
     	return b.SUM - a.SUM
     })
-    thead.style.display = "none"
     scores.forEach(function(score) {
     	var tr = table.insertRow()
-      tr.insertCell().innerHTML = "<b>" + score.NAME + "</b>"
+      tr.insertCell().innerHTML = "<b>" + score.PLAYERNAME + "</b>"
       tr.insertCell().innerText = score.DRIVERNAME1
       tr.insertCell().innerText = score.DRIVERNAME2
       tr.insertCell().innerText = score.POS1
