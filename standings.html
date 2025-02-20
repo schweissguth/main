@@ -36,14 +36,8 @@
     
     <h1>Regular season standings</h1>
 
-<table border cellpadding="2">
-<thead>
-  <tr>
-    <th>Player</th>
-    <th>Total</th>
-  </tr>
-</thead>
-  <tbody id="tbody"></tbody>
+<table border id="table" cellpadding="3">
+
 </table>
 
 
@@ -52,56 +46,21 @@
 </center>
 
 
-    <script type="text/javascript">//<![CDATA[
-
-
-
-	fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=SCORES&tqx=out:csv&tq=SELECT I, sum(G) group by I order by sum(G) DESC label I 'Player', sum(G) 'Total'").then(function(res) {
-  	return res.text()
-  }).then(function(res) {
-  console.log("PICKS raw", res)
-  	//res = res.split("setResponse(")[1]
-  	//res = res.split(");")[0]
-    //PICKS = JSON.parse(res)
-    res = res.split("\n")
-    
-    res.forEach(function(item, i) {
-    	var str = item.replace(/"/g, "")
-    	str = str.split(",")
-      res[i] = str
-      
-      
-    })
-    
-  	makeTable(res)
-    
+    <script type="text/javascript">
+fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SEASON").then(function(standings) {
+	return standings.json()
+}).then(function(standings) {
+	console.log(standings)
+  standings.sort(function(a, b) {
+  	return b.SUM - a.SUM
   })
-  
-  
-  function makeTable(res) {
-  res.shift()
-  	res.forEach(function(item) {
-    	var tr = tbody.insertRow()
-      item.forEach(function(jtem) {
-      	tr.insertCell().innerHTML = jtem
-      })
-    })
-  }
-
-
-  //]]></script>
-
-  <script>
-    // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent){
-      window.parent.parent.postMessage(["resultsFrame", {
-        height: document.body.getBoundingClientRect().height,
-        slug: "dv653k28"
-      }], "*")
-    }
-
-    // always overwrite window.name, in case users try to set it manually
-    window.name = "result"
+  standings.forEach(function(standing) {
+  	var tr = table.insertRow()
+    tr.insertCell().innerText = standing.PLAYERNAME
+    tr.insertCell().innerText = Math.round(standing.SUM)
+    tr.insertCell().innerText = Math.round(standing.DELTA)
+  })
+})
   </script>
 
 
