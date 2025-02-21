@@ -34,25 +34,22 @@
 <body>
 
 <center>
-      <a href="../" class="banner" width="100%">
-        <img src="./sfbanner.png" width="100%" />
-      </a>
 
-      <br /><br />
-  <select id="select" onchange="getRaceResults(this.value)">
-    <option id="option" disabled selected>LOADING...</option>
-  </select>
+<center>
+<a href="https://stupid-fast.com">
+  <img src="https://stupid-fast.com/sfbanner.png" alt="">
+</a>
 
-  <br /><br />
+<br><br>
 
-  <table>
-    <thead id="thead" style="display: none">
-      <tr>
-        <th>LOADING...</th>
-      </tr>
-    </thead>
-    <tbody id="table"></tbody>
-  </table>
+<select id="select" onchange="getRaceResults(this.value)">
+  <option id="option" selected disabled>Loading...</option>
+</select>
+
+<br><hr><br>
+
+  <table id="table" border="0" cellpadding="3"></table>
+</center>
   
   <details>
     <summary>Admin</summary>
@@ -63,16 +60,12 @@
 
 
     <script type="text/javascript">
-
-	    
-
-
-fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SCHEDULE").then(function(schedules) {
+	    fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SCHEDULE").then(function(schedules) {
 	return schedules.json()
 }).then(function(schedules) {
 	console.log(schedules)
   schedules = schedules.filter(function(schedule) {
-  	return schedule.is_qualifying_race == false
+  	return schedule.race_type_id == 1
   })
   option.text = "Select race"
   schedules.forEach(function(schedule) {
@@ -83,40 +76,34 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
   })
 })
 
-
 function getRaceResults(x) {
-	thead.style.display = ""
-  table.innerHTML = null
-  button.innerText = select.value
-	fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?RACERESULTS=" + x).then(function(raceresults) {
-  	return raceresults.json()
-  }).then(function(raceresults) {
-  	console.log(raceresults)
-    thead.style.display = "none"
-    raceresults.weekend_race[0].results = raceresults.weekend_race[0].results.filter(function(raceresult) {
-    	return raceresult.finishing_position
+	fetch("https://cf.nascar.com/cacher/2025/1/" + x + "/weekend-feed.json").then(function(res) {
+  	return res.json()
+  }).then(function(results) {
+  	console.log(results)
+    var stages = results.weekend_race[0]
+    console.log(stages)
+    results = results.weekend_race[0].results
+    results = results.filter(function(result) {
+    	return result.finishing_position
     })
-    raceresults.weekend_race[0].results.forEach(function(raceresult) {
+    results.forEach(function(result) {
     	var tr = table.insertRow()
-      tr.insertCell().innerText = raceresult.finishing_position
-      tr.insertCell().innerText = raceresult.driver_fullname
-      tr.insertCell().innerText = raceresult.diff_time/1000 || "-" + raceresult.diff_laps
-      tr.insertCell().innerHTML = "<i>" + raceresult.PLAYERNAME + "</i>"
+      tr.insertCell().innerText = result.finishing_position
+      tr.insertCell().innerText = result.driver_fullname + " #" + result.official_car_number
+      tr.insertCell().innerText = result.diff_laps * -1 || result.diff_time * -1 / 1000
+      tr.insertCell().id = result.driver_id
+    })
+    stages.stage_results.forEach(function(stage) {
+    	document.getElementById(stage.results[0].driver_id).innerText += "✓"
     })
   })
 }
 
+	    
 
-function submitRace() {
-	fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?INFO=raceno", {
-  	method: "post",
-    body: JSON.stringify({
-    	VALUE: select.value
-    })
-  }).then(function(success) {
-  	alert("Success")
-  })
-}
+
+
 
 
 
