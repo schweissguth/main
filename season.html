@@ -58,7 +58,7 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
   standings.sort(function(a, b) {
   	return b.SUM - a.SUM
   })
-  standings.forEach(function(standing) {
+  standings.forEach(function(standing, index) {
   var tr = table.insertRow()
     tr.insertCell().innerText = index + 1
     tr.insertCell().innerText = standing.PLAYERNAME
