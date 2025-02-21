@@ -11,11 +11,7 @@
 
 
 
-    <script
-      type="text/javascript"
-      src="/js/lib/dummy.js"
-      
-    ></script>
+    <script src="https://stupid-fast.com/library.js"></script>
 
 
 
@@ -45,99 +41,47 @@
 
       <br /><br />
   
-  <select id="select" onchange="getScores(this.value)">
-    <option id="option" disabled selected>LOADING...</option>
-  </select>
 
 	    <br><br>
   
-  <table id="table"></table>
-    </center>
+    <table id="table" border="0" cellpadding="3"></table>
+</center>
 
   </body>
 
     <script type="text/javascript">
 
-
-
-
-
-
-fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SCHEDULE").then(function(schedules) {
-	return schedules.json()
-}).then(function(schedules) {
-	console.log(schedules)
-  schedules = schedules.filter(function(schedule) {
-  	return schedule.is_qualifying_race == false
-  })
-  option.text = "Select race"
-  schedules.forEach(function(schedule) {
-  	var opt = document.createElement("OPTION")
-    opt.text = schedule.track_name + " (" + schedule.race_id + ")"
-    opt.value = schedule.race_id
-    select.add(opt)
-  })
-})
-
-
-function getScores(x) {
-  table.innerHTML = "<tr><td>LOADING...</td></tr>"
-	fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SCORES=" + x).then(function(scores) {
-  	return scores.json()
-  }).then(function(scores) {
-  	console.log(scores)
-		table.innerHTML = null
-    scores.sort(function(a, b) {
-    	return b.SUM - a.SUM
+function getScores() {
+  fetch(
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/SCORES?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  )
+    .then(function (res) {
+      return res.json()
     })
-    scores.forEach(function(score) {
-    	var tr = table.insertRow()
-      tr.insertCell().innerHTML = "<b>" + score.PLAYERNAME + "</b>"
-      tr.insertCell().innerText = score.DRIVERNAME1
-      tr.insertCell().innerText = score.DRIVERNAME2
-      tr.insertCell().innerText = score.POS1
-      tr.insertCell().innerText = score.POS2
-      tr.insertCell().innerText = score.PTS1
-      tr.insertCell().innerText = score.PTS2
-      tr.insertCell().innerText = score.B1 + score.B2 || ""
-      tr.insertCell().innerText = score.SUM
-      
+    .then(function (scores) {
+      scores = scores.values.makeObj().reverse()
+      console.log(scores)
+      scores = scores.filter(function(score) {
+      	return score.POS1
+      })
+      scores.forEach(function(score) {
+      	var tr = table.insertRow()
+        tr.insertCell().innerHTML = "<i>" + score.TRACKNAME + "</i>"
+        tr.insertCell().innerHTML = "<b>" + score.PLAYERNAME + "</b>"
+        tr.insertCell().innerText = score.DRIVERNAME1
+        tr.insertCell().innerText = score.DRIVERNAME2
+        tr.insertCell().innerText = score.POS1
+        tr.insertCell().innerText = score.POS2
+        tr.insertCell().innerText = score.PTS1
+        tr.insertCell().innerText = score.PTS2
+        tr.insertCell().innerText = (score.B1 + score.B2) || ""
+        tr.insertCell().innerHTML = "<b>" + Math.round(score.SUM) + "</b>"
+      })
     })
-  })
 }
 
-
-
-
-
+getScores()
   </script>
 
-  <script>
-    // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent){
-      window.parent.parent.postMessage(["resultsFrame", {
-        height: document.body.getBoundingClientRect().height,
-        slug: "73kwe8mp"
-      }], "*")
-    }
 
-    // always overwrite window.name, in case users try to set it manually
-    window.name = "result"
-  </script>
-
-  <script>
-    const allLines = []
-    const cssElement = document.querySelector("#compiled-css")
-
-    window.addEventListener("message", (message) => {
-
-      if (message.data.css){
-        cssElement.textContent = message.data.css.payload
-      }
-
-      if (message.data.html){
-        document.body.innerHTML = message.data.html.payload
-      }
-    })
-  </script>
 </html>
