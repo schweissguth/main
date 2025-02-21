@@ -43,7 +43,8 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
   	var tr = table.insertRow()
     tr.insertCell().innerText = new Date(schedule.date_scheduled).toLocaleDateString()
     tr.insertCell().innerText = schedule.track_name
-    tr.insertCell().innerText = new Date(schedule.tunein_date).toLocaleTimeString()
+	  var split = new Date(schedule.tunein_date).toLocaleTimeString().split(":")
+    tr.insertCell().innerText = split[0] + ":" + split[1]
     tr.insertCell().innerText = schedule.television_broadcaster
     tr.insertCell().innerText = schedule.radio_broadcaster
     
