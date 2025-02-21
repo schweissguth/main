@@ -91,7 +91,7 @@ function getRaceResults(x) {
     results.forEach(function(result) {
     	var tr = table.insertRow()
       tr.insertCell().innerText = result.finishing_position
-      tr.insertCell().innerText = result.driver_fullname + " #" + result.official_car_number
+      tr.insertCell().innerHTML = "<b>" + result.driver_fullname + "</b> #" + result.official_car_number
       tr.insertCell().innerText = result.diff_laps * -1 || result.diff_time * -1 / 1000
       tr.insertCell().id = result.driver_id
     })
