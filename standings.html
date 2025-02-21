@@ -62,7 +62,7 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
   	var tr = table.insertRow()
     tr.insertCell().innerText = standing.PLAYERNAME
     tr.insertCell().innerText = Math.round(standing.SUM)
-    tr.insertCell().innerText = Math.round(standing.DELTA)
+    tr.insertCell().innerText = Math.round(standing.DELTA) || ""
   })
 })
   </script>
