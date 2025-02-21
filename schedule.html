@@ -42,7 +42,7 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
   schedules.forEach(function(schedule) {
   	var tr = table.insertRow()
     tr.insertCell().innerText = new Date(schedule.date_scheduled).toLocaleDateString()
-    tr.insertCell().innerText = "<b>" + schedule.track_name + "</b>"
+    tr.insertCell().innerHTML = "<b>" + schedule.track_name + "</b>"
 	  var split = new Date(schedule.tunein_date).toLocaleTimeString().split(":")
     tr.insertCell().innerText = split[0] + ":" + split[1] + "PM"
     tr.insertCell().innerText = schedule.television_broadcaster
