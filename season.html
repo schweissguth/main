@@ -3,7 +3,7 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Regular Season Standings - StupidFast</title>
+  <title>Season Standings - StupidFast</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="robots" content="noindex, nofollow">
   <meta name="googlebot" content="noindex, nofollow">
@@ -40,7 +40,7 @@
 
 <br><br>
 
-<table border id="table" cellpadding="3">
+<table id="table" cellpadding="3">
 
 </table>
 
@@ -59,7 +59,8 @@ fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7ok
   	return b.SUM - a.SUM
   })
   standings.forEach(function(standing) {
-  	var tr = table.insertRow()
+  var tr = table.insertRow()
+    tr.insertCell().innerText = index + 1
     tr.insertCell().innerText = standing.PLAYERNAME
     tr.insertCell().innerText = Math.round(standing.SUM)
     tr.insertCell().innerText = Math.round(standing.DELTA) || ""
