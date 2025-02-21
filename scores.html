@@ -66,7 +66,7 @@ function getScores() {
         tr.insertCell().innerText = score.POS2
         tr.insertCell().innerText = score.PTS1
         tr.insertCell().innerText = score.PTS2
-        tr.insertCell().innerText = (score.B1 + score.B2) || ""
+        tr.insertCell().innerText = score.B1 + score.B2
         tr.insertCell().innerHTML = "<b>" + Math.round(score.SUM) + "</b>"
       })
     })
