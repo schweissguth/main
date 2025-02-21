@@ -6,6 +6,6 @@ Array.prototype.makeObj = function () {
       return acc
     }, {})
   })
-  console.log(json)
+  //console.log(this, json)
   return json
 }
