@@ -1,20 +1,19 @@
-function gviz(res) {
-  res = res.split("setResponse(")[1]
-  res = res.replace(");", "")
-  res = JSON.parse(res)
-  res = res.table.rows
-  console.log(res)
-  res = res.map(function(row) {
-  	return row.c.map(function(cell) {
-    	return cell.v || cell.f
+function gviz(url) {
+  fetch(url)
+    .then(function (res) {
+      return res.json()
     })
-  })
-  var header = res.shift()
-  res = res.map(function(row, r) {
-  	return row.reduce(function(curr, acc, i) {
-    	curr[header[i]] = acc
-    	return curr
-    }, {})
-  })
-  return res
+    .then(function (res) {
+      res = res.values
+      console.log(res)
+      var header = res.shift()
+      var array = res.map(function (row) {
+        return row.reduce(function (acc, cur, i) {
+          acc[header[i]] = cur
+          return acc
+        }, {})
+      })
+      console.log(array)
+      return array
+    })
 }
