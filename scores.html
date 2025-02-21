@@ -43,36 +43,213 @@
 
     <script type="text/javascript">
 
-function getScores() {
+var SCHED = []
+var OBJ = []
+
+fetch("https://cf.nascar.com/cacher/2025/race_list_basic.json")
+  .then(function (res) {
+    return res.json()
+  })
+  .then(function (schedules) {
+    schedules = schedules.series_1
+    console.log(schedules)
+    schedules = schedules.filter(function (schedule) {
+      return schedule.race_type_id == 1
+    })
+    SCHED = schedules
+    schedules.forEach(function (schedule) {
+      var opt = document.createElement("OPTION")
+      opt.text = schedule.track_name
+      opt.value = schedule.race_id
+      select.add(opt)
+    })
+    option.text = "Select race"
+  })
+  
+  function choose() {
+  	table.innerHTML = null
+  	var find = SCHED.find(function(sched) {
+    	return sched.race_id == select.value
+    })
+    if (find.winner_driver_id) {
+    	getPlayers()
+    } else {
+    	var tr = table.insertRow()
+      tr.insertCell().innerHTML = "<b>Date: </b>"
+      tr.insertCell().innerText = new Date(find.date_scheduled).toLocaleDateString()
+      
+    	tr = table.insertRow()
+      tr.insertCell().innerHTML = "<b>Start time: </b>"
+      tr.insertCell().innerText = new Date(find.tunein_date).toLocaleTimeString()
+      
+      tr = table.insertRow()
+      tr.insertCell().innerHTML = "<b>TV station: </b>"
+      tr.insertCell().innerText = find.television_broadcaster
+      
+      tr = table.insertRow()
+      tr.insertCell().innerHTML = "<b>Radio: </b>"
+      tr.insertCell().innerText = find.radio_broadcaster
+    }
+  }
+
+function getPlayers(schedules) {
   fetch(
-    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/SCORES?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PLAYERS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
   )
     .then(function (res) {
       return res.json()
     })
-    .then(function (scores) {
-      scores = scores.values.makeObj().reverse()
-      console.log(scores)
-      scores = scores.filter(function(score) {
-      	return score.POS1
+    .then(function (players) {
+      players = players.values.makeObj()
+      players = players.filter(function (player) {
+        return player.ACTIVE == "TRUE"
       })
-      scores.forEach(function(score) {
-      	var tr = table.insertRow()
-        tr.insertCell().innerHTML = "<i>" + score.TRACKNAME + "</i>"
-        tr.insertCell().innerHTML = "<b>" + score.PLAYERNAME + "</b>"
-        tr.insertCell().innerText = score.DRIVERNAME1
-        tr.insertCell().innerText = score.DRIVERNAME2
-        tr.insertCell().innerText = score.POS1
-        tr.insertCell().innerText = score.POS2
-        tr.insertCell().innerText = score.PTS1
-        tr.insertCell().innerText = score.PTS2
-        tr.insertCell().innerText = score.B1 + score.B2
-        tr.insertCell().innerHTML = "<b>" + Math.round(score.SUM) + "</b>"
+      console.log(players)
+      table.innerHTML = null
+      players.forEach(function (player) {
+        OBJ.push({
+          PLAYERID: player.PLAYERID,
+          PLAYERNAME: player.PLAYERNAME,
+          DRIVERID1: null,
+          DRIVERID2: null,
+          DRIVERNAME1: null,
+          DRIVERNAME2: null,
+          TRACKNAME: null,
+          POS1: null,
+          POS2: null,
+          PTS1: null,
+          PTS2: null,
+          B1: null,
+          B2: null,
+          SUM: null,
+        })
       })
+      console.log(OBJ)
+      getPicks(players)
     })
 }
 
-getScores()
+function getPicks(players) {
+  fetch(
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (picks) {
+      picks = picks.values.makeObj()
+      picks = picks.filter(function (pick) {
+        return pick.RACEID == select.value
+      })
+      console.log(picks)
+      var drivers = {}
+      picks.forEach(function (pick) {
+        drivers[pick.DRIVERID] = pick
+      })
+      picks = []
+      for (let i in drivers) {
+        picks.push(drivers[i])
+      }
+      picks = picks.filter(function (pick) {
+        return pick.PLAYERID
+      })
+      console.log(picks)
+      getResults(picks, players)
+    })
+}
+
+function getResults(picks, players) {
+  fetch(
+    "https://cf.nascar.com/cacher/2025/1/" +
+      select.value +
+      "/weekend-feed.json",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (results) {
+      results = results.weekend_race[0]
+      console.log(results)
+      picks.forEach(function (pick) {
+        var find = results.results.find(function (result) {
+          return pick.DRIVERID == result.driver_id
+        })
+        pick.POS = find.finishing_position
+      })
+      picks.sort(function (a, b) {
+        return b.POS - a.POS
+      })
+      picks = picks.map(function (pick, index) {
+        pick.PTS = index + 1
+        pick.B = 0
+        return pick
+      })
+      console.log(picks)
+      getBonus(picks, results, players)
+    })
+}
+
+function getBonus(picks, results, players) {
+  results.stage_results.forEach(function (stage) {
+    var driverid = stage.results[0].driver_id
+    console.log(driverid)
+    var find = picks.find(function (pick) {
+      return pick.DRIVERID == driverid
+    })
+    console.log("dound", find)
+    if (find) {
+      find.B++
+    }
+  })
+  picks.reverse()
+  picks[0].B++
+  picks[0].B++
+  console.log(picks)
+  mapPlayers(picks, results, players)
+}
+
+function mapPlayers(picks, results, players) {
+  var arr = []
+  players.forEach(function (player) {
+    var obj = {
+      B: 0,
+      SUM: 0,
+    }
+    var filter = picks.filter(function (pick) {
+      return pick.PLAYERID == player.PLAYERID
+    })
+    filter.forEach(function (pick, index) {
+      obj.PLAYERNAME = pick.PLAYERNAME
+      obj["DRIVERID" + index] = pick.DRIVERID
+      obj["DRIVERNAME" + index] = pick.DRIVERNAME
+      obj["POS" + index] = pick.POS
+      obj["PTS" + index] = pick.PTS
+      obj.B += pick.B
+      obj.SUM += pick.PTS + pick.B
+    })
+    arr.push(obj)
+    arr.sort(function (a, b) {
+      return b.SUM - a.SUM
+    })
+  })
+  makeTable(arr)
+}
+
+function makeTable(array) {
+  array.forEach(function (player) {
+    var tr = table.insertRow()
+    tr.insertCell().innerHTML = "<b>" + player.PLAYERNAME + "</b>"
+    tr.insertCell().innerText = player.DRIVERNAME0
+    tr.insertCell().innerText = player.DRIVERNAME1
+    tr.insertCell().innerText = player.POS0
+    tr.insertCell().innerText = player.POS1
+    tr.insertCell().innerText = player.PTS0
+    tr.insertCell().innerText = player.PTS1
+    tr.insertCell().innerText = player.B || ""
+    tr.insertCell().innerHTML = "<b>" + player.SUM + "</b>"
+  })
+}
+
   </script>
 
 
