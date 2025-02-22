@@ -46,7 +46,6 @@
   </body>
 
     <script type="text/javascript">
-
 var SCHED = []
 var OBJ = []
 
@@ -63,7 +62,7 @@ fetch("https://cf.nascar.com/cacher/2025/race_list_basic.json")
     SCHED = schedules
     schedules.forEach(function (schedule) {
       var opt = document.createElement("OPTION")
-      opt.text = schedule.track_name
+      opt.text = schedule.track_name + " - " + new Date(schedule.date_scheduled).toLocaleDateString().split("/2025")[0] + " @ " + new Date(schedule.tunein_date).toLocaleTimeString().replace(":00 PM", "PM")
       opt.value = schedule.race_id
       select.add(opt)
     })
@@ -84,7 +83,7 @@ fetch("https://cf.nascar.com/cacher/2025/race_list_basic.json")
       
     	tr = table.insertRow()
       tr.insertCell().innerHTML = "<b>Start time: </b>"
-      tr.insertCell().innerText = new Date(find.tunein_date).toLocaleTimeString()
+      tr.insertCell().innerText = new Date(find.tunein_date).toLocaleTimeString().replace(":00 PM", "PM")
       
       tr = table.insertRow()
       tr.insertCell().innerHTML = "<b>TV station: </b>"
@@ -253,6 +252,7 @@ function makeTable(array) {
     tr.insertCell().innerHTML = "<b>" + player.SUM + "</b>"
   })
 }
+
 
   </script>
 
