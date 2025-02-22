@@ -62,7 +62,7 @@ fetch("https://cf.nascar.com/cacher/2025/race_list_basic.json")
     SCHED = schedules
     schedules.forEach(function (schedule) {
       var opt = document.createElement("OPTION")
-      opt.text = schedule.track_name + " - " + new Date(schedule.date_scheduled).toLocaleDateString().split("/2025")[0] + " @ " + new Date(schedule.tunein_date).toLocaleTimeString().replace(":00 PM", "PM")
+      opt.text = schedule.track_name + " @ " + new Date(schedule.tunein_date).toLocaleTimeString().replace(":00 PM", "PM")
       opt.value = schedule.race_id
       select.add(opt)
     })
