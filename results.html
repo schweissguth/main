@@ -61,21 +61,25 @@
 
 
     <script type="text/javascript">
-	    fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SCHEDULE").then(function(schedules) {
-	return schedules.json()
-}).then(function(schedules) {
-	console.log(schedules)
-  schedules = schedules.filter(function(schedule) {
-  	return schedule.race_type_id == 1
+	  fetch("https://cf.nascar.com/cacher/2025/race_list_basic.json")
+  .then(function (res) {
+    return res.json()
   })
-  option.text = "Select race"
-  schedules.forEach(function(schedule) {
-  	var opt = document.createElement("OPTION")
-    opt.text = schedule.track_name + " (" + schedule.race_id + ")"
-    opt.value = schedule.race_id
-    select.add(opt)
+  .then(function (schedules) {
+    schedules = schedules.series_1
+    console.log(schedules)
+    schedules = schedules.filter(function (schedule) {
+      return schedule.race_type_id == 1
+    })
+    SCHED = schedules
+    schedules.forEach(function (schedule) {
+      var opt = document.createElement("OPTION")
+      opt.text = schedule.track_name
+      opt.value = schedule.race_id
+      select.add(opt)
+    })
+    option.text = "Select race"
   })
-})
 
 function getRaceResults(x) {
 	fetch("https://cf.nascar.com/cacher/2025/1/" + x + "/weekend-feed.json").then(function(res) {
@@ -100,14 +104,6 @@ function getRaceResults(x) {
     })
   })
 }
-
-	    
-
-
-
-
-
-
 
   </script>
 
