@@ -10,11 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <script
-    type="text/javascript"
-    src="/js/lib/dummy.js"
-    
-  ></script>
+  <script src="https://stupid-fast.com/library.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css.css">
 
@@ -25,7 +21,6 @@
     /* EOS */
   </style>
 
-  <script id="insert"></script>
 
 </head>
 <body>
@@ -51,9 +46,11 @@
 
 
     <script type="text/javascript">
-fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SEASON").then(function(standings) {
+
+fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/SEASON?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI").then(function(standings) {
 	return standings.json()
 }).then(function(standings) {
+	standings = standings.values.makeObj()
 	console.log(standings)
   standings.sort(function(a, b) {
   	return b.SUM - a.SUM
