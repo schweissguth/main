@@ -9,3 +9,14 @@ Array.prototype.makeObj = function () {
   //console.log(this, json)
   return json
 }
+
+Array.prototype.vlookup = function (input, refkey, returnkey) {
+  var find = this.findLast(function (find) {
+    find[refkey] == input
+  })
+  return (
+    find[returnkey] || {
+      [returnkey]: null,
+    }
+  )
+}
