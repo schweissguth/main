@@ -41,7 +41,7 @@
 
 <br><br>
 
-<select id="select" onchange="getRaceResults(this.value)">
+<select id="select" onchange="choose(this.value)">
   <option id="option" selected disabled>Loading...</option>
 </select>
 
@@ -54,7 +54,7 @@
 
 
     <script type="text/javascript">
-	  fetch("https://cf.nascar.com/cacher/2025/race_list_basic.json")
+	 fetch("https://cf.nascar.com/cacher/2025/race_list_basic.json")
   .then(function (res) {
     return res.json()
   })
@@ -67,37 +67,55 @@
     SCHED = schedules
     schedules.forEach(function (schedule) {
       var opt = document.createElement("OPTION")
-      opt.text = schedule.track_name
+      opt.text =
+        schedule.track_name +
+        " " +
+        new Date(schedule.tunein_date)
+          .toLocaleDateString()
+          .replace("/2025", "") +
+        " @ " +
+        new Date(schedule.tunein_date)
+          .toLocaleTimeString()
+          .replace(":00 PM", " PM") +
+        " on " +
+        schedule.television_broadcaster +
+        " & " +
+        schedule.radio_broadcaster
       opt.value = schedule.race_id
       select.add(opt)
     })
     option.text = "Select race"
   })
 
-function getRaceResults(x) {
-	fetch("https://cf.nascar.com/cacher/2025/1/" + x + "/weekend-feed.json").then(function(res) {
-  	return res.json()
-  }).then(function(results) {
-  	console.log(results)
-		table.innerHTML = null
-    var stages = results.weekend_race[0]
-    console.log(stages)
-    results = results.weekend_race[0].results
-    results = results.filter(function(result) {
-    	return result.finishing_position
+function choose(x) {
+  fetch("https://cf.nascar.com/cacher/2025/1/" + x + "/weekend-feed.json")
+    .then(function (res) {
+      return res.json()
     })
-    results.forEach(function(result) {
-    	var tr = table.insertRow()
-      tr.insertCell().innerText = result.finishing_position
-      tr.insertCell().innerHTML = "<b>" + result.driver_fullname + "</b> #" + result.official_car_number
-      tr.insertCell().innerText = result.diff_laps * -1 || result.diff_time * -1 / 1000
-      tr.insertCell().id = result.driver_id
+    .then(function (results) {
+      console.log(results)
+      table.innerHTML = null
+      var stages = results.weekend_race[0]
+      console.log(stages)
+      results = results.weekend_race[0].results
+      results = results.filter(function (result) {
+        return result.finishing_position
+      })
+      results.forEach(function (result) {
+        var tr = table.insertRow()
+        tr.insertCell().innerText = result.finishing_position
+        tr.insertCell().innerHTML =
+          "<b>" + result.driver_fullname + "</b> #" + result.official_car_number
+        tr.insertCell().innerText =
+          result.diff_laps * -1 || (result.diff_time * -1) / 1000
+        tr.insertCell().id = result.driver_id
+      })
+      stages.stage_results.forEach(function (stage) {
+        document.getElementById(stage.results[0].driver_id).innerText += "✓"
+      })
     })
-    stages.stage_results.forEach(function(stage) {
-    	document.getElementById(stage.results[0].driver_id).innerText += "✓"
-    })
-  })
 }
+
 
   </script>
 
