@@ -48,6 +48,7 @@
     <script type="text/javascript">
 var SCHED = []
 var OBJ = []
+var ARR = []
 
 fetch("https://cf.nascar.com/cacher/2025/race_list_basic.json")
   .then(function (res) {
@@ -57,43 +58,47 @@ fetch("https://cf.nascar.com/cacher/2025/race_list_basic.json")
     schedules = schedules.series_1
     console.log(schedules)
     schedules = schedules.filter(function (schedule) {
-      return schedule.race_type_id == 1
+      return schedule.race_type_id == 1 && schedule.winner_driver_id
     })
     SCHED = schedules
     schedules.forEach(function (schedule) {
       var opt = document.createElement("OPTION")
-      opt.text = schedule.track_name + " @ " + new Date(schedule.tunein_date).toLocaleTimeString().replace(":00 PM", "PM") + " on " + schedule.television_broadcaster
+      opt.text = schedule.track_name
       opt.value = schedule.race_id
       select.add(opt)
     })
     option.text = "Select race"
   })
-  
-  function choose() {
-  	table.innerHTML = null
-  	var find = SCHED.find(function(sched) {
-    	return sched.race_id == select.value
-    })
-    if (find.winner_driver_id) {
-    	getPlayers()
-    } else {
-    	var tr = table.insertRow()
-      tr.insertCell().innerHTML = "<b>Date: </b>"
-      tr.insertCell().innerText = new Date(find.date_scheduled).toLocaleDateString()
-      
-    	tr = table.insertRow()
-      tr.insertCell().innerHTML = "<b>Start time: </b>"
-      tr.insertCell().innerText = new Date(find.tunein_date).toLocaleTimeString().replace(":00 PM", "PM")
-      
-      tr = table.insertRow()
-      tr.insertCell().innerHTML = "<b>TV station: </b>"
-      tr.insertCell().innerText = find.television_broadcaster
-      
-      tr = table.insertRow()
-      tr.insertCell().innerHTML = "<b>Radio: </b>"
-      tr.insertCell().innerText = find.radio_broadcaster
-    }
+
+function choose() {
+  table.innerHTML = null
+  var find = SCHED.find(function (sched) {
+    return sched.race_id == select.value
+  })
+  if (find.winner_driver_id) {
+    getPlayers()
+  } else {
+    var tr = table.insertRow()
+    tr.insertCell().innerHTML = "<b>Date: </b>"
+    tr.insertCell().innerText = new Date(
+      find.date_scheduled,
+    ).toLocaleDateString()
+
+    tr = table.insertRow()
+    tr.insertCell().innerHTML = "<b>Start time: </b>"
+    tr.insertCell().innerText = new Date(find.tunein_date)
+      .toLocaleTimeString()
+      .replace(":00 PM", "PM")
+
+    tr = table.insertRow()
+    tr.insertCell().innerHTML = "<b>TV station: </b>"
+    tr.insertCell().innerText = find.television_broadcaster
+
+    tr = table.insertRow()
+    tr.insertCell().innerHTML = "<b>Radio: </b>"
+    tr.insertCell().innerText = find.radio_broadcaster
   }
+}
 
 function getPlayers(schedules) {
   fetch(
@@ -223,7 +228,9 @@ function mapPlayers(picks, results, players) {
     })
     filter.forEach(function (pick, index) {
       obj.PLAYERNAME = pick.PLAYERNAME
+      obj.PLAYERID = pick.PLAYERID
       obj["DRIVERID" + index] = pick.DRIVERID
+      obj.TRACKNAME = select.selectedOptions[0].innerText
       obj["DRIVERNAME" + index] = pick.DRIVERNAME
       obj["POS" + index] = pick.POS
       obj["PTS" + index] = pick.PTS
@@ -251,7 +258,24 @@ function makeTable(array) {
     tr.insertCell().innerText = player.B || ""
     tr.insertCell().innerHTML = "<b>" + player.SUM + "</b>"
   })
+  console.log("array", array)
+  ARR = array
 }
+
+function postData() {
+  if (confirm("Are you sure you want to submit results?")) {
+    fetch(
+      "https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SCORES",
+      {
+        method: "post",
+        body: JSON.stringify(ARR),
+      },
+    ).then(function (res) {
+      alert("Success")
+    })
+  }
+}
+
 
 
   </script>
