@@ -88,13 +88,13 @@
   })
 
 function choose(x) {
+table.innerHTML = null
   fetch("https://cf.nascar.com/cacher/2025/1/" + x + "/weekend-feed.json")
     .then(function (res) {
       return res.json()
     })
     .then(function (results) {
       console.log(results)
-      table.innerHTML = null
       var stages = results.weekend_race[0]
       console.log(stages)
       results = results.weekend_race[0].results
