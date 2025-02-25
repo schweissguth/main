@@ -79,6 +79,7 @@ function getRaceResults(x) {
   	return res.json()
   }).then(function(results) {
   	console.log(results)
+		table.innerHTML = null
     var stages = results.weekend_race[0]
     console.log(stages)
     results = results.weekend_race[0].results
