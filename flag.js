@@ -25,7 +25,7 @@ var flag = document.getElementById("pflag")
       pstage.innerHTML = "Stage " + res.stage.stage_num
       plaps.innerHTML = res.laps_to_go + " laps to go"
       ptrack.innerHTML = res.track_name
-    
+			getTV(res.race_id)
 })
 
 }
@@ -35,3 +35,20 @@ flagData()
 setInterval(function(){
   flagData()
 }, 30000)
+
+
+function getTV(raceid) {
+	fetch("https://cf.nascar.com/cacher/2025/race_list_basic.json").then(function(res) {
+  	return res.json()
+  }).then(function(schedules) {
+  	schedules = schedules.series_1
+  	console.log(schedules)
+    var find = schedules.find(function(schedule) {
+    	return schedule.race_id == raceid
+    })
+    pdate.innerHTML = new Date(find.date_scheduled).toLocaleTimeString().replace(":00 PM", " PM")
+    ptv.innerHTML = find.television_broadcaster
+    pradio.innerHTML = find.radio_broadcaster
+    
+  })
+}
