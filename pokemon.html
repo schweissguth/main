@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Pokemon card</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
+
+
+
+    <style id="compiled-css" type="text/css">
+      
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+  </head>
+  <body>
+    
+
+<center>
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif" id="img" alt="">
+</center>
+  </body>
+
+    <script type="text/javascript">
+
+var max = 75
+
+function getCard() {
+  var rand = Math.floor(Math.random() * max)
+  console.log(rand)
+
+  fetch("https://api.pokemontcg.io/v2/cards?page=" + rand)
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (cards) {
+      console.log(cards)
+      var count = cards.count
+      var randcard = Math.floor(Math.random() * cards.count)
+      card = cards.data[randcard]
+      console.log(card)
+      img.src = card.images.large
+    })
+}
+
+getCard()
+
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "bpzhqy8d"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+  </script>
+</html>
