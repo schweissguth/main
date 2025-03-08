@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Zelda</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
+
+
+
+    <style id="compiled-css" type="text/css">
+      
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+  </head>
+  <body>
+    
+<center>
+<h1 id="h1"></h1>
+<img src="https://zelda.fanapis.com/api/games/5f6ce9d805615a85623ec2c9" id="img" alt="">
+<p id="p"></p>
+</center>
+  </body>
+
+    <script type="text/javascript">
+
+var maxpages = 33
+
+function getZelda() {
+
+var randpage = Math.ceil(Math.random() * maxpages)
+console.log(randpage)
+
+fetch("https://botw-compendium.herokuapp.com/api/v3/compendium/all").then(function(res) {
+	return res.json()
+}).then(function(res) {
+	console.log(res)
+  var n = res.data.length
+  var index = Math.floor(Math.random() * n)
+  var item = res.data[index]
+  console.log(item)
+  h1.innerText = item.name.toUpperCase()
+  img.src = item.image
+  p.innerText = item.description
+})
+
+
+}
+
+getZelda()
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "s0njd9ux"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+  </script>
+</html>
