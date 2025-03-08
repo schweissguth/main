@@ -20,7 +20,9 @@
 
 
     <style id="compiled-css" type="text/css">
-      
+      img {
+  width: 200px;
+}
 
       /* EOS */
     </style>
@@ -38,7 +40,7 @@
     
 <center>
 <h1 id="h1"></h1>
-<img src="https://zelda.fanapis.com/api/games/5f6ce9d805615a85623ec2c9" id="img" alt="">
+<img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif" id="img" alt="">
 <p id="p"></p>
 </center>
   </body>
@@ -48,27 +50,45 @@
 var maxpages = 33
 
 function getZelda() {
+  var randpage = Math.ceil(Math.random() * maxpages)
+  console.log(randpage)
 
-var randpage = Math.ceil(Math.random() * maxpages)
-console.log(randpage)
-
-fetch("https://botw-compendium.herokuapp.com/api/v3/compendium/all").then(function(res) {
-	return res.json()
-}).then(function(res) {
-	console.log(res)
-  var n = res.data.length
-  var index = Math.floor(Math.random() * n)
-  var item = res.data[index]
-  console.log(item)
-  h1.innerText = item.name.toUpperCase()
-  img.src = item.image
-  p.innerText = item.description
-})
-
-
+  fetch("https://zelda.fanapis.com/api/characters?limit=99&page=" + randpage)
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      console.log(res)
+      var rand = Math.floor(Math.random() * res.count)
+      var item = res.data[rand]
+      console.log("item", item)
+      h1.innerText = item.name
+      p.innerText = item.description
+      getImage("Zelda wiki " + item.name)
+    })
 }
 
 getZelda()
+
+function getImage(name) {
+  fetch(
+    "https://www.googleapis.com/customsearch/v1?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI&cx=966ac0ea2a1aa4f4b&q=" + encodeURIComponent(name) + "&searchType=image&num=1",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (images) {
+      console.log("images", images)
+      var image = images.items[0]
+      console.log("image", image)
+      try {
+      	img.src = image.image.thumbnailLink
+      } catch(err) {
+      	img.src = image.image.thumbnailLink
+      }
+    })
+}
+
 
   </script>
 
