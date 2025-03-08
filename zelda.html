@@ -22,7 +22,9 @@
     <style id="compiled-css" type="text/css">
       img {
   width: 200px;
+  margin: 10px;
 }
+
 
       /* EOS */
     </style>
@@ -38,10 +40,10 @@
   </head>
   <body>
     
-<center>
+<center id="center">
 <h1 id="h1"></h1>
-<img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif" id="img" alt="">
 <p id="p"></p>
+<div id="div"></div>
 </center>
   </body>
 
@@ -64,7 +66,7 @@ function getZelda() {
       console.log("item", item)
       h1.innerText = item.name
       p.innerText = item.description
-      getImage("Zelda wiki " + item.name)
+      getImage("Zelda " + item.name + " " + item.description)
     })
 }
 
@@ -72,20 +74,20 @@ getZelda()
 
 function getImage(name) {
   fetch(
-    "https://www.googleapis.com/customsearch/v1?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI&cx=966ac0ea2a1aa4f4b&q=" + encodeURIComponent(name) + "&searchType=image&num=1",
+    "https://www.googleapis.com/customsearch/v1?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI&cx=966ac0ea2a1aa4f4b&q=" + encodeURIComponent(name) + "&searchType=image&num=5",
   )
     .then(function (res) {
       return res.json()
     })
     .then(function (images) {
       console.log("images", images)
-      var image = images.items[0]
-      console.log("image", image)
-      try {
-      	img.src = image.image.thumbnailLink
-      } catch(err) {
-      	img.src = image.image.thumbnailLink
-      }
+      images = images.items
+      images.forEach(function(image) {
+      var img = document.createElement("IMG")
+      img.src = image.image.thumbnailLink
+      img.style.display = "block"
+      	div.append(img)
+      })
     })
 }
 
