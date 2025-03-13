@@ -18,7 +18,18 @@ function getPlayers() {
       })
       players.forEach(function (player) {
         var tr = pt.insertRow()
-        tr.insertCell().innerHTML = "<b>" + player.PLAYERNAME + "</b>"
+        var td0 = tr.insertCell()
+        var a = document.createElement("A")
+        a.href = "javascript:void(0)"
+        a.onclick = function() {
+        	if (confirm("Alert " + player.PLAYERNAME + " to pick?")) {
+          	fetch("https://script.google.com/macros/s/AKfycby3oJXHAF7Nx5rEXCd2Fy3mTdkRKHAkj9L-3m4cz-JMZet2Ug4DELuccc0Re4vfoYk/exec?" + encodeURIComponent(player.PHONE))
+          }
+        }
+        a.innerText = player.PLAYERNAME
+        a.style.fontWeight = "bold"
+        td0.append(a)
+        
         + " <small>(" + Math.round(player.PICKORDER) + ")</small>"
         var div1 = document.createElement("DIV")
         var div2 = document.createElement("DIV")
