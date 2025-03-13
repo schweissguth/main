@@ -23,7 +23,9 @@ function getPlayers() {
         a.href = "javascript:void(0)"
         a.onclick = function() {
         	if (confirm("Alert " + player.PLAYERNAME + " to pick?")) {
-          	fetch("https://script.google.com/macros/s/AKfycby3oJXHAF7Nx5rEXCd2Fy3mTdkRKHAkj9L-3m4cz-JMZet2Ug4DELuccc0Re4vfoYk/exec?" + encodeURIComponent(player.PHONE))
+          	fetch("https://script.google.com/macros/s/AKfycby3oJXHAF7Nx5rEXCd2Fy3mTdkRKHAkj9L-3m4cz-JMZet2Ug4DELuccc0Re4vfoYk/exec?" + encodeURIComponent(player.PHONE)).then(function(res) {
+            alert("Success")
+            })
           }
         }
         a.innerText = player.PLAYERNAME
