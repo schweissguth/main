@@ -48,7 +48,7 @@ function getPlayers(standings) {
               body: JSON.stringify({
                 DRIVERID: standing.driver_id,
                 PLAYERID: this.value,
-                DRIVERNAME: standing.first_name + " " + standing.last_name,
+                //DRIVERNAME: standing.first_name + " " + standing.last_name,
               }),
             },
           )
