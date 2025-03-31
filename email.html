@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>RandyMailPersonal</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
+
+
+
+    <style id="compiled-css" type="text/css">
+      
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+  </head>
+  <body>
+    
+<h1>Randy Mail (personal)</h1>
+
+
+<ol id="ol">
+  
+</ol>
+
+
+<br>
+
+<details>
+  <summary>Completed</summary>
+  <ol id="details"></ol>
+</details>
+  </body>
+
+    <script type="text/javascript">
+
+
+
+
+
+function getMail() {
+fetch("https://script.google.com/macros/s/AKfycbyIguLKcIcAdsBaECfPRs6w-EO62gB5K-oczPIJbf5VHDd36gijKR5MZUERpwUt2bPP/exec").then(function(res) {
+	return res.json()
+}).then(function(emails) {
+	ol.innerHTML = null
+	console.log(emails)
+  emails.forEach(function(email) {
+  var li = document.createElement("LI")
+  var a = document.createElement("A")
+  //a.href = email.perma.replace("/u/0/", "/u/1/")
+  a.href = email.link.replace("/u/0/", "/u/1/")
+  a.innerText = email.subj
+  a.target = "_blank"
+  a.onclick = function() {
+  	fetch("https://script.google.com/macros/s/AKfycbyIguLKcIcAdsBaECfPRs6w-EO62gB5K-oczPIJbf5VHDd36gijKR5MZUERpwUt2bPP/exec", {
+    	method: "post",
+      body: JSON.stringify({
+      	id: email.id
+      })
+    }).then(function() {
+    	details.append(li)
+    })
+  }
+  li.append(a)
+  ol.append(li)
+  })
+})
+}
+
+
+getMail()
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "tpc09dv1"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+  </script>
+</html>
