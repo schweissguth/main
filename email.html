@@ -38,6 +38,10 @@
     
 <h1>Randy Mail (personal)</h1>
 
+<input type="range" step="1" min="0", max="5" id="range" onchange="getMail()">
+
+<br>
+
 
 <ol id="ol">
   
@@ -68,9 +72,10 @@ fetch("https://script.google.com/macros/s/AKfycbyIguLKcIcAdsBaECfPRs6w-EO62gB5K-
   var li = document.createElement("LI")
   var a = document.createElement("A")
   //a.href = email.perma.replace("/u/0/", "/u/1/")
-  a.href = email.link.replace("/u/0/", "/u/1/")
+  a.href = email.link.replace("/u/0/", "/u/" + range.value + "/")
   a.innerText = email.subj
   a.target = "_blank"
+  a.title = range.value
   a.onclick = function() {
   	fetch("https://script.google.com/macros/s/AKfycbyIguLKcIcAdsBaECfPRs6w-EO62gB5K-oczPIJbf5VHDd36gijKR5MZUERpwUt2bPP/exec", {
     	method: "post",
