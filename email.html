@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>RandyMailPersonal</title>
+    <title>RandyMail - personal</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
@@ -20,7 +20,17 @@
 
 
     <style id="compiled-css" type="text/css">
-      
+      li {
+  padding: 5px;
+}
+
+a {
+  padding: 20px;
+}
+
+dialog div {
+  margin-top: 40px;
+}
 
       /* EOS */
     </style>
@@ -35,65 +45,134 @@
 
   </head>
   <body>
-    
-<h1>Randy Mail (personal)</h1>
+    <h1>RandyMail - personal</h1>
 
-<input type="range" step="1" min="0", max="5" id="range" onchange="getMail()">
-
-<br>
+<p id="success" style="font-style: italic;">&nbsp;</p>
 
 
 <ol id="ol">
-  
+  <b>LOADING...</b>
 </ol>
 
 
-<br>
 
-<details>
-  <summary>Completed</summary>
-  <ol id="details"></ol>
-</details>
+
   </body>
 
     <script type="text/javascript">
 
-
-
-
-
 function getMail() {
-fetch("https://script.google.com/macros/s/AKfycbyIguLKcIcAdsBaECfPRs6w-EO62gB5K-oczPIJbf5VHDd36gijKR5MZUERpwUt2bPP/exec").then(function(res) {
-	return res.json()
-}).then(function(emails) {
-	ol.innerHTML = null
-	console.log(emails)
-  emails.forEach(function(email) {
-  var li = document.createElement("LI")
-  var a = document.createElement("A")
-  //a.href = email.perma.replace("/u/0/", "/u/1/")
-  a.href = email.link.replace("/u/0/", "/u/" + range.value + "/")
-  a.innerText = email.subj
-  a.target = "_blank"
-  a.title = range.value
-  a.onclick = function() {
-  	fetch("https://script.google.com/macros/s/AKfycbyIguLKcIcAdsBaECfPRs6w-EO62gB5K-oczPIJbf5VHDd36gijKR5MZUERpwUt2bPP/exec", {
-    	method: "post",
-      body: JSON.stringify({
-      	id: email.id
-      })
-    }).then(function() {
-    	details.append(li)
+  ol.innerHTML = "<li><b>LOADING...</b></li>"
+  fetch(
+    "https://script.google.com/macros/s/AKfycbyIguLKcIcAdsBaECfPRs6w-EO62gB5K-oczPIJbf5VHDd36gijKR5MZUERpwUt2bPP/exec",
+  )
+    .then(function (res) {
+      return res.json()
     })
-  }
-  li.append(a)
-  ol.append(li)
-  })
-})
+    .then(function (threads) {
+      console.log(threads)
+      ol.innerHTML = null
+      threads.forEach(function (thread) {
+        var a = document.createElement("LI")
+        a.innerText = thread.subj + " (" + thread.num + ")"
+        a.onclick = function () {
+        	success.innerHTML = "&nbsp;"
+          
+          var dia = document.createElement("DIALOG")
+          var header = document.createElement("HEADER")
+          dia.append(header)
+
+          var archive = document.createElement("A")
+          archive.innerText = "Archive"
+          archive.href = "javascript:void(0)"
+          archive.onclick = function () {
+            post(thread.id, "archive")
+          }
+          header.append(archive)
+
+          var inbox = document.createElement("A")
+          inbox.innerText = "Move to inbox"
+          inbox.href = "javascript:void(0)"
+          inbox.onclick = function () {
+            console.log(thread.id)
+            post(thread.id, "inbox")
+          }
+          header.append(inbox)
+
+          var close = document.createElement("A")
+          close.innerText = "Close"
+          close.href = "javascript:void(0)"
+          close.onclick = function () {
+          	a.remove()
+            dia.remove()
+          }
+          header.append(close)
+
+          var div = document.createElement("DIV")
+          div.innerHTML += "LOADING..."
+          dia.append(div)
+          document.getElementsByTagName("BODY")[0].append(dia)
+          dia.showModal()
+          fetch(
+            "https://script.google.com/macros/s/AKfycbyIguLKcIcAdsBaECfPRs6w-EO62gB5K-oczPIJbf5VHDd36gijKR5MZUERpwUt2bPP/exec?thread=" +
+              thread.id,
+          )
+            .then(function (res) {
+              return res.json()
+            })
+            .then(function (msgs) {
+              console.log(msgs)
+              div.innerHTML = null
+              msgs.forEach(function (msg) {
+                var details = document.createElement("DETAILS")
+                var summary = document.createElement("SUMMARY")
+                summary.innerHTML =
+                  "<b>" +
+                  msg.frm +
+                  "</b> " +
+                  new Date(msg.date).toLocaleDateString() +
+                  "<br>" +
+                  "<i>to: " +
+                  msg.to +
+                  " " +
+                  msg.cc +
+                  " " +
+                  msg.bcc +
+                  "</i> " +
+                  "<br>" +
+                  msg.pbody.substring(0, 100) +
+                  "...<br>"
+                details.append(summary)
+                var p = document.createElement("P")
+                p.innerHTML = "<br>" + msg.body
+                p.prepend(document.createElement("HR"))
+                details.append(p)
+                details.append(summary)
+                div.append(details)
+              })
+            })
+        }
+        ol.append(a)
+      })
+    })
 }
 
-
 getMail()
+
+function post(id, moveto) {
+  fetch(
+    "https://script.google.com/macros/s/AKfycbyIguLKcIcAdsBaECfPRs6w-EO62gB5K-oczPIJbf5VHDd36gijKR5MZUERpwUt2bPP/exec?moveto=" + moveto + "&id=" + id, {
+    	method: "post"
+    })
+    .then(function (res) {
+      return res.text()
+    })
+    .then(function (res) {
+    	console.log(res)
+      success.innerText = res
+    })
+}
+
 
   </script>
 
@@ -102,7 +181,7 @@ getMail()
     if (window.parent && window.parent.parent){
       window.parent.parent.postMessage(["resultsFrame", {
         height: document.body.getBoundingClientRect().height,
-        slug: "tpc09dv1"
+        slug: "oapr5yv0"
       }], "*")
     }
 
