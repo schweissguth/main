@@ -81,8 +81,8 @@ fetch("https://sheets.googleapis.com/v4/spreadsheets/1sUuU5xniQ-G6Su7zDWVNBlW0Um
   })
   console.log(players)
   var tr = table.insertRow()
-  tr.insertCell().innerText = "Away"
-  tr.insertCell().innerText = "Home"
+  tr.insertCell().innerText = ""
+  tr.insertCell().innerText = ""
   players.forEach(function(player) {
   	tr.insertCell().innerText = player.PLAYERNAME
   })
