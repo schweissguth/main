@@ -1,10 +1,9 @@
 
-
 <!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>IM LEARNING</title>
+    <title>IM LEARNING v2</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
@@ -21,44 +20,8 @@
 
 
     <style id="compiled-css" type="text/css">
-      * {
-  font-family: sans-serif;
-}
-
-h1 {
-  font-size: 3em;
-}
-
-select {
-  width: 100%;
-  font-size: 1.5em;
-  text-align: center;
-}
-
-center center {
-  //outline: 1px solid;
-  width: 100%;
-  //max-width: 500px;
-  padding: 30px 0px 30px 0px;
-}
-
-audio {
-  display: none;
-}
-
-img {
-  width: auto;
-  height: auto;
-  max-width: 280px;
-  max-height: 280px;
-  margin: 5px;
-  //border: 1px solid gray;
-  //border-radius: 15px;
-
-}
-
-img:active {
-  opacity: 50%;
+      body {
+  background: white;
 }
 
       /* EOS */
@@ -74,162 +37,72 @@ img:active {
 
   </head>
   <body>
-      <meta name="referrer" content="no-referrer">
-  <center><center>
-  <img src="https://lh3.googleusercontent.com/d/1-Gra-16t0NR2SfvWB4eXbBrCjerRc-uE=w200-h200?authuser=0" alt="">
-  <br><br>
-  <i><b>Learn all things.</b>
-  <br>
-  Easy learning app for toddlers and kids.</i>
-  <br><br>
+    <meta name="referrer" content="no-referrer" />
 
-<header>
-  <select name="" id="select" onchange="getData(this.value)">
-    <option disabled selected>Select a category</option>
-  </select>
-</header>
 
-<br><br>
-Image size: <input type="range" id="inpsize" min=1 max=3 value="2" step="1" onchange="changeImgSize(this.value)">
-<br><br>
+<center>
+<a href="https://stupid-fast.com/imlearning">
+<img src="https://lh3.googleusercontent.com/d/12u29jNMmX8F-XCRoRAbZV-cOzDfc0fXs=w150?authuser=0">
+</a>
 
-<small>Click a picture for audio.</small>
-
-<br><br>
 <hr>
-<br><br>
-<main></main>
 
+  <main id="main"></main>
 
-
-<audio id="audio" src=""></audio>
-
-
-<script>
-
-function gviz(KEY, SHEET, TQ, CALLBACK) {
-
-  var SPLIT1 = KEY.split("/edit")[0]
-  var SPLIT2 = SPLIT1.split("/d/").reverse()[0]
-
-  var URL = "https://docs.google.com/spreadsheets/d/" + SPLIT2 + "/gviz/tq?tqx=out:html&sheet=" + SHEET + "&" + "tq=" + TQ
-  console.log(URL)
+  <audio id="audio" src=""></audio>
   
-  fetch(URL).then(function(x) {
-  	return x.text();
-  }).then(function(result) {
-  	//console.log(result)
-    var RESPONSETEXT = result
-      var TEMPLATE = document.createElement("DIV")
-      TEMPLATE.innerHTML = RESPONSETEXT
+  <iframe frameborder="0"></iframe>
+</center>
 
-      var ARR = []
-      var TRS = TEMPLATE.getElementsByTagName("TR")
-
-      for (var i = 0; i < TRS.length; i++) {
-        var SUBARR = []
-        var TDS = TRS[i].getElementsByTagName("TD")
-        for (var j = 0; j < TDS.length; j++) {
-          SUBARR.push(TDS[j].textContent)
-        }
-        ARR.push(SUBARR)
-      }
-
-
-      CALLBACK(ARR)
-  })
-
-}
-
-function init() {
-  console.log("init")
-}
-
-
-</script>
-</center></center>
-<br><br><br><br><br><br>
-  </body>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9398f6c98977233e","version":"2025.4.0-1-g37f21b1","r":1,"token":"95d4af946c9a4d229ea725f950960b54","serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}}}' crossorigin="anonymous"></script>
+</body>
 
     <script type="text/javascript">
 
+    
 
+function fetchItems(url) {
+  main.innerHTML = "<img src='https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif' />"
+fetch(url).then(function(res) {
+	return res.json()
+}).then(function(res) {
+	console.log(res)
+  res = res.filter(function(item) {
+  	return item.name.split(".")[0]
+  })
+  listItems(res)
+})
+ 
+}
+fetchItems("https://script.google.com/macros/s/AKfycbwGNQKWgDKVXYFogoOoTSm3FPWk8ZZGr02rRppTfJ1GyOPZRrltjZS7SNeYWO71QPyf/exec")
 
-var key = "1uMoQYR2qzgK-edKNNiaCDVrpXIzXOcni_6KY0pdZI08"
-var main = document.getElementsByTagName("main")[0]
-
-function getApps() {
-gviz(key, "MT", "select A", function(data) {
-	data.shift()
-	var arr = []
-	data.forEach(function(item) {
-  	var io = arr.indexOf(item[0])
-    if (io < 0) {
-    	arr.push(item[0])
+function listItems(items) {
+  main.innerHTML = null
+	items.forEach(function(item) {
+  	var img = document.createElement("IMG")
+    img.src = "https://lh3.googleusercontent.com/d/" + item.id + "=w200-h200?authuser=0"
+    img.onclick = function() {
+      if (item.home) {
+fetchItems("https://script.google.com/macros/s/AKfycbwGNQKWgDKVXYFogoOoTSm3FPWk8ZZGr02rRppTfJ1GyOPZRrltjZS7SNeYWO71QPyf/exec?name=" + item.name.split(".")[0])
+      } else {
+    var dia = document.createElement("DIALOG")
+      main.append(dia)
+      var img2 = document.createElement("IMG")
+      img2.src = "https://lh3.googleusercontent.com/d/" + item.id + "=w500-h500?authuser=0"
+      dia.append(img2)
+      dia.showModal()
+      dia.onclick = function() {
+      	dia.remove()
+      }
+        
+      }
+    	audio.src = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=" + item.name.split(".")[0]
+      audio.play()
     }
+    main.append(img)
   })
-  
-  arr.forEach(function(item) {
-  	select.innerHTML += "<option>" + item + "</option"
-  })
-})
 }
-
-getApps()
-
-function getData(input) {
-main.innerHTML = ""
-gviz(key, "LEARNINGAPP", "select B, C, D where A = '" + input + "'", function(data) {
-console.log(data)
-data.shift()
-
-data.forEach(function(item) {
-
-  var img = document.createElement("IMG")
-  if (item[1].includes("file/d/") || item[1].includes("open?id=")) {
-  	var split = item[1].split("file/d/")[1]
-  	var split = item[1].split("open?id=")[1]
-    split = split.split("/view")[0]
-    split = split.split("&usp=")[0]
-    console.log("split", split)
-    img.src = "https://drive.google.com/thumbnail?id=" + split + "&sz=w200-h200"
-  } else {
-  	img.src = item[1]
-  }
-
-  img.alt = item[0]
-  img.style.width = 270/item[2] + "px"
-  img.setAttribute("onclick", "playAudio(this.alt, this)")
-  main.append(img)
-  inpsize.value = 4 - item[2]
-
-  
-  
-})	
-})
-}
-
-
-
-
-
-
-function playAudio(text) {
-  audio.src = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=" + text
-  audio.play()
-}
-
-
-$("center").on("click", "img", function(e) {
-	$("img").css("opacity", "100%")
- 	$(this).css("opacity", "50%")
-
-})
-
-
-function changeImgSize(val) {
-	$("img").css("width", 270/(3-val+1) + "px")
-}
+    
 
   </script>
 
@@ -238,7 +111,7 @@ function changeImgSize(val) {
     if (window.parent && window.parent.parent){
       window.parent.parent.postMessage(["resultsFrame", {
         height: document.body.getBoundingClientRect().height,
-        slug: "fo1yewrx"
+        slug: "1x6897Lf"
       }], "*")
     }
 
