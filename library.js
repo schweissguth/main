@@ -46,7 +46,10 @@ function getStandings() {
 function getPickorder() {
   const urls = [
     "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKORDER?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
-    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PLAYERS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI"
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PLAYERS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+    "https://cf.nascar.com/cacher/2025/1/points-feed.json",
+    "https://cf.nascar.com/live-ops/live-ops.json",
   ]
 
   return Promise.all(urls.map(function(url) {
@@ -58,10 +61,27 @@ function getPickorder() {
   })).then(function(res) {
     let pickers = res[0].values.makeObj()
     let players = res[1].values.makeObj()
+    let picks = res[2].values.makeObj()
+    let standings = res[3]
+    let live = res[4]
+
+    standings = standings.map(function(standing) {
+      standing.pick = picks.findLast(function(pick) {
+        return pick.DRIVERID == standing.driver_id && live.live_current_series1_race == pick.RACEID
+      })?.PLAYERID
+      return standing
+    })
+
     pickers = pickers.map(function(picker) {
       picker.playername = players.findLast(function(player) {
         return player.PLAYERID == picker.PLAYERID
       })?.PLAYERNAME
+      picker.cell = players.findLast(function(player) {
+        return player.PLAYERID == picker.PLAYERID
+      })?.PHONE
+      picker.picks = standings.filter(function(standing) {
+        return standing.pick == picker.PLAYERID
+      })
       return picker
     })
     return pickers.sort(function(a, b) {
@@ -69,6 +89,3 @@ function getPickorder() {
     })
   })
 }
-
-
-
