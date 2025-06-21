@@ -28,7 +28,7 @@ function getStandings() {
     let live = res[0]
     let standings = res[1]
     let picks = res[2].values.makeObj()
-    let drivers = res[3]
+    let drivers = res[3].response
     return standings.map(function(standing) {
       standing.badge = drivers.find(function(driver) {
         return driver.Nascar_Driver_ID == standing.driver_id
