@@ -36,6 +36,7 @@ function getStandings() {
       standing.pick = picks.findLast(function(pick) {
         return pick.DRIVERID == standing.driver_id && pick.RACEID == live.live_current_series1_race
       })?.PLAYERID
+      standing.raceid = live.live_current_series1_race
       return standing
     })
   })
