@@ -5,7 +5,7 @@ getPickorder().then(function(pickers) {
     let tr = pickstable.insertRow()
     let td = tr.insertCell()
     let a = document.createElement("A")
-    a.innerHTML = "<b>" + picker.playername + </b> + " <small>(" + picker.TOTAL + ")</small>"
+    a.innerHTML = "<b>" + picker.playername + "</b>" + " <small>(" + picker.TOTAL + ")</small>"
     a.href = "javascript:"
     a.style.textDecoration = ""
     a.onclick = function() {
