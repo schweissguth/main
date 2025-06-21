@@ -1,144 +1,88 @@
-
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Sort and display driver standings with images</title>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta name="robots" content="noindex, nofollow">
-    <meta name="googlebot" content="noindex, nofollow">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Picks - StupidFast.com</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex, nofollow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <script
       type="text/javascript"
-      src="/js/lib/dummy.js"
-      
+      src="https://stupid-fast.com/library.js"
     ></script>
-
-        <script type="text/javascript" src="https://stupid-fast.com/library.js"></script>
-        <link rel="stylesheet" type="text/css" href="https://stupid-fast.com/css.css">
-
-
-    <style id="compiled-css" type="text/css">
-      
-
-      /* EOS */
-    </style>
-
-    <style type="text/css">
-      :root {
-        color-scheme: light;
-      }
-    </style>
-
-    <script id="insert"></script>
-
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://stupid-fast.com/css.css"
+    />
   </head>
   <body>
     <center>
-  <br /><br />
-  <a href="https://stupid-fast.com" >
-    <img src="https://stupid-fast.com/sfbanner.png" />
-  </a>
-  <br><br>
+      <br /><br />
+      <a href="https://stupid-fast.com">
+        <img src="https://stupid-fast.com/sfbanner.png" />
+      </a>
+      <br /><br />
 
-  <table id="table" cellpadding="3">
-    <tr>
-      <th>LOADING...</th>
-    </tr>
-  </table>
-</center>
+      <table id="table" cellpadding="3">
+        <tr>
+          <th>LOADING...</th>
+        </tr>
+      </table>
+    </center>
+  </body>
 
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9533d99bef6feb6a","version":"2025.6.2","r":1,"serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"token":"95d4af946c9a4d229ea725f950960b54","b":1}' crossorigin="anonymous"></script>
-</body>
-
-    <script type="text/javascript">
-
-getPickorder().then(function (pickorder) {
-  getStandings().then(function (standings) {
-    console.log(standings)
-    table.innerHTML = ""
-    standings.sort(function (a, b) {
-      return a.position - b.position
-    })
-    standings.forEach(function (standing) {
-      let tr = table.insertRow()
-
-      let td = tr.insertCell()
-      let img = document.createElement("IMG")
-      img.src = standing.badge
-      img.width = "50"
-      img.alt = ""
-      td.append(img)
-
-      tr.insertCell().innerText = standing.driver_name
-
-      td = tr.insertCell()
-      let select = document.createElement("SELECT")
-      let option = document.createElement("OPTION")
-      option.text = ""
-      select.add(option)
-      pickorder.forEach(function (picker) {
-        let opt = document.createElement("OPTION")
-        opt.text = picker.playername
-        opt.value = picker.PLAYERID
-        select.add(opt)
-      })
-      select.onchange = function() {
-        fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKS", {
-          method: "post",
-          body: JSON.stringify({
-            RACENO: standing.raceid,
-            DRIVERID: standing.driver_id,
-            PLAYERID: this.value
-          })
+  <script type="text/javascript">
+    getPickorder().then(function (pickorder) {
+      getStandings().then(function (standings) {
+        console.log(standings)
+        table.innerHTML = ""
+        standings.sort(function (a, b) {
+          return a.position - b.position
         })
-      }
-      select.value = standing.pick
-      td.append(select)
+        standings.forEach(function (standing) {
+          let tr = table.insertRow()
+
+          let td = tr.insertCell()
+          let img = document.createElement("IMG")
+          img.src = standing.badge
+          img.width = "50"
+          img.alt = ""
+          td.append(img)
+
+          tr.insertCell().innerText = standing.driver_name
+
+          td = tr.insertCell()
+          let select = document.createElement("SELECT")
+          let option = document.createElement("OPTION")
+          option.text = ""
+          select.add(option)
+          pickorder.forEach(function (picker) {
+            let opt = document.createElement("OPTION")
+            opt.text = picker.playername
+            opt.value = picker.PLAYERID
+            select.add(opt)
+          })
+          select.onchange = function() {
+            fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKS", {
+              method: "post",
+              body: JSON.stringify({
+                RACENO: standing.raceid,
+                DRIVERID: standing.driver_id,
+                PLAYERID: this.value
+              })
+            })
+          }
+          select.value = standing.pick
+          td.append(select)
+        })
+        let tr13 = table.insertRow(13)
+        let td13 = tr13.insertCell()
+        td13.setAttribute("colspan", 10)
+        td13.innerHTML = "<br><hr><br>"
+      })
     })
-    let tr13 = table.insertRow(13)
-    let td13 = tr13.insertCell()
-    td13.setAttribute("colspan", 10)
-    td13.innerHTML = "<br><hr><br>"
-  })
-})
-
-
-  </script>
-
-  <script>
-    // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent){
-      window.parent.parent.postMessage(["resultsFrame", {
-        height: document.body.getBoundingClientRect().height,
-        slug: "90huLe3d"
-      }], "*")
-    }
-
-    // always overwrite window.name, in case users try to set it manually
-    window.name = "result"
-  </script>
-
-  <script>
-    const allLines = []
-    const cssElement = document.querySelector("#compiled-css")
-
-    window.addEventListener("message", (message) => {
-
-      if (message.data.css){
-        cssElement.textContent = message.data.css.payload
-      }
-
-      if (message.data.html){
-        document.body.innerHTML = message.data.html.payload
-      }
-    })
-
-    if (window.parent){
-      window.parent.postMessage({loaded: true}, "*")
-    }
   </script>
 </html>
