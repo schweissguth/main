@@ -6,17 +6,63 @@ Array.prototype.makeObj = function () {
       return acc
     }, {})
   })
-  //console.log(this, json)
   return json
 }
 
-Array.prototype.vlookup = function (input, refkey, returnkey) {
-  var find = this.findLast(function (find) {
-    find[refkey] == input
+function getStandings() {
+  const urls = [
+    "https://cf.nascar.com/live-ops/live-ops.json",
+    "https://cf.nascar.com/cacher/2025/1/points-feed.json",
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  ]
+
+  return Promise.all(urls.map(function (url) {
+      return fetch(url).then(function (res) {
+        if (res.ok) {
+          return res.json()
+        }
+      })
+    }),
+  ).then(function (res) {
+    let live = res[0]
+    let standings = res[1]
+    let picks = res[2].values.makeObj()
+    return standings.map(function(standing) {
+      standing.pick = picks.findLast(function(pick) {
+        return pick.DRIVERID == standing.driver_id && pick.RACEID == live.live_current_series1_race
+      })?.PLAYERID
+      return standing
+    })
   })
-  return (
-    find[returnkey] || {
-      [returnkey]: null,
-    }
-  )
 }
+
+
+function getPickorder() {
+  const urls = [
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKORDER?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PLAYERS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI"
+  ]
+
+  return Promise.all(urls.map(function(url) {
+    return fetch(url).then(function(res) {
+      if (res.ok) {
+        return res.json()
+      }
+    })
+  })).then(function(res) {
+    let pickers = res[0].values.makeObj()
+    let players = res[1].values.makeObj()
+    pickers = pickers.map(function(picker) {
+      picker.playername = players.findLast(function(player) {
+        return player.PLAYERID == picker.PLAYERID
+      })?.PLAYERNAME
+      return picker
+    })
+    return pickers.sort(function(a, b) {
+      return a.PICKORDER - b.PICKORDER
+    })
+  })
+}
+
+
+
