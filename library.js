@@ -89,3 +89,59 @@ function getPickorder() {
     })
   })
 }
+
+function getRunningorder() {
+  const urls = [
+    "https://cf.nascar.com/cacher/live/live-feed.json",
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PLAYERS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  ]
+
+  return Promise.all(
+    urls.map(function (url) {
+      return fetch(url).then(function (res) {
+        if (res.ok) {
+          return res.json()
+        }
+      })
+    }),
+  ).then(function (res) {
+    let positions = res[0]
+    let players = res[1].values.makeObj()
+    let picks = res[2].values.makeObj()
+
+    picks = picks.map(function (pick) {
+      pick.playername = players.findLast(function (player) {
+        return player.PLAYERID == pick.PLAYERID
+      })?.PLAYERNAME
+      return pick
+    })
+
+    positions.vehicles = positions.vehicles.map(function (position) {
+      position.player = {
+        id: null,
+        name: null,
+      }
+      let findplayer = picks.findLast(function (pick) {
+        return (
+          pick.DRIVERID == position.driver.driver_id &&
+          positions.race_id == pick.RACEID
+        )
+      })
+      position.player.id = findplayer?.PLAYERID
+      position.player.name = findplayer?.playername
+      return position
+    })
+    positions.vehicles.reverse()
+    let count = 0
+    positions.vehicles = positions.vehicles.map(function (vehicle) {
+      vehicle.pts = null
+      if (vehicle.player.id) {
+        vehicle.pts = ++count
+      }
+      return vehicle
+    })
+    positions.vehicles.reverse()
+    console.log(positions)
+  })
+}
