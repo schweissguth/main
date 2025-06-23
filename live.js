@@ -6,7 +6,7 @@ getRunningorder().then(function (runningorder) {
       feed.driver.full_name +
       " " +
       "<i><small>-" +
-      Math.round(feed.delta * 100) / 100 +
+      delta.toFixed(2) +
       "</small></i>"
     tr.insertCell().innerHTML =
       "<b>" +
