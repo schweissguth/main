@@ -142,6 +142,6 @@ function getRunningorder() {
       return vehicle
     })
     positions.vehicles.reverse()
-    console.log(positions)
+    return positions
   })
 }
