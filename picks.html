@@ -69,7 +69,7 @@
             fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKS", {
               method: "post",
               body: JSON.stringify({
-                RACENO: standing.raceid,
+                RACEID: standing.raceid,
                 DRIVERID: standing.driver_id,
                 PLAYERID: this.value
               })
