@@ -1,4 +1,5 @@
 getRunningorder().then(function (runningorder) {
+  tlive.innerHTML = null
   runningorder.vehicles.forEach(function (feed) {
     var tr = tlive.insertRow()
     tr.insertCell().innerText = feed.running_position + " "
