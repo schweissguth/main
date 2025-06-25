@@ -1,4 +1,43 @@
-<center>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>SF homepage 55</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
+
+        <link rel="stylesheet" type="text/css" href="https://stupid-fast.com/css.css">
+        <script type="text/javascript" src="https://stupid-fast.com/library.js"></script>
+
+
+    <style id="compiled-css" type="text/css">
+      
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+  </head>
+  <body>
+    <center>
   <br /><br />
   <a href="https://stupid-fast.com">
     <img src="https://stupid-fast.com/sfbanner.png" alt="" />
@@ -56,3 +95,44 @@
   <script src="https://stupid-fast.com/live.js"></script>
   <script src="https://stupid-fast.com/feed.js"></script>
 </center>
+
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"95560b3a28e186ec","version":"2025.6.2","r":1,"token":"95d4af946c9a4d229ea725f950960b54","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}}}' crossorigin="anonymous"></script>
+</body>
+
+    <script type="text/javascript">
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "8r0nmygp"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
+</html>
