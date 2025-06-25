@@ -208,3 +208,11 @@ function getResults(raceid) {
   })
 }
 
+function getFlag() {
+  return fetch("https://cf.nascar.com/cacher/live/live-feed.json").then(function(res) {
+    return res.json()
+  })
+}
+
+
+
