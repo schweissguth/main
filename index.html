@@ -90,12 +90,8 @@
     </tbody>
   </table>
 
-  <script src="https://stupid-fast.com/flag.js"></script>
-  <script src="https://stupid-fast.com/live.js"></script>
-  <script src="https://stupid-fast.com/feed.js"></script>
 </center>
 
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"95560b3a28e186ec","version":"2025.6.2","r":1,"token":"95d4af946c9a4d229ea725f950960b54","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}}}' crossorigin="anonymous"></script>
 </body>
 
     <script type="text/javascript">
@@ -128,7 +124,6 @@
 
 
       
-function flagData() {
 
 fetch("https://cf.nascar.com/cacher/live/live-feed.json").then(res => res.json()).then(function(res) {
 	//console.log(res)
@@ -157,13 +152,6 @@ var flag = document.getElementById("pflag")
 			getTV(res.race_id)
 })
 
-}
-
-flagData()
-
-setInterval(function(){
-  flagData()
-}, 30000)
 
 
 function getTV(raceid) {
@@ -182,41 +170,63 @@ function getTV(raceid) {
   })
 }
 
+	    getRunningorder().then(function (runningorder) {
+  tlive.innerHTML = null
+  runningorder.vehicles.forEach(function (feed) {
+    var tr = tlive.insertRow()
+    tr.insertCell().innerText = feed.running_position + " "
+    tr.insertCell().innerHTML =
+      feed.driver.full_name +
+      " " +
+      "<i><small>-" +
+      feed.delta.toFixed(2) +
+      "</small></i>"
+    tr.insertCell().innerHTML =
+      "<b>" +
+      (feed.player.name || "") +
+      "</b>" +
+      " <i><small>" +
+      (feed.pts || "") +
+      "</small></i>"
+  })
+})
+
+
+
+
+
+fetch("https://cf.nascar.com/cacher/live/live-feed.json").then(res => res.json()).then(function(res) {
+      getRace(res.race_id)
+})
+
+
+
+function getRace(raceno) {
+fetch("https://cf.nascar.com/cacher/2025/1/" + raceno + "/lap-notes.json").then(function (item) {
+        return item.json()
+      }).then(function (item) {
+        //console.log(item.laps)
+            tfeed.innerHTML = null
+
+        for (var i in item.laps) {
+          item.laps[i].forEach(function (jtem) {
+            var tr = tfeed.insertRow(0)
+            tr.insertCell().innerHTML = i
+            tr.insertCell().innerHTML = jtem.Note
+            
+          })
+
+        }
+      })
+    
+}
+
+
 
 
       
   </script>
 
-  <script>
-    // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent){
-      window.parent.parent.postMessage(["resultsFrame", {
-        height: document.body.getBoundingClientRect().height,
-        slug: "8r0nmygp"
-      }], "*")
-    }
 
-    // always overwrite window.name, in case users try to set it manually
-    window.name = "result"
-  </script>
 
-  <script>
-    const allLines = []
-    const cssElement = document.querySelector("#compiled-css")
-
-    window.addEventListener("message", (message) => {
-
-      if (message.data.css){
-        cssElement.textContent = message.data.css.payload
-      }
-
-      if (message.data.html){
-        document.body.innerHTML = message.data.html.payload
-      }
-    })
-
-    if (window.parent){
-      window.parent.postMessage({loaded: true}, "*")
-    }
-  </script>
 </html>
