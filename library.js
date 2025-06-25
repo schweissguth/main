@@ -14,7 +14,6 @@ function getStandings() {
     "https://cf.nascar.com/live-ops/live-ops.json",
     "https://cf.nascar.com/cacher/2025/1/points-feed.json",
     "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
-    "https://cf.nascar.com/cacher/drivers.json",
   ]
 
   return Promise.all(
@@ -29,11 +28,7 @@ function getStandings() {
     let live = res[0]
     let standings = res[1]
     let picks = res[2].values.makeObj()
-    let drivers = res[3].response
     return standings.map(function (standing) {
-      standing.badge = drivers.find(function (driver) {
-        return driver.Nascar_Driver_ID == standing.driver_id
-      })?.Badge_Image
       standing.pick = picks.findLast(function (pick) {
         return (
           pick.DRIVERID == standing.driver_id &&
