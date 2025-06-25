@@ -4,7 +4,7 @@ getPickorder().then(function(pickers) {
   pickers.forEach(function(picker) {
     let tr = pickstable.insertRow()
     let td = tr.insertCell()
-    td.innerHTML = "<b>" + picker.playername + "</b>" + "&nbsp;<small>(" + picker.TOTAL + ")</small>"
+    td.innerHTML = "<b>" + picker.playername + "</b>" + "&nbsp;<small>(" + Math.round(picker.PICKORDER) + ")</small>"
     //let a = document.createElement("A")
     //a.innerHTML = "<b>" + picker.playername + "</b>" + "&nbsp;<small>(" + picker.TOTAL + ")</small>"
     //a.href = "javascript:"
