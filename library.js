@@ -214,9 +214,15 @@ function getFlag() {
   })
 }
 
-function getLapNotes(x) {
-  return fetch("https://cf.nascar.com/cacher/2025/1/" + x + "/lap-notes.json").then(function(res) {
-    return res.json()
+function getLapNotes() {
+  return fetch("https://cf.nascar.com/cacher/live/live-feed.json").then(function(currentrace) {
+    return currentrace.json()
+  }).then(function(currentrace) {
+    return fetch("https://cf.nascar.com/cacher/2025/1/" + currentrace.race_id + "/lap-notes.json").then(function(notes) {
+      return notes.json()
+    }).then(function(notes) {
+      return notes.laps
+    })
   })
 }
 
