@@ -41,79 +41,81 @@
 
 <br><br>
 
-<select id="select" onchange="choose(this.value)">
-  <option id="option" selected disabled>Loading...</option>
+
+<select id="selectrace" onchange="selectRace(this.value)">
+  <option id="option">LOADING...</option>
 </select>
 
-<br><br>
+<hr>
 
-  <table id="table" border="0" cellpadding="3"></table>
+<table id="table" cellpadding="3">
+  <thead>
+    <tr>
+      <!--th id="th">SELECT RACE...</th-->
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+
 </center>
   
 
 
 
     <script type="text/javascript">
-	 fetch("https://cf.nascar.com/cacher/2025/race_list_basic.json")
-  .then(function (res) {
-    return res.json()
-  })
-  .then(function (schedules) {
-    schedules = schedules.series_1
-    console.log(schedules)
-    schedules = schedules.filter(function (schedule) {
-      return schedule.race_type_id == 1
-    })
-    SCHED = schedules
-    schedules.forEach(function (schedule) {
-      var opt = document.createElement("OPTION")
-      opt.text =
-        schedule.track_name +
-        " " +
-        new Date(schedule.tunein_date)
-          .toLocaleDateString()
-          .replace("/2025", "") +
-        " @ " +
-        new Date(schedule.tunein_date)
-          .toLocaleTimeString()
-          .replace(":00 PM", " PM") +
-        " on " +
-        schedule.television_broadcaster +
-        " & " +
-        schedule.radio_broadcaster
-      opt.value = schedule.race_id
-      select.add(opt)
-    })
-    option.text = "Select race"
-  })
+	    const schedule = []
 
-function choose(x) {
-table.innerHTML = null
-  fetch("https://cf.nascar.com/cacher/2025/1/" + x + "/weekend-feed.json")
-    .then(function (res) {
-      return res.json()
+getSchedule().then(function (res) {
+  console.log(res)
+  option.text = "Select race..."
+  option.disabled = true
+  res.forEach(function (race, n) {
+    schedule.push(race)
+    let opt = document.createElement("OPTION")
+    opt.value = race.race_id
+    opt.text = race.track_name
+    + " - " + new Date(race.date_scheduled).toUTCString().split("2025")[0] + " " 
+    + new Date(race.date_scheduled).toLocaleTimeString().replace(":00 PM", "PM")
+    + ", " + race.television_broadcaster + " & " + race.radio_broadcaster
+    + " (" + race.race_id + ")"
+    selectrace.append(opt)
+  })
+  selectrace.value = res.find(function(race) {
+    return !race.winner_driver_id
+  })?.race_id
+})
+
+function selectRace(x) {
+  tbody.innerHTML = "<tr><th>LOADING...</th></tr>"
+  let findrace = schedule.find(function (race) {
+    return race.race_id == x
+  })
+  if (findrace.winner_driver_id) {
+    getResults(x).then(function (res) {
+      console.log("results", res)
+      res = res.filter(function(driver) {
+        return driver.finishing_position > 0
+      })
+      tbody.innerHTML = null
+      res.forEach(function(driver) {
+        let tr = tbody.insertRow()
+        tr.insertCell().innerText = driver.finishing_position
+        tr.insertCell().innerText = driver.driver_fullname
+        let td = tr.insertCell()
+        td.innerText = driver.score.playername || ""
+        td.style.fontWeight = "bold"
+        td = tr.insertCell()
+        td.innerText = driver.score.PTS || ""
+        if (driver.score.B > 0) {
+          td.innerText += "+" + driver.score.B
+        }
+      })
+
     })
-    .then(function (results) {
-      console.log(results)
-      var stages = results.weekend_race[0]
-      console.log(stages)
-      results = results.weekend_race[0].results
-      results = results.filter(function (result) {
-        return result.finishing_position
-      })
-      results.forEach(function (result) {
-        var tr = table.insertRow()
-        tr.insertCell().innerText = result.finishing_position
-        tr.insertCell().innerHTML =
-          "<b>" + result.driver_fullname + "</b> #" + result.official_car_number
-        tr.insertCell().innerText =
-          result.diff_laps * -1 || (result.diff_time * -1) / 1000
-        tr.insertCell().id = result.driver_id
-      })
-      stages.stage_results.forEach(function (stage) {
-        document.getElementById(stage.results[0].driver_id).innerText += "✓"
-      })
-    })
+  } else {
+    console.log(findrace)
+    tbody.innerHTML = null
+  }
 }
 
 
