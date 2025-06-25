@@ -14,6 +14,13 @@ a {
   display: table;
 }
 
+.heading {
+  color: red;
+  font-size: 1.5em;
+  display: block;
+  margin-top: 25px;
+}
+
 table {
   border-collapse: collapse;
 }
