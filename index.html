@@ -1,153 +1,58 @@
+<center>
+  <br /><br />
+  <a href="https://stupid-fast.com">
+    <img src="https://stupid-fast.com/sfbanner.png" alt="" />
+  </a>
 
+  <br />
 
-<!DOCTYPE html>
-<html>
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Stupid-Fast.com</title>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="googlebot" content="noindex, nofollow">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <a href="https://stupid-fast.com/picks" class="heading">Click HERE to Make Picks</a>
+  <a href="https://www.driveraverages.com/">DriverAverages.com</a>
+  <a href="https://stupid-fast.com/results">Results and schedule</a>
+  <a href="https://stupid-fast.com/season" class="heading">Season standings</a>
 
+  <br /><br />
 
-    <link rel="stylesheet" type="text/css" href="./css.css">
+  <table id="pickstable" cellpadding="3">
+    <tr>
+      <th>LOADING...</th>
+    </tr>
+  </table>
 
+  <br /><br />
 
-<style>
-.heading {
-  color: darkgoldenrod;
-  font-size: 1.2em;
-}
+  <p id="ptrack"></p>
+  <p>
+    <span id="pdate"></span> on <span id="ptv"></span> /
+    <span id="pradio"></span>
+  </p>
+  <span id="pstage"></span>
+  <span id="pflag"></span>
+  <span id="plaps"></span>
 
-#tplayers tr {
-  height: 40px;
-}
+  <br /><br />
 
+  <table>
+    <tbody id="tlive">
+      <tr>
+        <th>LOADING...</th>
+      </tr>
+    </tbody>
+  </table>
 
+  <br /><br />
 
-  </style>
-	<script src="https://stupid-fast.com/library.js"></script>
+  <table cellpadding="2">
+    <thead></thead>
+    <tbody id="tfeed">
+      <tr>
+        <th>LOADING...</th>
+      </tr>
+    </tbody>
+  </table>
 
-
-</head>
-<body>
-	
-  <center id="main">
-	<br><br>
-<a href="https://stupid-fast.com">
-  <img src="https://stupid-fast.com/sfbanner.png" alt="">
-</a>
-
-	  <br>
-
-
-    <div id="links"></div>
-
-	  <br><br>
-
-
-	  <table id="pickstable" cellpadding="3">
-		    <tr>
-    <th>LOADING...</th>
-  </tr>
-	  </table>
-
-	  <br><br>
-
-	  
-<p id="ptrack"></p>
-<p>
-  <span id="pdate"></span> on 
-  <span id="ptv"></span> / 
-  <span id="pradio"></span>
-</p>
-<span id="pstage"></span>
-<span id="pflag"></span>
-<span id="plaps"></span>
-
-	  <br><br>
-	  
-
-
-	  <table>
-		  <tbody id="tlive">
-			  <tr><th>LOADING...</th></tr>
-			  
-		  </tbody>
-	  </table>
-
-	  <br><br>
-
-	  <table cellpadding="2">
-<thead>
-</thead>
-  <tbody id="tfeed">
-	   <tr>
-    <th>LOADING...</th>
-  </tr>
-  </tbody>
-</table>
-
-
-    <script src="https://stupid-fast.com/pickstable.js"></script>
-    <script src="https://stupid-fast.com/flag.js"></script>
-    <script src="https://stupid-fast.com/live.js"></script>
-    <script src="https://stupid-fast.com/feed.js"></script>
-	  
-
-
-    
-
-  </center>
-
-
-
-    <script type="text/javascript">//<![CDATA[
-
-
-var HOMEPAGE = []
-
-function getHomepage() {
-	fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/HOMEPAGE?alt=json&key=AIzaSyDhLaELifRHh1xemqXD92dXajIdevmltSQ").then(function(item) {
-  	return item.json()
-  }).then(function(item) {
-    var header = item.values.shift()
-    HOMEPAGE = item.values.map(function(jtem) {
-      return jtem.reduce(function(total, ktem, index) {
-        total[header[index]] = ktem
-        return total
-      }, {})
-    })
-
-  	//console.log("HOMEPAGE", HOMEPAGE)
-    
-    HOMEPAGE = HOMEPAGE.filter(function(jtem) {
-    	return jtem.ACTIVE == "TRUE"
-    })
-    
-    HOMEPAGE.forEach(function(jtem) {
-    	var tag = document.createElement(jtem.TAG)
-      tag.href = jtem.HREF
-      tag.innerHTML = jtem.TEXT
-      tag.target = jtem.TARGET
-      tag.style = jtem.STYLE
-      tag.id = jtem.id
-      tag.className = jtem.CLASS
-      links.append(tag)
-
-    })
-  })
-}
-
-getHomepage()
-
-
-
-
-  //]]></script>
-
-
-
-</body>
-</html>
+  <script src="https://stupid-fast.com/pickstable.js"></script>
+  <script src="https://stupid-fast.com/flag.js"></script>
+  <script src="https://stupid-fast.com/live.js"></script>
+  <script src="https://stupid-fast.com/feed.js"></script>
+</center>
