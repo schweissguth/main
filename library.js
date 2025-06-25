@@ -214,5 +214,11 @@ function getFlag() {
   })
 }
 
+function getLapNotes(x) {
+  return fetch("https://cf.nascar.com/cacher/2025/1/" + x + "/lap-notes.json").then(function(res) {
+    return res.json()
+  })
+}
+
 
 
