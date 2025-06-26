@@ -149,14 +149,19 @@ function getFlag() {
   )
 }
 
-function getLapNotes(x) {
-  return fetch("https://cf.nascar.com/cacher/2025/1/" + x + "/lap-notes.json")
+function getLapNotes() {
+  getLiveFeed().then(function(liverace) {
+    return liverace.race_id
+  }).then(function(raceid) {
+    
+  return fetch("https://cf.nascar.com/cacher/2025/1/" + raceid + "/lap-notes.json")
     .then(function (res) {
       return res.json()
     })
     .then(function (res) {
       return res.laps
     })
+    )
 }
 
 function getStages(x) {
