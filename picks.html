@@ -36,6 +36,7 @@
 
   <script type="text/javascript">
     getCurrentRace().then(function (currentrace) {
+  table.innerHTML = null
   getStandings().then(function (res) {
     console.log(res)
     res.sort(function (a, b) {
