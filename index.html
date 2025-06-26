@@ -36,7 +36,8 @@
       }
     </style>
 
-    <script id="insert"></script>
+    
+<script src="https://stupid-fast.com/server.js"></script>
 
   </head>
   <body>
@@ -57,7 +58,7 @@
 
   <br /><br />
 
-  <table id="pickstable" cellpadding="3">
+  <table id="picks" cellpadding="3">
     <tr>
       <th>LOADING...</th>
     </tr>
@@ -103,24 +104,60 @@
 
     <script type="text/javascript">
 
-getPickorder().then(function (pickers) {
+getPickOrder().then(function (pickers) {
   console.log(pickers)
-  pickstable.innerHTML = null
+  picks.innerHTML = null
+  pickers.sort(function (a, b) {
+    return a.PICKORDER - b.PICKORDER
+  })
   pickers.forEach(function (picker) {
-    let tr = pickstable.insertRow()
+    let tr = picks.insertRow()
+    tr.id = picker.PLAYERID
     let td = tr.insertCell()
-    td.innerHTML =
-      "<b>" +
-      picker.playername +
-      "</b>" +
-      "&nbsp;<small>(" +
-      Math.round(picker.PICKORDER) +
-      ")</small>"
-    td = tr.insertCell()
-    picker.picks.forEach(function (pick) {
-      let div = document.createElement("DIV")
-      div.innerText = pick.driver_name
-      td.append(div)
+    let span = document.createElement("SPAN")
+    span.innerText = picker.PLAYERID + " "
+    span.classList.add("playername")
+    td.append(span)
+    let small = document.createElement("SMALL")
+    small.innerText = "(" + Math.round(picker.PICKORDER) + ")"
+    td.append(small)
+    tr.insertCell().classList.add("playerpicks")
+  })
+  getPlayers().then(function (players) {
+    players.forEach(function (player) {
+      try {
+        let tr = document.getElementById(player.PLAYERID)
+        tr.getElementsByClassName("playername")[0].innerText =
+          player.PLAYERNAME + " "
+      } catch (err) {}
+    })
+    getPicks().then(function (picks) {
+      getCurrentRace().then(function (currentrace) {
+        picks = picks.filter(function (pick) {
+          return pick.RACEID == currentrace
+        })
+        getStandings().then(function (drivers) {
+          console.log("drivers", drivers)
+          drivers = drivers.map(function (driver) {
+            driver.playerid = null
+            return driver
+          })
+          picks.forEach(function (pick) {
+            drivers.find(function (driver) {
+              return driver.driver_id == pick.DRIVERID
+            }).playerid = pick.PLAYERID
+          })
+          drivers.forEach(function (driver) {
+            if (driver.playerid) {
+              let tr = document.getElementById(driver.playerid)
+              let td = tr.getElementsByClassName("playerpicks")[0]
+              let div = document.createElement("DIV")
+              div.innerText = driver.driver_name
+              td.append(div)
+            }
+          })
+        })
+      })
     })
   })
 })
