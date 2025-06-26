@@ -52,17 +52,19 @@
 
   <br /><br />
 
-<table id="PICKS" cellpadding="3" border>
+<table id="PICKS" cellpadding="3">
   <tr><th>LOADING...</th></tr>
 </table>
 
-<br>
+<br><br>
 
 <p id="TRACK"></p>
 <p id="BROADCAST"></p>
 <p id="RADIO"></p>
 <p id="LAPS"></p>
 <p id="STAGE"></p>
+
+<br>
 
 <table id="LIVEFEED" cellpadding="3"></table>
 
@@ -141,7 +143,7 @@ getPickOrder().then(function (pickers) {
 
 getLiveFeed().then(function(liverace) {
   console.log("liverace", liverace)
-  TRACK.innerText = liverace.track_name.toUpperCase()
+  TRACK.innerHTML = "<u>" + liverace.track_name.toUpperCase() + "</u>"
   LAPS.innerText = "Lap " + liverace.lap_number + " of " + liverace.laps_in_race + " (" + liverace.laps_to_go + " laps to go)"
   let flags = [,"🟢","🟡",,"🏁",,,,"🏴","🏁"]
   STAGE.innerHTML = "Stage " + liverace.stage.stage_num + " <big>" + flags[liverace.flag_state] + "</big> flag"
