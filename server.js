@@ -157,7 +157,6 @@ function getLapNotes() {
       return liverace.race_id
     })
     .then(function (raceid) {
-      console.log(raceid)
       return fetch(
         "https://cf.nascar.com/cacher/2025/1/" + raceid + "/lap-notes.json",
       )
@@ -169,10 +168,6 @@ function getLapNotes() {
       return res.laps
     })
 }
-
-getLapNotes().then(function (notes) {
-  console.log(notes)
-})
 
 function getStages(x) {
   return fetch(
