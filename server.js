@@ -1,12 +1,12 @@
-Array.prototype.makeObj = function () {
-  var header = this.shift()
-  var json = this.map(function (row) {
-    return row.reduce(function (acc, cur, i) {
-      acc[header[i]] = cur
-      return acc
-    }, {})
+Array.prototype.makeObj = function() {
+  let header = this.shift()
+  return this.map(function(each) {
+    let obj = {}
+    for (let i = 0; i < header.length; i++) {
+      obj[header[i]] = each[i] || null
+    }
+    return obj
   })
-  return json
 }
 
 function getInfo() {
