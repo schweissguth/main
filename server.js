@@ -18,19 +18,21 @@ function getInfo() {
 }
 
 function getCurrentRace() {
-  return fetch("https://cf.nascar.com/live-ops/live-ops.json").then(
-    function (res) {
+  return fetch("https://cf.nascar.com/live-ops/live-ops.json")
+    .then(function (res) {
       return res.json()
-    }).then(function(res) {
+    })
+    .then(function (res) {
       return res.live_current_series1_race
     })
 }
 
 function getPrevRace() {
-  return fetch("https://cf.nascar.com/live-ops/live-ops.json").then(
-    function (res) {
+  return fetch("https://cf.nascar.com/live-ops/live-ops.json")
+    .then(function (res) {
       return res.json()
-    }).then(function(res) {
+    })
+    .then(function (res) {
       return res.live_drive__ng_race_id
     })
 }
@@ -150,19 +152,27 @@ function getFlag() {
 }
 
 function getLapNotes() {
-  getLiveFeed().then(function(liverace) {
-    return liverace.race_id
-  }).then(function(raceid) {
-    
-  return fetch("https://cf.nascar.com/cacher/2025/1/" + raceid + "/lap-notes.json")
+  return getLiveFeed()
+    .then(function (liverace) {
+      return liverace.race_id
+    })
+    .then(function (raceid) {
+      console.log(raceid)
+      return fetch(
+        "https://cf.nascar.com/cacher/2025/1/" + raceid + "/lap-notes.json",
+      )
+    })
     .then(function (res) {
       return res.json()
     })
     .then(function (res) {
       return res.laps
     })
-    )
 }
+
+getLapNotes().then(function (notes) {
+  console.log(notes)
+})
 
 function getStages(x) {
   return fetch(
@@ -179,6 +189,3 @@ function getPoints(x) {
     return res.json()
   })
 }
-
-
-
