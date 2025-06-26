@@ -96,6 +96,7 @@ getPickOrder().then(function (pickers) {
     let span = document.createElement("SPAN")
     span.innerText = picker.PLAYERID + " "
     span.classList.add("playername")
+    span.style.fontWeight = "bold"
     td.append(span)
     let small = document.createElement("SMALL")
     small.innerText = "(" + Math.round(picker.PICKORDER) + ")"
