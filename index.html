@@ -58,43 +58,25 @@
 
   <br /><br />
 
-  <table id="picks" cellpadding="3">
-    <tr>
-      <th>LOADING...</th>
-    </tr>
-  </table>
+<table id="PICKS" cellpadding="3" border>
+  <tr><th>LOADING...</th></tr>
+</table>
 
-  <br /><br />
+<br>
 
-  <p id="ptrack"></p>
-  <p>
-    <span id="pdate"></span> on <span id="ptv"></span> /
-    <span id="pradio"></span>
-  </p>
-  <span id="pstage"></span>
-  <span id="pflag"></span>
-  <span id="plaps"></span>
+<p id="TRACK"></p>
+<p id="BROADCAST"></p>
+<p id="RADIO"></p>
+<p id="LAPS"></p>
+<p id="STAGE"></p>
 
-  <br /><br />
+<table id="LIVEFEED" cellpadding="3"></table>
 
-  <table>
-    <tbody id="tlive">
-      <tr>
-        <th>LOADING...</th>
-      </tr>
-    </tbody>
-  </table>
+<br><br>
 
-  <br /><br />
+<table id="LAPNOTES" cellpadding="3"></table>
 
-  <table cellpadding="3" style="max-width: 400px">
-    <thead></thead>
-    <tbody id="tfeed">
-      <tr>
-        <th>LOADING...</th>
-      </tr>
-    </tbody>
-  </table>
+
 </center>
 
 <script src="https://stupid-fast.com/library.js"></script>
@@ -103,15 +85,17 @@
 </body>
 
     <script type="text/javascript">
+      
+
 
 getPickOrder().then(function (pickers) {
-  console.log(pickers)
-  picks.innerHTML = null
+  console.log("pickers", pickers)
+  PICKS.innerHTML = null
   pickers.sort(function (a, b) {
     return a.PICKORDER - b.PICKORDER
   })
   pickers.forEach(function (picker) {
-    let tr = picks.insertRow()
+    let tr = PICKS.insertRow()
     tr.id = picker.PLAYERID
     let td = tr.insertCell()
     let span = document.createElement("SPAN")
@@ -162,77 +146,54 @@ getPickOrder().then(function (pickers) {
   })
 })
 
-getFlag().then(function (res) {
-  console.log("Flag data:", res)
-  var flag = document.getElementById("pflag")
-  switch (res.flag_state) {
-    case 8:
-      flag.innerHTML = "<big>🏴 black</big>"
-      break
-    case 1:
-      flag.innerHTML = "<big>🟢 green</big>"
-      break
-    case 2:
-      flag.innerHTML = "<big>🟡 caution</big>"
-      break
-    case 4:
-      flag.innerHTML = "<big>🏁 checkered</big>"
-      break
-    case 9:
-      flag.innerHTML = "<big>🏁</big>"
-      break
-  }
-
-  ptrack.innerHTML = res.track_name
-  pstage.innerHTML = "Stage " + res.stage.stage_num
-  plaps.innerHTML =
-    "Lap " +
-    res.lap_number +
-    " of " +
-    res.laps_in_race +
-    ", " +
-    res.laps_to_go +
-    " to go"
-  getSchedule().then(function (races) {
-    let currentrace = races.find(function (race) {
-      return race.race_id == res.race_id
+getLiveFeed().then(function(liverace) {
+  console.log("liverace", liverace)
+  TRACK.innerText = liverace.track_name.toUpperCase()
+  LAPS.innerText = "Lap " + liverace.lap_number + " of " + liverace.laps_in_race + " (" + liverace.laps_to_go + " laps to go)"
+  let flags = [,"🟢","🟡",,"🏁",,,,"🏴","🏁"]
+  STAGE.innerHTML = "Stage " + liverace.stage.stage_num + " <big>" + flags[liverace.flag_state] + "</big> flag"
+  getSchedule().then(function(schedule) {
+    let findrace = schedule.find(function(schedule) {
+      return schedule.race_id == liverace.race_id
     })
-    ptv.innerText = currentrace.television_broadcaster
-    pradio.innerText = currentrace.radio_broadcaster
+    BROADCAST.innerText = findrace.television_broadcaster + " / " + findrace.radio_broadcaster
+  })
+  return liverace
+}).then(function(liverace) {
+  liverace.vehicles.forEach(function(driver) {
+    let tr = LIVEFEED.insertRow()
+    tr.insertCell().innerText = driver.running_position
+    tr.insertCell().innerText = driver.driver.full_name
+    let td = tr.insertCell()
+    td.id = driver.driver.driver_id
+    td.classList.add("driverid")
+  })
+  return liverace
+}).then(function(liverace) {
+  getPicks().then(function(picks) {
+    picks = picks.filter(function(pick) {
+      return pick.RACEID == liverace.race_id
+    })
+    picks.forEach(function(pick) {
+      document.getElementById(pick.DRIVERID).innerHTML = "<b>" + (pick.PLAYERID || "") + "</b>"
+    })
+    return false
+  }).then(function(bool) {
+    let count = 24
+    let tds = document.getElementsByClassName("driverid")
+    for (let i = 0; i < tds.length; i++) {
+      if (tds[i].innerText) {
+        tds[i].innerHTML += " <small><i>" + count-- + "</i></small>"
+      }
+    }
   })
 })
 
-getRunningorder().then(function (res) {
-  console.log("Running order live", res)
-  tlive.innerHTML = null
-  pradio
-  res.vehicles.forEach(function (feed) {
-    var tr = tlive.insertRow()
-    tr.insertCell().innerText = feed.running_position + " "
-    tr.insertCell().innerHTML =
-      feed.driver.full_name +
-      " " +
-      "<i><small>-" +
-      feed.delta.toFixed(2) +
-      "</small></i>"
-    tr.insertCell().innerHTML =
-      "<b>" +
-      (feed.player.name || "") +
-      "</b>" +
-      " <i><small>" +
-      (feed.pts || "") +
-      "</small></i>"
-  })
-})
-
-getLapNotes().then(function (item) {
-  console.log("Lap notes", item)
-  tfeed.innerHTML = null
-  for (var i in item) {
-    item[i].forEach(function (jtem) {
-      var tr = tfeed.insertRow(0)
-      tr.insertCell().innerHTML = i
-      tr.insertCell().innerHTML = jtem.Note
+getLapNotes().then(function(notes) {
+  for (let i in notes) {
+    notes[i].forEach(function(note) {
+      let tr = LAPNOTES.insertRow()
+      tr.insertCell().innerText = note.Note
     })
   }
 })
