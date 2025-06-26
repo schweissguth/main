@@ -83,7 +83,7 @@
       
 
 
-getPickOrder().then(function (pickers) {
+getPickOrder().then(function(pickers) {
   console.log("pickers", pickers)
   PICKS.innerHTML = null
   pickers.sort(function (a, b) {
@@ -103,41 +103,45 @@ getPickOrder().then(function (pickers) {
     td.append(small)
     tr.insertCell().classList.add("playerpicks")
   })
-  getPlayers().then(function (players) {
-    players.forEach(function (player) {
-      try {
-        let tr = document.getElementById(player.PLAYERID)
-        tr.getElementsByClassName("playername")[0].innerText =
-          player.PLAYERNAME + " "
-      } catch (err) {}
+  return false
+}).then(function() {
+  return getPicks().then(function(picks) {
+    return picks
+  })
+}).then(function(picks) {
+  return getCurrentRace().then(function(raceid) {
+    return picks.filter(function(pick) {
+      return pick.RACEID == raceid
     })
-    getPicks().then(function (picks) {
-      getCurrentRace().then(function (currentrace) {
-        picks = picks.filter(function (pick) {
-          return pick.RACEID == currentrace
-        })
-        getStandings().then(function (drivers) {
-          console.log("drivers", drivers)
-          drivers = drivers.map(function (driver) {
-            driver.playerid = null
-            return driver
-          })
-          picks.forEach(function (pick) {
-            drivers.find(function (driver) {
-              return driver.driver_id == pick.DRIVERID
-            }).playerid = pick.PLAYERID
-          })
-          drivers.forEach(function (driver) {
-            if (driver.playerid) {
-              let tr = document.getElementById(driver.playerid)
-              let td = tr.getElementsByClassName("playerpicks")[0]
-              let div = document.createElement("DIV")
-              div.innerText = driver.driver_name
-              td.append(div)
-            }
-          })
-        })
-      })
+  })
+}).then(function(picks) {
+  console.log("Picks", picks)
+  return getStandings().then(function(standings) {
+    return standings.map(function(standing) {
+      standing.playerid = ""
+      standing.playerid = picks.findLast(function(pick) {
+        return pick.DRIVERID == standing.driver_id
+      })?.PLAYERID
+      return standing
+    })
+  })
+}).then(function(standings) {
+  standings.forEach(function(standing) {
+    if (standing.playerid) {
+      let tr = document.getElementById(standing.playerid)
+      let td = tr.getElementsByClassName("playerpicks")[0]
+      let div = document.createElement("DIV")
+      div.innerText = standing.driver_name
+      td.append(div)
+    }
+  })
+}).then(function() {
+  getPlayers().then(function(players) {
+    players.forEach(function(player) {
+      let tr = document.getElementById(player.PLAYERID)
+      if (tr) {
+        tr.getElementsByTagName("SPAN")[0].innerText = player.PLAYERNAME + " "
+      }
     })
   })
 })
