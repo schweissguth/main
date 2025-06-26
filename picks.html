@@ -70,6 +70,9 @@
       tr.insertCell().append(select)
     })
     getPickOrder().then(function (players) {
+      players = players.sort(function(a, b) {
+        return a.PICKORDER - b.PICKORDER
+      })
       let sels = document.getElementsByTagName("SELECT")
       for (let i = 0; i < sels.length; i++) {
         players.forEach(function (player) {
