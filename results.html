@@ -41,20 +41,16 @@
 <br><br>
 
 
-<select id="selectrace" onchange="selectRace(this.value)">
+
+
+<select onchange="selectRace(this.value)" id="select">
   <option id="option">LOADING...</option>
 </select>
 
 <br><br>
 
-<table id="table" cellpadding="3">
-  <thead>
-    <tr>
-      <!--th id="th">SELECT RACE...</th-->
-    </tr>
-  </thead>
-  <tbody id="tbody"></tbody>
-</table>
+
+<table id="table"></table>
 
 </center>
   
@@ -62,60 +58,101 @@
 
 
     <script type="text/javascript">
-	    const schedule = []
+	    const schedules = []
 
-getSchedule().then(function (res) {
-  console.log(res)
-  option.text = "Select race..."
-  option.disabled = true
-  res.forEach(function (race, n) {
-    schedule.push(race)
+getSchedule().then(function(races) {
+  console.log("Races", races)
+  option.remove()
+  races.forEach(function(race) {
+    schedules.push(race)
     let opt = document.createElement("OPTION")
+    opt.text = race.track_name + " #" + race.race_id
     opt.value = race.race_id
-    opt.text = race.track_name
-    + " - " + new Date(race.date_scheduled).toUTCString().split("2025")[0] + " " 
-    + new Date(race.date_scheduled).toLocaleTimeString().replace(":00 PM", "PM")
-    + ", " + race.television_broadcaster + " & " + race.radio_broadcaster
-    + " (" + race.race_id + ")"
-    selectrace.append(opt)
+    select.add(opt)
   })
-  selectrace.value = res.find(function(race) {
+  select.value = races.find(function(race) {
     return !race.winner_driver_id
-  })?.race_id
+  }).race_id
+  selectRace(select.value)
 })
 
 function selectRace(x) {
-  tbody.innerHTML = "<tr><th>LOADING...</th></tr>"
-  let findrace = schedule.find(function (race) {
-    return race.race_id == x
+  table.insertRow().insertCell().innerText = "LOADING..."
+  let findrace = schedules.find(function(schedule) {
+    return schedule.race_id == x
   })
   if (findrace.winner_driver_id) {
-    getResults(x).then(function (res) {
-      console.log("results", res)
-      res = res.filter(function(driver) {
-        return driver.finishing_position > 0
-      })
-      tbody.innerHTML = null
-      res.forEach(function(driver) {
-        let tr = tbody.insertRow()
-        tr.insertCell().innerText = driver.finishing_position
-        tr.insertCell().innerText = driver.driver_fullname
-        let td = tr.insertCell()
-        td.innerText = driver.score.playername || ""
-        td.style.fontWeight = "bold"
-        td = tr.insertCell()
-        td.innerText = driver.score.PTS || ""
-        if (driver.score.B > 0) {
-          td.innerText += "+" + driver.score.B
-        }
-      })
-
-    })
+    listResults(findrace)
   } else {
-    console.log(findrace)
-    tbody.innerHTML = null
+    table.innerHTML = ""
+    table.insertRow().insertCell().innerText = findrace.race_name
+    table.insertRow().insertCell().innerText = new Date(findrace.date_scheduled).toUTCString().split("2025")[0] + " @ " + new Date(findrace.date_scheduled).toLocaleTimeString().replace(":00 PM", "PM")
+    table.insertRow().insertCell().innerText = "On " + findrace.television_broadcaster + " / " + findrace.radio_broadcaster
   }
 }
+
+
+function listResults(findrace) {
+    table.innerHTML = ""
+    getResults(findrace.race_id).then(function(results) {
+      console.log("Results", results)
+      results = results.filter(function(result) {
+        return result.finishing_position
+      })
+      results.forEach(function(result) {
+        let tr = table.insertRow()
+        tr.insertCell().innerText = result.finishing_position
+        tr.insertCell().innerText = result.driver_fullname
+        let span = document.createElement("SPAN")
+        span.style.fontWeight = "bold"
+        let td = tr.insertCell()
+        td.id = result.driver_id
+        td.append(span)
+        let small = document.createElement("SMALL")
+        td.append(small)
+      })
+      return findrace
+    }).then(function(findrace) {
+      return getPicks().then(function(picks) {
+        picks = picks.filter(function(pick) {
+          return pick.RACEID == findrace.race_id
+        })
+        console.log("Picks", picks)
+        picks.forEach(function(pick) {
+          let td = document.getElementById(pick.DRIVERID)
+          if (td) {
+            td.getElementsByTagName("SPAN")[0].className = pick.PLAYERID || ""
+            td.getElementsByTagName("SPAN")[0].innerText = pick.PLAYERID || ""
+          }
+        })
+        return false
+      })
+    }).then(function() {
+      getPlayers().then(function(players) {
+        players.forEach(function(player) {
+          let spans = table.getElementsByClassName(player.PLAYERID)
+          for (let i in spans) {
+            spans[i].innerText = player.PLAYERNAME
+          }
+        })
+      })
+      
+    }).then(function() {
+      let trs = table.getElementsByTagName("TR")
+      let count = 0
+      for (let i = trs.length - 1; i >= 0; i--) {
+        let span = trs[i].getElementsByTagName("SPAN")[0]
+        if (span.innerText) {
+          trs[i].getElementsByTagName("SMALL")[0].innerText = " (" + ++count + ")"
+        }
+
+      }
+    })
+}
+
+
+
+
 
 
   </script>
