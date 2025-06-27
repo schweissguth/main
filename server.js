@@ -49,7 +49,7 @@ function getPlayers() {
     })
 }
 
-function getPicks() {
+function getPicks(x) {
   return fetch(
     "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
   )
@@ -57,7 +57,13 @@ function getPicks() {
       return res.json()
     })
     .then(function (res) {
-      return res.values.makeObj()
+      if (x) {
+        return res.values.makeObj().filter(function(filter) {
+          return filter.RACEID == x
+        })
+      } else {
+        return res.values.makeObj()
+      }
     })
 }
 
