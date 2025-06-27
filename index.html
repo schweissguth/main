@@ -83,6 +83,7 @@
       
 
 getPickOrder().then(function(pickers) {
+  PICKS.innerHTML = null
   pickers.sort(function(a, b) {
     return a.PICKORDER - b.PICKORDER
   })
