@@ -46,21 +46,29 @@
 
 
     <script type="text/javascript">
+	    
 
-fetch("https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/SEASON?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI").then(function(standings) {
-	return standings.json()
-}).then(function(standings) {
-	standings = standings.values.makeObj()
-	console.log(standings)
-  standings.sort(function(a, b) {
-  	return b.SUM - a.SUM
+
+getSeason().then(function(points) {
+  console.log(points)
+  points.forEach(function(point, i) {
+    let tr = table.insertRow()
+    tr.insertCell().innerText = (i + 1) + "."
+    let td = tr.insertCell()
+    td.id = point.PLAYERID
+    td.innerText = point.PLAYERID
+    td.style.fontWeight = "bold"
+    tr.insertCell().innerText = point.SUM
+    td = tr.insertCell()
+    td.innerHTML = "<small><i>" + (parseInt(point.DELTA) || "") + "</i></small>"
   })
-  standings.forEach(function(standing, index) {
-  var tr = table.insertRow()
-    tr.insertCell().innerText = index + 1
-    tr.insertCell().innerText = standing.PLAYERNAME
-    tr.insertCell().innerText = Math.round(standing.SUM)
-    tr.insertCell().innerHTML = "<small>" + Math.round(standing.DELTA) || "" + "</small>"
+  getPlayers().then(function(players) {
+    players.forEach(function(player) {
+      let td = document.getElementById(player.PLAYERID)
+      if (td) {
+        td.innerText = player.PLAYERNAME
+      }
+    })
   })
 })
   </script>
