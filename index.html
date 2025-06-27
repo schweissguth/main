@@ -96,8 +96,7 @@ getPickOrder().then(function(pickers) {
     let small = document.createElement("SMALL")
     small.innerText = " (" + Math.round(picker.PICKORDER) + ")"
     td.append(small)
-    td = tr.insertCell()
-    td.className = "drivers"
+    tr.insertCell().className = "drivers"
   })
   getPlayers().then(function(players) {
     players.forEach(function(player) {
