@@ -74,7 +74,6 @@
 </center>
 
 
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9556e6197ee2eacc","version":"2025.6.2","r":1,"token":"95d4af946c9a4d229ea725f950960b54","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}}}' crossorigin="anonymous"></script>
 </body>
 
     <script type="text/javascript">
@@ -133,91 +132,9 @@ getPickOrder().then(function(pickers) {
 })
       
 
-getLiveFeed().then(function(liverace) {
-  console.log("liverace", liverace)
-  TRACK.innerHTML = "<u>" + liverace.track_name.toUpperCase() + "</u>"
-  LAPS.innerText = "Lap " + liverace.lap_number + " of " + liverace.laps_in_race + " (" + liverace.laps_to_go + " laps to go)"
-  let flags = [,"🟢","🟡",,"🏁",,,,"🏴","🏁"]
-  STAGE.innerHTML = "Stage " + liverace.stage.stage_num + " <big>" + flags[liverace.flag_state] + "</big> flag"
-  getSchedule().then(function(schedule) {
-    let findrace = schedule.find(function(schedule) {
-      return schedule.race_id == liverace.race_id
-    })
-    BROADCAST.innerText = findrace.television_broadcaster + " / " + findrace.radio_broadcaster
-  })
-  return liverace
-}).then(function(liverace) {
-  liverace.vehicles.forEach(function(driver) {
-    let tr = LIVEFEED.insertRow()
-    tr.insertCell().innerText = driver.running_position
-    tr.insertCell().innerText = driver.driver.full_name
-    let td = tr.insertCell()
-    td.id = driver.driver.driver_id
-    td.classList.add("driverid")
-  })
-  return liverace
-}).then(function(liverace) {
-  getPicks().then(function(picks) {
-    picks = picks.filter(function(pick) {
-      return pick.RACEID == liverace.race_id
-    })
-    picks.forEach(function(pick) {
-      document.getElementById(pick.DRIVERID).innerHTML = "<b>" + (pick.PLAYERID || "") + "</b>"
-    })
-    return false
-  }).then(function(bool) {
-    let count = 24
-    let tds = document.getElementsByClassName("driverid")
-    for (let i = 0; i < tds.length; i++) {
-      if (tds[i].innerText) {
-        tds[i].innerHTML += " <small><i>" + count-- + "</i></small>"
-      }
-    }
-  })
-})
-
-getLapNotes().then(function(notes) {
-  for (let i in notes) {
-    notes[i].forEach(function(note) {
-      let tr = LAPNOTES.insertRow()
-      tr.insertCell().innerText = note.Note
-    })
-  }
-})
-
 
   </script>
 
-  <script>
-    // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent){
-      window.parent.parent.postMessage(["resultsFrame", {
-        height: document.body.getBoundingClientRect().height,
-        slug: "j60wox73"
-      }], "*")
-    }
 
-    // always overwrite window.name, in case users try to set it manually
-    window.name = "result"
-  </script>
 
-  <script>
-    const allLines = []
-    const cssElement = document.querySelector("#compiled-css")
-
-    window.addEventListener("message", (message) => {
-
-      if (message.data.css){
-        cssElement.textContent = message.data.css.payload
-      }
-
-      if (message.data.html){
-        document.body.innerHTML = message.data.html.payload
-      }
-    })
-
-    if (window.parent){
-      window.parent.postMessage({loaded: true}, "*")
-    }
-  </script>
 </html>
