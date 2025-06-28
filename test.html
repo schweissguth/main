@@ -78,7 +78,6 @@
 
     <script type="text/javascript">
       
-
 getPickOrder().then(function(pickers) {
   PICKS.innerHTML = null
   pickers.sort(function(a, b) {
@@ -106,9 +105,9 @@ getPickOrder().then(function(pickers) {
     })
   })
   getCurrentRace().then(function(currentrace) {
-    getPicks(currentrace).then(function(picks) {
+    return getPicks(currentrace).then(function(picks) {
       console.log("Picks", picks)
-      getStandings().then(function(standings) {
+      return getStandings().then(function(standings) {
         standings = standings.map(function(standing) {
           standing.playerid = picks.findLast(function(pick) {
             return pick.DRIVERID == standing.driver_id
@@ -130,7 +129,6 @@ getPickOrder().then(function(pickers) {
     })
   })
 })
-      
 
 
   </script>
