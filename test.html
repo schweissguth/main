@@ -78,12 +78,12 @@
 
     <script type="text/javascript">
       
-getPickOrder().then(function(pickers) {
+getPickOrder().then(async function (pickers) {
   PICKS.innerHTML = null
-  pickers.sort(function(a, b) {
+  pickers.sort(function (a, b) {
     return a.PICKORDER - b.PICKORDER
   })
-  pickers.forEach(function(picker) {
+  pickers.forEach(function (picker) {
     let tr = PICKS.insertRow()
     tr.id = picker.PLAYERID
     let td = tr.insertCell()
@@ -96,39 +96,43 @@ getPickOrder().then(function(pickers) {
     td.append(small)
     tr.insertCell().className = "drivers"
   })
-  getPlayers().then(function(players) {
-    players.forEach(function(player) {
-      let tr = document.getElementById(player.PLAYERID)
-      if (tr) {
-        tr.getElementsByTagName("SPAN")[0].innerText = player.PLAYERNAME
-      }
-    })
+  let players = await getPlayers().then(function (players) {
+    return players
   })
-  getCurrentRace().then(function(currentrace) {
-    return getPicks(currentrace).then(function(picks) {
-      console.log("Picks", picks)
-      return getStandings().then(function(standings) {
-        standings = standings.map(function(standing) {
-          standing.playerid = picks.findLast(function(pick) {
-            return pick.DRIVERID == standing.driver_id
-          })?.PLAYERID || ""
-          return standing
-        })
-        console.log("Standings", standings)
-        standings.forEach(function(standing) {
-          if (standing.playerid) {
-            let tr = document.getElementById(standing.playerid)
-            let td = tr.getElementsByClassName("drivers")[0]
-            let div = document.createElement("DIV")
-            div.innerText = standing.driver_name
-            td.append(div)
-          }
-        })
-      })
-
-    })
+  players.forEach(function (player) {
+    let tr = document.getElementById(player.PLAYERID)
+    if (tr) {
+      tr.getElementsByTagName("SPAN")[0].innerText = player.PLAYERNAME
+    }
+  })
+  let currentrace = await getCurrentRace().then(function (currentrace) {
+    return currentrace
+  })
+  let picks = await getPicks(currentrace).then(function (picks) {
+    return picks
+  })
+  let standings = await getStandings().then(function (standings) {
+    return standings
+  })
+  standings = standings.map(function (standing) {
+    standing.playerid =
+      picks.findLast(function (pick) {
+        return pick.DRIVERID == standing.driver_id
+      })?.PLAYERID || ""
+    return standing
+  })
+  console.log("Standings", standings)
+  standings.forEach(function (standing) {
+    if (standing.playerid) {
+      let tr = document.getElementById(standing.playerid)
+      let td = tr.getElementsByClassName("drivers")[0]
+      let div = document.createElement("DIV")
+      div.innerText = standing.driver_name
+      td.append(div)
+    }
   })
 })
+
 
 
   </script>
