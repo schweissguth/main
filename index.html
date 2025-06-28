@@ -120,7 +120,7 @@ getPickOrder().then(function(pickers) {
         standings.forEach(function(standing) {
           if (standing.playerid) {
             let tr = document.getElementById(standing.playerid)
-            let td = tr.getElementsByClassName("drivers")[0]
+            let td = tr.querySelector(".drivers")
             let div = document.createElement("DIV")
             div.innerText = standing.driver_name
             td.append(div)
