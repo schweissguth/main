@@ -78,7 +78,8 @@
 
     <script type="text/javascript">
       
-getPickOrder().then(function(pickers) {
+  getPickOrder().then(function(pickers) {
+    console.log("Pickers", pickers)
   PICKS.innerHTML = null
   pickers.sort(function(a, b) {
     return a.PICKORDER - b.PICKORDER
@@ -94,7 +95,7 @@ getPickOrder().then(function(pickers) {
     let small = document.createElement("SMALL")
     small.innerText = " (" + Math.round(picker.PICKORDER) + ")"
     td.append(small)
-    tr.insertCell().className = "drivers"
+    tr.insertCell().setAttribute("class", "drivers")
   })
   getPlayers().then(function(players) {
     players.forEach(function(player) {
@@ -116,13 +117,13 @@ getPickOrder().then(function(pickers) {
         })
         console.log("Standings", standings)
         standings.forEach(function(standing) {
-
         })
       })
 
     })
   })
 })
+
 
   </script>
 
