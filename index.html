@@ -79,13 +79,12 @@
      <script type="text/javascript">
       
 
-document.addEventListener("DOMContentLoaded", function() {
-  getPickOrder().then(function(pickers) {
+getPickOrder().then(function (pickers) {
   PICKS.innerHTML = null
-  pickers.sort(function(a, b) {
+  pickers.sort(function (a, b) {
     return a.PICKORDER - b.PICKORDER
   })
-  pickers.forEach(function(picker) {
+  pickers.forEach(function (picker) {
     let tr = PICKS.insertRow()
     tr.id = picker.PLAYERID
     let td = tr.insertCell()
@@ -98,26 +97,27 @@ document.addEventListener("DOMContentLoaded", function() {
     td.append(small)
     tr.insertCell().setAttribute("class", "drivers")
   })
-  getPlayers().then(function(players) {
-    players.forEach(function(player) {
+  getPlayers().then(function (players) {
+    players.forEach(function (player) {
       let tr = document.getElementById(player.PLAYERID)
       if (tr) {
         tr.getElementsByTagName("SPAN")[0].innerText = player.PLAYERNAME
       }
     })
   })
-  getCurrentRace().then(function(currentrace) {
-    getPicks(currentrace).then(function(picks) {
+  getInfo("CURRENTRACE").then(function (currentrace) {
+    getPicks(currentrace).then(function (picks) {
       console.log("Picks", picks)
-      getStandings().then(function(standings) {
-        standings = standings.map(function(standing) {
-          standing.playerid = picks.findLast(function(pick) {
-            return pick.DRIVERID == standing.driver_id
-          })?.PLAYERID || ""
+      getStandings().then(function (standings) {
+        standings = standings.map(function (standing) {
+          standing.playerid =
+            picks.findLast(function (pick) {
+              return pick.DRIVERID == standing.driver_id
+            })?.PLAYERID || ""
           return standing
         })
         console.log("Standings", standings)
-        standings.forEach(function(standing) {
+        standings.forEach(function (standing) {
           if (standing.playerid) {
             let tr = document.getElementById(standing.playerid)
             let td = tr.querySelector(".drivers")
@@ -127,10 +127,8 @@ document.addEventListener("DOMContentLoaded", function() {
           }
         })
       })
-
     })
   })
-})
 })
 
       
