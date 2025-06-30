@@ -123,7 +123,11 @@ function getInfo() {
       return res.json()
     })
     .then(function (res) {
-      return res.values.makeObj()
+      let obj = {}
+      res.forEach(function(item) {
+        obj[item[0]] = item[1]
+      })
+      return obj
     })
 }
 
