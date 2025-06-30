@@ -1,7 +1,184 @@
+
+<!DOCTYPE html>
 <html>
   <head>
-  <script type="text/javascript">
-    location.replace("https://jsfiddle.net/schweissguth/on74vqk8/show");
-  </script>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>ToDo</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
+
+
+
+    <style id="compiled-css" type="text/css">
+      
+td {
+  vertical-align: top;
+}
+
+b, code {
+  display: block;
+}
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
   </head>
+  <body>
+    
+
+<center>
+
+<h1>Todo</h1>
+
+<input type="text" id="inputnew">
+<br><br>
+<button onclick="addNew(inputnew.value)">Add new</button>
+
+<br><br>
+
+<table id="table" cellpadding="9"></table>
+
+<iframe frameborder="0"></iframe>
+
+</center>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9580ad7088656201","version":"2025.6.2","r":1,"token":"95d4af946c9a4d229ea725f950960b54","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}}}' crossorigin="anonymous"></script>
+</body>
+
+    <script type="text/javascript">
+
+let items = []
+
+function addNew(value) {
+  fetch(
+    "https://script.google.com/macros/s/AKfycbwse9SfQZPij0Idf8QvlaN_vIzaCd_hHZwvtSGbMOAdld5MhZJfkUAUFivhvYEyEvaK/exec?V2",
+    {
+      method: "post",
+      body: JSON.stringify([Date.now(), value, 11]),
+    },
+  ).then(function (res) {
+    inputnew.value = null
+    init()
+  })
+}
+
+function init() {
+  fetch(
+    "https://script.google.com/macros/s/AKfycbwse9SfQZPij0Idf8QvlaN_vIzaCd_hHZwvtSGbMOAdld5MhZJfkUAUFivhvYEyEvaK/exec?V2",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      items = res
+      items.shift()
+      makeTable()
+    })
+}
+
+init()
+
+
+function makeTable() {
+  table.innerHTML = null
+      let filter = items.filter(function (item, index) {
+        return (
+          items.findLastIndex(function (fi) {
+            return fi[0] == item[0]
+          }) == index
+        )
+      })
+      filter.sort(function (a, b) {
+        return a[2] - b[2]
+      })
+      filter.forEach(function (item) {
+        let tr = table.insertRow()
+        tr.insertCell().innerText = item[1]
+        let sel = document.createElement("SELECT")
+        for (let i = 1; i < 11; i++) {
+          let opt = document.createElement("OPTION")
+          opt.text = i
+          sel.add(opt)
+        }
+        let opt11 = document.createElement("OPTION")
+        opt11.value = 11
+        opt11.text = ""
+        sel.add(opt11)
+        let optdel = document.createElement("OPTION")
+        optdel.value = 100
+        optdel.text = "delete"
+        sel.add(optdel)
+        sel.onchange = function () {
+          post(item[0], item[1], this.value)
+        }
+        sel.value = item[2]
+        tr.insertCell().append(sel)
+      })
+}
+
+function post(id, name, priority) {
+  fetch(
+    "https://script.google.com/macros/s/AKfycbwse9SfQZPij0Idf8QvlaN_vIzaCd_hHZwvtSGbMOAdld5MhZJfkUAUFivhvYEyEvaK/exec?V2",
+    {
+      method: "post",
+      body: JSON.stringify([id, name, priority]),
+    },
+  ).then(function (res) {
+  })
+  items.push([id, name, priority])
+  makeTable()
+}
+
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "b2wc9aer"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
 </html>
