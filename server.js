@@ -115,7 +115,7 @@ function getScores() {
     })
 }
 
-function getInfo() {
+function getInfo(x) {
   return fetch(
     "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/INFO?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
   )
@@ -127,7 +127,11 @@ function getInfo() {
       res.values.forEach(function(item) {
         obj[item[0]] = item[1]
       })
-      return obj
+      if (x) {
+        return obj[x]
+      } else {
+        return obj
+      }
     })
 }
 
