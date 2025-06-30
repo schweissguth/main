@@ -17,6 +17,33 @@ function getOps() {
   )
 }
 
+function nextRace(x) {
+  return fetch(
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      res = res.values.makeObj().pop()
+      return res.RACEID
+    })
+}
+
+
+function prevRace(x) {
+  return fetch(
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/SCORING?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      res = res.values.makeObj().pop()
+      return res.RACEID
+    })
+}
+
 function getCurrentRace() {
   return fetch("https://cf.nascar.com/live-ops/live-ops.json")
     .then(function (res) {
