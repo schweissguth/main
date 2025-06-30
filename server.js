@@ -124,7 +124,7 @@ function getInfo() {
     })
     .then(function (res) {
       let obj = {}
-      res.forEach(function(item) {
+      res.values.forEach(function(item) {
         obj[item[0]] = item[1]
       })
       return obj
