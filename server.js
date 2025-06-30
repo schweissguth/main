@@ -44,26 +44,6 @@ function prevRace(x) {
     })
 }
 
-function getCurrentRace() {
-  return fetch("https://cf.nascar.com/live-ops/live-ops.json")
-    .then(function (res) {
-      return res.json()
-    })
-    .then(function (res) {
-      return res.live_current_series1_race
-    })
-}
-
-function getPrevRace() {
-  return fetch("https://cf.nascar.com/live-ops/live-ops.json")
-    .then(function (res) {
-      return res.json()
-    })
-    .then(function (res) {
-      return res.live_drive__ng_race_id
-    })
-}
-
 function getPlayers() {
   return fetch(
     "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PLAYERS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
@@ -142,26 +122,6 @@ function getScores() {
     })
 }
 
-function getInfo(x) {
-  return fetch(
-    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/INFO?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
-  )
-    .then(function (res) {
-      return res.json()
-    })
-    .then(function (res) {
-      let obj = {}
-      res.values.forEach(function(item) {
-        obj[item[0]] = item[1]
-      })
-      if (x) {
-        return obj[x]
-      } else {
-        return obj
-      }
-    })
-}
-
 function getSchedule() {
   return fetch("https://cf.nascar.com/cacher/2025/1/race_list_basic.json").then(
     function (res) {
@@ -237,3 +197,35 @@ function getPoints(x) {
     return res.json()
   })
 }
+
+
+
+/*
+https://cf.nascar.com/cacher/drivers.json
+https://cf.nascar.com/cacher/live/live-feed.json
+https://cf.nascar.com/cacher/live/series_1/RACEID/live-pit-data.json
+https://cf.nascar.com/cacher/tracks.json
+https://cf.nascar.com/cacher/YYYY/1/points-feed.json
+https://cf.nascar.com/cacher/YYYY/1/RACEID/driver-recap.json
+https://cf.nascar.com/cacher/YYYY/1/RACEID/lap-averages.json
+https://cf.nascar.com/cacher/YYYY/1/RACEID/lap-notes.json
+https://cf.nascar.com/cacher/YYYY/1/RACEID/lap-times.json
+https://cf.nascar.com/cacher/YYYY/1/RACEID/live-stage-points.json
+https://cf.nascar.com/cacher/YYYY/1/RACEID/snappytv.json
+https://cf.nascar.com/cacher/YYYY/1/RACEID/weekend-feed.json
+https://cf.nascar.com/cacher/YYYY/1/schedule-feed.json
+https://cf.nascar.com/cacher/YYYY/race_list_basic.json
+https://cf.nascar.com/data/cacher/production/RACEID/1/RACEID/raceResults.json
+https://cf.nascar.com/live-ops/live-ops.json
+https://cf.nascar.com/live/feeds/live-flag-data.json
+https://cf.nascar.com/live/feeds/series_1/RACEID/live_feed.json
+https://cf.nascar.com/live/feeds/series_1/RACEID/live_points.json
+https://cf.nascar.com/loopstats/prod/YYYY/1/RACEID.json
+https://www.nascar.com/wp-json/
+https://www.nascar.com/wp-json/wp/v2/categories/14278
+https://www.nascar.com/wp-json/wp/v2/race_schedule/389629
+https://www.nascar.com/wp-json/wp/v2/weekend_schedule
+https://cf.nascar.com/data/images/carbadges/1/01.png
+https://cf.nascar.com/cacher/2025/1/final/1-owners-points.json
+https://cf.nascar.com/cacher/staging/live/live-feed.json
+*/
