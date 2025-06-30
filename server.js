@@ -9,7 +9,7 @@ Array.prototype.makeObj = function() {
   })
 }
 
-function getInfo() {
+function getOps() {
   return fetch("https://cf.nascar.com/live-ops/live-ops.json").then(
     function (res) {
       return res.json()
@@ -106,6 +106,18 @@ function getChase() {
 function getScores() {
   return fetch(
     "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/SCORING?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      return res.values.makeObj()
+    })
+}
+
+function getInfo() {
+  return fetch(
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/INFO?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
   )
     .then(function (res) {
       return res.json()
