@@ -103,7 +103,7 @@ getPickOrder().then(function (pickers) {
       }
     })
   })
-  getInfo("CURRENTRACE").then(function (currentrace) {
+  nextRace().then(function (currentrace) {
     getPicks(currentrace).then(function (picks) {
       console.log("Picks", picks)
       getStandings().then(function (standings) {
@@ -155,7 +155,7 @@ function feed() {
       BROADCAST.innerText =
         findrace.television_broadcaster + " / " + findrace.radio_broadcaster
     })
-    
+
     LIVEFEED.innerHTML = null
     liverace.vehicles.forEach(function (driver) {
       let tr = LIVEFEED.insertRow()
@@ -216,7 +216,6 @@ feed()
 setInterval(function () {
   feed()
 }, 30000)
-
 
 
 
