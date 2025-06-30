@@ -132,47 +132,74 @@ getPickOrder().then(function (pickers) {
 })
 
       
-
-getLiveFeed().then(function(liverace) {
+setInterval(function() {
+  getLiveFeed().then(function (liverace) {
   console.log("liverace", liverace)
   TRACK.innerHTML = "<u>" + liverace.track_name.toUpperCase() + "</u>"
-  LAPS.innerText = "Lap " + liverace.lap_number + " of " + liverace.laps_in_race + " (" + liverace.laps_to_go + " laps to go)"
-  let flags = [,"🟢","🟡",,"🏁",,,,"🏴","🏁"]
-  STAGE.innerHTML = "Stage " + liverace.stage.stage_num + " <big>" + flags[liverace.flag_state] + "</big> flag"
-  getSchedule().then(function(schedule) {
-    let findrace = schedule.find(function(schedule) {
+  LAPS.innerText =
+    "Lap " +
+    liverace.lap_number +
+    " of " +
+    liverace.laps_in_race +
+    " (" +
+    liverace.laps_to_go +
+    " laps to go)"
+  let flags = [, "🟢", "🟡", , "🏁", , , , "🏴", "🏁"]
+  STAGE.innerHTML =
+    "Stage " +
+    liverace.stage.stage_num +
+    " <big>" +
+    flags[liverace.flag_state] +
+    "</big> flag"
+  getSchedule().then(function (schedule) {
+    let findrace = schedule.find(function (schedule) {
       return schedule.race_id == liverace.race_id
     })
-    BROADCAST.innerText = findrace.television_broadcaster + " / " + findrace.radio_broadcaster
+    BROADCAST.innerText =
+      findrace.television_broadcaster + " / " + findrace.radio_broadcaster
   })
-  return liverace
-}).then(function(liverace) {
-  liverace.vehicles.forEach(function(driver) {
+
+  liverace.vehicles.forEach(function (driver) {
+    LIVEFEED.innerHTML = null
     let tr = LIVEFEED.insertRow()
     tr.insertCell().innerText = driver.running_position
-    tr.insertCell().innerText = driver.driver.full_name
     let td = tr.insertCell()
+    if (driver.delta) {
+      driver.delta = driver.delta.toFixed(2) * -1
+    }
+    td.innerHTML =
+      driver.driver.full_name +
+      " <small><i>" +
+      (driver.delta || "") +
+      "</i></small>"
+    td = tr.insertCell()
     td.id = driver.driver.driver_id
     td.classList.add("driverid")
   })
-  return liverace
-}).then(function(liverace) {
-  getPicks().then(function(picks) {
-    picks = picks.filter(function(pick) {
+  getPicks().then(function (picks) {
+    picks = picks.filter(function (pick) {
       return pick.RACEID == liverace.race_id
     })
-    picks.forEach(function(pick) {
-      document.getElementById(pick.DRIVERID).innerHTML = "<b>" + (pick.PLAYERID || "") + "</b>"
-    })
-    return false
-  }).then(function(bool) {
-    let count = 24
-    let tds = document.getElementsByClassName("driverid")
-    for (let i = 0; i < tds.length; i++) {
-      if (tds[i].innerText) {
-        tds[i].innerHTML += " <small><i>" + count-- + "</i></small>"
+    getPlayers().then(function (players) {
+      picks = picks.map(function (pick) {
+        pick.playername =
+          players.find(function (player) {
+            return player.PLAYERID == pick.PLAYERID
+          })?.PLAYERNAME || ""
+        return pick
+      })
+      picks.forEach(function (pick) {
+        document.getElementById(pick.DRIVERID).innerHTML =
+          "<b>" + (pick.playername || "") + "</b>"
+      })
+      let count = 24
+      let tds = document.getElementsByClassName("driverid")
+      for (let i = 0; i < tds.length; i++) {
+        if (tds[i].innerText) {
+          tds[i].innerHTML += " <small><i>" + count-- + "</i></small>"
+        }
       }
-    }
+    })
   })
 })
 
@@ -184,6 +211,9 @@ getLapNotes().then(function(notes) {
     })
   }
 })
+  
+}, 30000);
+
 
 
   </script>
