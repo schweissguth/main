@@ -74,11 +74,9 @@
 </center>
 
 
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9556e6197ee2eacc","version":"2025.6.2","r":1,"token":"95d4af946c9a4d229ea725f950960b54","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}}}' crossorigin="anonymous"></script>
 
      <script type="text/javascript">
       
-
 getPickOrder().then(function (pickers) {
   PICKS.innerHTML = null
   pickers.sort(function (a, b) {
@@ -131,88 +129,95 @@ getPickOrder().then(function (pickers) {
   })
 })
 
-      
-setInterval(function() {
+function feed() {
   getLiveFeed().then(function (liverace) {
-  console.log("liverace", liverace)
-  TRACK.innerHTML = "<u>" + liverace.track_name.toUpperCase() + "</u>"
-  LAPS.innerText =
-    "Lap " +
-    liverace.lap_number +
-    " of " +
-    liverace.laps_in_race +
-    " (" +
-    liverace.laps_to_go +
-    " laps to go)"
-  let flags = [, "🟢", "🟡", , "🏁", , , , "🏴", "🏁"]
-  STAGE.innerHTML =
-    "Stage " +
-    liverace.stage.stage_num +
-    " <big>" +
-    flags[liverace.flag_state] +
-    "</big> flag"
-  getSchedule().then(function (schedule) {
-    let findrace = schedule.find(function (schedule) {
-      return schedule.race_id == liverace.race_id
+    console.log("liverace", liverace)
+    TRACK.innerHTML = "<u>" + liverace.track_name.toUpperCase() + "</u>"
+    LAPS.innerText =
+      "Lap " +
+      liverace.lap_number +
+      " of " +
+      liverace.laps_in_race +
+      " (" +
+      liverace.laps_to_go +
+      " laps to go)"
+    let flags = [, "🟢", "🟡", , "🏁", , , , "🏴", "🏁"]
+    STAGE.innerHTML =
+      "Stage " +
+      liverace.stage.stage_num +
+      " <big>" +
+      flags[liverace.flag_state] +
+      "</big> flag"
+    getSchedule().then(function (schedule) {
+      let findrace = schedule.find(function (schedule) {
+        return schedule.race_id == liverace.race_id
+      })
+      BROADCAST.innerText =
+        findrace.television_broadcaster + " / " + findrace.radio_broadcaster
     })
-    BROADCAST.innerText =
-      findrace.television_broadcaster + " / " + findrace.radio_broadcaster
-  })
-
-  liverace.vehicles.forEach(function (driver) {
+    
     LIVEFEED.innerHTML = null
-    let tr = LIVEFEED.insertRow()
-    tr.insertCell().innerText = driver.running_position
-    let td = tr.insertCell()
-    if (driver.delta) {
-      driver.delta = driver.delta.toFixed(2) * -1
-    }
-    td.innerHTML =
-      driver.driver.full_name +
-      " <small><i>" +
-      (driver.delta || "") +
-      "</i></small>"
-    td = tr.insertCell()
-    td.id = driver.driver.driver_id
-    td.classList.add("driverid")
-  })
-  getPicks().then(function (picks) {
-    picks = picks.filter(function (pick) {
-      return pick.RACEID == liverace.race_id
-    })
-    getPlayers().then(function (players) {
-      picks = picks.map(function (pick) {
-        pick.playername =
-          players.find(function (player) {
-            return player.PLAYERID == pick.PLAYERID
-          })?.PLAYERNAME || ""
-        return pick
-      })
-      picks.forEach(function (pick) {
-        document.getElementById(pick.DRIVERID).innerHTML =
-          "<b>" + (pick.playername || "") + "</b>"
-      })
-      let count = 24
-      let tds = document.getElementsByClassName("driverid")
-      for (let i = 0; i < tds.length; i++) {
-        if (tds[i].innerText) {
-          tds[i].innerHTML += " <small><i>" + count-- + "</i></small>"
-        }
+    liverace.vehicles.forEach(function (driver) {
+      let tr = LIVEFEED.insertRow()
+      tr.insertCell().innerText = driver.running_position
+      let td = tr.insertCell()
+      if (driver.delta) {
+        driver.delta = Math.abs(driver.delta.toFixed(2)) * -1
       }
+      td.innerHTML =
+        driver.driver.full_name +
+        " <small><i>" +
+        (driver.delta || "") +
+        "</i></small>"
+      td = tr.insertCell()
+      td.id = driver.driver.driver_id
+      td.classList.add("driverid")
+    })
+    getPicks().then(function (picks) {
+      picks = picks.filter(function (pick) {
+        return pick.RACEID == liverace.race_id
+      })
+      getPlayers().then(function (players) {
+        picks = picks.map(function (pick) {
+          pick.playername =
+            players.find(function (player) {
+              return player.PLAYERID == pick.PLAYERID
+            })?.PLAYERNAME || ""
+          return pick
+        })
+        picks.forEach(function (pick) {
+          document.getElementById(pick.DRIVERID).innerHTML =
+            "<b>" + (pick.playername || "") + "</b>"
+        })
+        let count = 24
+        let tds = document.getElementsByClassName("driverid")
+        for (let i = 0; i < tds.length; i++) {
+          if (tds[i].innerText) {
+            tds[i].innerHTML += " <small><i>" + count-- + "</i></small>"
+          }
+        }
+      })
     })
   })
-})
 
-getLapNotes().then(function(notes) {
-  for (let i in notes) {
-    notes[i].forEach(function(note) {
+  getLapNotes().then(function (notes) {
+    console.log("Notes", notes)
+    LAPNOTES.innerHTML = null
+    notes = Object.entries(notes)
+    notes.reverse().forEach(function (note) {
       let tr = LAPNOTES.insertRow()
-      tr.insertCell().innerText = note.Note
+      tr.insertCell().innerText = note[0]
+      tr.insertCell().innerText = note[1][0].Note
     })
-  }
-})
-  
-}, 30000);
+  })
+}
+feed()
+
+setInterval(function () {
+  feed()
+}, 30000)
+
+
 
 
 
@@ -223,36 +228,5 @@ getLapNotes().then(function(notes) {
 
    
 
-  <script>
-    // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent){
-      window.parent.parent.postMessage(["resultsFrame", {
-        height: document.body.getBoundingClientRect().height,
-        slug: "j60wox73"
-      }], "*")
-    }
 
-    // always overwrite window.name, in case users try to set it manually
-    window.name = "result"
-  </script>
-
-  <script>
-    const allLines = []
-    const cssElement = document.querySelector("#compiled-css")
-
-    window.addEventListener("message", (message) => {
-
-      if (message.data.css){
-        cssElement.textContent = message.data.css.payload
-      }
-
-      if (message.data.html){
-        document.body.innerHTML = message.data.html.payload
-      }
-    })
-
-    if (window.parent){
-      window.parent.postMessage({loaded: true}, "*")
-    }
-  </script>
 </html>
