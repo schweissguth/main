@@ -1,281 +1,118 @@
 
 <!DOCTYPE html>
 <html>
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Calc - StupidFast</title>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="googlebot" content="noindex, nofollow">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>dele t this noe</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <script
-    type="text/javascript"
-    src="/js/lib/dummy.js"
-    
-  ></script>
 
-    <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
+
+        <script type="text/javascript" src="https://stupid-fast.com/server.js"></script>
 
 
-  <style id="compiled-css" type="text/css">
-    
+    <style id="compiled-css" type="text/css">
+      
 
-    /* EOS */
-  </style>
+      /* EOS */
+    </style>
 
-  <script id="insert"></script>
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
 
-</head>
-<body>
-    
-<form action="https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec" target="iframe">
+    <script id="insert"></script>
+
+  </head>
+  <body>
+    <center>
+<h1>Stupid-Fast Scoring</h1>
+<table id="table" border="1" cellpadding="3"></table>
 
 <br><br>
 
-<input type="hidden" name="page" value="nextrace">
-
-<br><br>
-
-<select name="raceid" id="selectrace"></select>
-Next race: <input type="submit">
-
-<br><br>
-
+<form action="https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec" method="get" target="iframe">
+<textarea name="ta" style="width: 290px; height: 400px"></textarea>
+<br>
+<input type="submit">
+<br>
+<iframe frameborder="0" name="iframe"></iframe>
 </form>
-
-<button onclick="getResults()">Get results</button>
-
-<br><br>
-
-<button onclick="getPicks()">Get picks</button>
-
-<br><br>
-
-<button onclick="assignPts()">Assign pts</button>
-
-<br><br>
-
-<button onclick="getStages()">Get stages</button>
-
-<br><br>
-
-<button onclick="sumTotal()">Sum total</button>
-
-<br><br>
-
-<button onclick="pasteResults()" style="background-color: green">Paste results</button>
-
-<br><br>
-
-<table border cellpadding="2">
-  <tbody id="tbody"></tbody>
-</table>
-
-<br><br>
-
-<form action="https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?page=calc" target="iframe" id="form">
-<br><br>
-<input type="hidden" name="page" value="calc">
-<br><br>
-  <textarea name="value" id="ta" cols="45" rows="24"></textarea>
-  <br><br>
-  <input type="submit">
-  <br><br>
-  <iframe name="iframe" frameborder="0" width="100%" height="500"></iframe>
-  <br><br>
-</form>
-
-
-
-
-<br><br>
-
-
+</center>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"957baa6a1cde8637","version":"2025.6.2","r":1,"token":"95d4af946c9a4d229ea725f950960b54","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}}}' crossorigin="anonymous"></script>
+</body>
 
     <script type="text/javascript">
 
-var SCHEDULE = []
-var RESULTS = []
-var PICKS = []
-var STAGES = []
+const points = []
 
-
-
-
-fetch("https://cf.nascar.com/cacher/2025/race_list_basic.json").then(function(res) {
-  return res.json()
-}).then(function(res) {
-  SCHEDULE = res.series_1
-  SCHEDULE.shift()
-  SCHEDULE.shift()
-  console.log(SCHEDULE)
-  makeSelect()
-});
-
-
-
-function makeSelect() {
-SCHEDULE.forEach(function(item) {
-	var opt = document.createElement("OPTION")
-  opt.text = item.track_name
-  opt.value = item.race_id
-  selectrace.add(opt)
+getLiveFeed().then(function (race) {
+  console.log("Live feed", race)
+  getPicks(race.race_id).then(function (picks) {
+    race.vehicles = race.vehicles.map(function (driver) {
+      driver.playerid = picks.findLast(function (pick) {
+        return pick.DRIVERID == driver.driver.driver_id
+      })?.PLAYERID
+      return driver
+    })
+    let count = 0
+    race.vehicles = race.vehicles.reverse().map(function (driver) {
+      driver.score = 0
+      driver.bonus = 0
+      if (driver.playerid) {
+        driver.score = ++count
+      }
+      return driver
+    })
+    race.vehicles.reverse()
+    race.vehicles[0].bonus++
+    race.vehicles[0].bonus++
+    getStages(race.race_id).then(function (stages) {
+      console.log("Stages", stages)
+      stages.forEach(function (stage) {
+        let driverid = stage.results[0].driver_id
+        race.vehicles.find(function (driver) {
+          return driver.driver.driver_id == driverid
+        }).bonus++
+      })
+      race.vehicles.forEach(function (driver) {
+        let tr = table.insertRow()
+        tr.insertCell().innerText = driver.running_position
+        tr.insertCell().innerText = driver.driver.full_name
+        tr.insertCell().innerText = driver.driver.driver_id
+        tr.insertCell().innerText = driver.playerid || ""
+        tr.insertCell().innerText = driver.score || null
+        tr.insertCell().innerText = driver.bonus || null
+        tr.insertCell().innerText = race.race_id
+      })
+      race.vehicles.forEach(function (driver) {
+        if (driver.playerid) {
+          points.push([
+            race.race_id,
+            driver.playerid,
+            driver.driver.driver_id,
+            driver.running_position,
+            driver.score,
+            driver.bonus || null,
+          ])
+        }
+      })
+      document.getElementsByName("ta")[0].value = JSON.stringify(points)
+    })
+  })
 })
-}
 
-
-function getResults() {
-fetch("https://cf.nascar.com/cacher/2024/1/" + selectrace.value + "/weekend-feed.json").then(function(res) {
-  return res.json()
-}).then(function(res) {
-  RESULTS = res.weekend_race[0].results.filter(item => item.finishing_position > 0)
-  STAGES = res.weekend_race[0].stage_results
-  console.log(RESULTS)
-  console.log("stages", STAGES)
-  makeTable()
-});
-
-}
-
-
-function getPicks() {
-console.log(selectrace.value)
-	fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=PICKS&tqx=out:csv&tq=SELECT A, B, C, D, E where B = " + selectrace.value + "order by A DESC").then(function(res) {
-  	return res.text()
-  }).then(function(res) {
-  console.log("PICKS raw", res)
-  	//res = res.split("setResponse(")[1]
-  	//res = res.split(");")[0]
-    //PICKS = JSON.parse(res)
-    PICKS = res.split("\n")
-    
-    PICKS.forEach(function(item, i) {
-    	var str = item.replace(/"/g, "")
-    	str = str.split(",")
-      PICKS[i] = str
-      
-      
-    })
-    
-  	console.log("PICKS", PICKS)
-    mapPicks()
-    
-  })
-}
-
-function mapPicks() {
-	RESULTS.map(function(item) {
-  	var find = PICKS.find(jtem => jtem[2] == item.driver_id) || ["","","","",""]
-    item.PLAYERID = find[3]
-    item.PLAYER = find[4]
-  })
-  console.log(RESULTS)
-  makeTable()
-}
-
-function assignPts() {
-	RESULTS.reverse()
-  var counter = 1
-	RESULTS.map(function(item) {
-  	if (item.PLAYERID) {
-    	item.PTS = counter++
-    } else {
-    item.PTS = ""
-    }
-  })
-  RESULTS.reverse()
-  makeTable()
-}
-
-
-function getStages() {
-	RESULTS.map(item => item.BONUS = 0)
-  RESULTS[0].BONUS = 2
-	STAGES.forEach(function(item) {
-  	var driverid = item.results[0].driver_id
-    var find = RESULTS.find(jtem => jtem.driver_id == driverid)
-    find.BONUS++
-  })
-  console.log("RESULTS WITH STAGES", RESULTS)
-  makeTable()
-}
-
-function sumTotal() {
-	RESULTS.map(item => item.TOTAL = "")
-  
-	RESULTS.map(item => {
-  	if (item.PTS > 0) {
-    	item.TOTAL = item.BONUS + item.PTS
-    }
-  })
-  makeTable()
-}
-
-function assignDollas() {
-	var f1 = RESULTS.filter(function(item) {
-  	return item.TOTAL == RESULTS[0].TOTAL
-  })
-	var f2 = RESULTS.filter(function(item) {
-  	return item.TOTAL !== RESULTS[0].TOTAL
-  })
-  
-  if (f1.length > 1) {
-  	var amount = 4 / f1.length
-  	f1.forEach(function(item, index) {
-    	RESULTS[index].W = amount
-    })
-  } else {
-  	RESULTS[0].W = 2.5
-  }
-  
-  if (f2.length > 1 && f1.length == 1) {
-  	var amount = 1.5 / f1.length
-  	f2.forEach(function(item, index) {
-    	RESULTS[1 + index].W = amount
-    })
-  	
-  }
-  makeTable()
-  
-}
-
-
-function makeTable() {
-	tbody.innerHTML = null
-	RESULTS.map(function(item, index) {
-  	var tr = tbody.insertRow()
-    tr.insertCell().innerHTML = item.finishing_position
-    tr.insertCell().innerHTML = item.driver_fullname
-    tr.insertCell().innerHTML = item.race_id
-    tr.insertCell().innerHTML = item.driver_id
-    tr.insertCell().innerHTML = item.PLAYERID || ""
-    tr.insertCell().innerHTML = item.PTS || ""
-    tr.insertCell().innerHTML = item.BONUS || ""
-    tr.insertCell().innerHTML = item.TOTAL || ""
-  })
-  
-}
-
-
-function pasteResults() {
-	var filter = RESULTS.filter(item => item.PLAYERID)
-  var ARR = []
-  filter.forEach(function(item) {
-  	var arr = [
-    item.race_id,
-    item.PLAYERID,
-    item.driver_id,
-    item.finishing_position,
-    item.PTS,
-    item.BONUS,
-    item.TOTAL
-    ]
-    ARR.push(arr)
-  })
-  ta.value = JSON.stringify(ARR)
-}
 
   </script>
 
@@ -284,7 +121,7 @@ function pasteResults() {
     if (window.parent && window.parent.parent){
       window.parent.parent.postMessage(["resultsFrame", {
         height: document.body.getBoundingClientRect().height,
-        slug: "r0x98yLt"
+        slug: "h0tsf1cq"
       }], "*")
     }
 
@@ -292,6 +129,23 @@ function pasteResults() {
     window.name = "result"
   </script>
 
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
 
-</body>
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
 </html>
