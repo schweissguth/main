@@ -26,7 +26,7 @@
       </a>
       <br /><br />
 
-      <table id="table" cellpadding="3">
+      <table id="table" cellpadding="5">
         <tr>
           <th>LOADING...</th>
         </tr>
@@ -35,7 +35,7 @@
   </body>
 
   <script type="text/javascript">
-    getCurrentRace().then(function (currentrace) {
+    nextRace().then(function (currentrace) {
   table.innerHTML = null
   getStandings().then(function (res) {
     console.log(res)
@@ -70,7 +70,7 @@
       tr.insertCell().append(select)
     })
     getPickOrder().then(function (players) {
-      players = players.sort(function(a, b) {
+      players = players.sort(function (a, b) {
         return a.PICKORDER - b.PICKORDER
       })
       let sels = document.getElementsByTagName("SELECT")
@@ -112,6 +112,7 @@
     })
   })
 })
+
 
   </script>
 </html>
