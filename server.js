@@ -18,16 +18,13 @@ function getOps() {
 }
 
 function nextRace(x) {
-  return fetch(
-    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
-  )
-    .then(function (res) {
-      return res.json()
-    })
-    .then(function (res) {
-      res = res.values.makeObj().pop()
-      return res.RACEID
-    })
+  return getSchedule().then(function(res) {
+    console.log(res)
+    res = res.find(function(race) {
+    return !race.winner_driver_id
+  }).race_id
+  return res
+  })
 }
 
 
