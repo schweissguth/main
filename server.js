@@ -17,7 +17,7 @@ function getOps() {
   )
 }
 
-function nextRace(x) {
+function nextRace() {
   return getSchedule().then(function(res) {
     console.log(res)
     res = res.find(function(race) {
