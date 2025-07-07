@@ -2,6 +2,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -86,6 +87,9 @@ function selectRace(x) {
     table.innerHTML = null
     getResults(findrace.race_id).then(function (results) {
       console.log("Results", results)
+      results.sort(function(a, b) {
+        return Boolean(b.finishing_position) - Boolean(a.finishing_position)
+      })
       results.forEach(function (result) {
         let tr = table.insertRow()
         tr.id = results.driver_id
