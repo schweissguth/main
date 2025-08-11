@@ -186,8 +186,10 @@ function feed() {
           return pick
         })
         picks.forEach(function (pick) {
+          try {
           document.getElementById(pick.DRIVERID).innerHTML =
             "<b>" + (pick.playername || "") + "</b>"
+          } catch (err) {}
         })
         let count = 24
         let tds = document.getElementsByClassName("driverid")
