@@ -20,7 +20,11 @@
 
 
     <style id="compiled-css" type="text/css">
-      
+      center {
+  margin: auto;
+  max-width: 290px;
+}
+
 * {
   
   vertical-align: middle;
@@ -45,14 +49,14 @@ td {
   <body>
     
 <center>
+  <link rel="stylesheet" href="https://stupid-fast.com/css.css">
 
-<h1 style="display: inline-block;">Upset alert</h1>
-<br>
+<h1 style="display: inline-block;">🏈 Upset Alert</h1>
+<p>
 <a href="https://stupid-fast.com/cf">College football scoreboard</a>
-<br>
-<p>Select the matchup most likely to result in an upset.
-  <br>
-  Each college football week starts on Monday.
+</p>
+<p>Select the matchup most likely to result in an upset.  If an upset occurs, a point will be awarded to the player accordingly.</p>
+<p style="color: gray;">(Each college football week starts on Monday.)</p>
 </p>
 <br>
 
@@ -82,6 +86,17 @@ td {
 
     <script type="text/javascript">
 
+Array.prototype.makeObj = function () {
+  let header = this.shift()
+  return this.map(function (each) {
+    let obj = {}
+    for (let i = 0; i < header.length; i++) {
+      obj[header[i]] = each[i] || null
+    }
+    return obj
+  })
+}
+
 function getScoreboard() {
   return fetch(
     "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard",
@@ -109,84 +124,137 @@ function getScoreboard() {
     })
 }
 
-//https://script.google.com/macros/s/AKfycbymkB_0-cVqloMZ2iBRnjQ2rvpgoB1IKLWIAjFdaMHKK8vyZ0JBI0AZ49pbQY7_tBVU/exec
-
 function getPlayers() {
   return fetch(
-    "https://script.google.com/macros/s/AKfycbymkB_0-cVqloMZ2iBRnjQ2rvpgoB1IKLWIAjFdaMHKK8vyZ0JBI0AZ49pbQY7_tBVU/exec?PLAYERS",
-  ).then(function (res) {
-    return res.json()
-  })
+    "https://sheets.googleapis.com/v4/spreadsheets/1DJ0d2YDxPNN38v7uCgU-Netkvl-betAGEvM8TsCOBGw/values/PLAYERS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      return res.values.makeObj()
+    })
 }
 
 function getPicks() {
   return fetch(
+    "https://sheets.googleapis.com/v4/spreadsheets/1DJ0d2YDxPNN38v7uCgU-Netkvl-betAGEvM8TsCOBGw/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      return res.values.makeObj()
+    })
+}
+
+function post(week, gameid, playerid, playername, gamename) {
+  fetch(
     "https://script.google.com/macros/s/AKfycbymkB_0-cVqloMZ2iBRnjQ2rvpgoB1IKLWIAjFdaMHKK8vyZ0JBI0AZ49pbQY7_tBVU/exec?PICKS",
-  ).then(function (res) {
-    return res.json()
-  })
+    {
+      method: "post",
+      body: JSON.stringify([week, gameid, playerid, playername, gamename]),
+    },
+  )
 }
 
 //-------------------------
 
-loading.innerText = "Loading players..."
-getPlayers().then(function (players) {
-  console.log("Players", players)
-  loading.innerText = "Loading picks..."
-  getPicks().then(function (picks) {
-    console.log("Picks", picks)
-    loading.innerText = "Loading games..."
-    getScoreboard().then(function (games) {
-      loading.innerText = ""
-      //console.log("Games", games)
-      games.forEach(function (game) {
-        game.pick =
-          picks.findLast(function (pick) {
+function buildTable() {
+  loading.innerText = "Loading players..."
+  table.innerHTML = null
+  getPlayers().then(function (players) {
+    console.log("Players", players)
+    loading.innerText = "Loading picks..."
+    getPicks().then(function (picks) {
+      console.log("Picks", picks)
+      loading.innerText = "Loading games..."
+      getScoreboard().then(function (games) {
+        loading.innerText = ""
+        //console.log("Games", games)
+        games.forEach(function (game) {
+          game.pick = picks.findLast(function (pick) {
             return pick.GAMEID == game.id
           })?.PLAYERID
-      })
-      console.log("Games", games)
-      games.forEach(function (game) {
-        let tr = table.insertRow()
-        tr.insertCell().innerHTML = 
-        "<img src='" + game.away.team.logo + "' width='25' />" + 
-        "  <small>" + game.away.curatedRank.current + "</small> " + 
-        game.away.team.shortDisplayName + 
-        "<br>" + 
-        "<img src='" + game.home.team.logo + "' width='25' />" + 
-        "  <small>" + game.home.curatedRank.current + "</small> " + 
-        game.home.team.shortDisplayName
-
-        let td = tr.insertCell()
-        let select = document.createElement("SELECT")
-        let option = document.createElement("OPTION")
-        select.add(option)
-        select.onchange = function() {
-          post(game.week, game.id, this.value, select.options[select.selectedIndex].text, game.name)
-        }
-        if (game.status.period > 0) {
-          select.disabled = true
-        }
-        players.forEach(function(player) {
-          let opt = document.createElement("OPTION")
-          opt.text = player.NAME
-          opt.value = player.ID
-          select.add(opt)
         })
-        select.value = game.pick
-        td.append(select)
+        console.log("Games", games)
+        games.forEach(function (game) {
+          let tr = table.insertRow()
+          tr.insertCell().innerHTML =
+            "<img src='" +
+            game.away.team.logo +
+            "' width='25' />" +
+            "  <small>" +
+            game.away.curatedRank.current +
+            "</small> " +
+            game.away.team.shortDisplayName +
+            " <small>" +
+            game.away.records[0].summary +
+            "</small>" +
+            "<br>" +
+            "<img src='" +
+            game.home.team.logo +
+            "' width='25' />" +
+            "  <small>" +
+            game.home.curatedRank.current +
+            "</small> " +
+            game.home.team.shortDisplayName +
+            " <small>" +
+            game.home.records[0].summary +
+            "</small>"
+
+          let td = tr.insertCell()
+          if (game.status.period > 0) {
+            td.innerHTML = game.away.score + "<br>" + game.home.score
+          }
+
+          td = tr.insertCell()
+          let select = document.createElement("SELECT")
+          let option = document.createElement("OPTION")
+          select.add(option)
+          select.onchange = function () {
+            post(
+              game.week,
+              game.id,
+              this.value,
+              select.options[select.selectedIndex].text,
+              game.name,
+            )
+          }
+          if (game.status.period > 0) {
+            select.disabled = true
+          }
+          players.forEach(function (player) {
+            let opt = document.createElement("OPTION")
+            opt.text = player.NAME
+            opt.value = player.ID
+            select.add(opt)
+          })
+          select.value = game.pick
+          td.append(select)
+
+          let div = document.createElement("small")
+          if (game.status.period > 0) {
+            div.innerText =
+              "\n Q" + game.status.period + "-" + game.status.displayClock + " " + game.broadcast.substring(0, 5)
+          } else {
+            div.innerText =
+              "\n" +
+              new Date(game.startDate).toLocaleTimeString().split(":00 ")[0] +
+              "/" +
+              game.broadcast.substring(0, 5)
+          }
+          td.append(div)
+        })
       })
     })
   })
-})
-
-function post(week, gameid, playerid, playername, gamename) {
-  fetch("https://script.google.com/macros/s/AKfycbymkB_0-cVqloMZ2iBRnjQ2rvpgoB1IKLWIAjFdaMHKK8vyZ0JBI0AZ49pbQY7_tBVU/exec?PICKS", {
-    method: "post",
-    body: JSON.stringify([week, gameid, playerid, playername, gamename])
-  })
 }
+buildTable()
 
+setInterval(function () {
+  buildTable()
+}, 30000)
 
 
   </script>
