@@ -141,7 +141,7 @@ getPlayers().then(function (players) {
       //console.log("Games", games)
       games.forEach(function (game) {
         game.pick =
-          picks.find(function (pick) {
+          picks.findLast(function (pick) {
             return pick.GAMEID == game.id
           })?.PLAYERID
       })
