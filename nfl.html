@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>NFL football fantasy</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
+
+
+
+    <style id="compiled-css" type="text/css">
+      center {
+  margin: auto;
+  max-width: 290px;
+}
+
+* {
+  
+  vertical-align: middle;
+}
+
+td {
+  padding: 10px 5px 10px 5px;
+}
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+  </head>
+  <body>
+    
+<center>
+  <link rel="stylesheet" href="https://stupid-fast.com/css.css">
+
+<h1 style="display: inline-block;">🏈 NFL Draft</h1>
+
+<p>Each picker selects one team per turn.  After making a pick, the picker notifies the next person to go.  This continues until every picker has made one selection.  Once the first round is complete, the order reverses: the last picker now selects first.  The draft continues in this back-and-forth (snake) pattern—forward, then backward—until all teams are chosen.</p>
+<br>
+
+
+
+<table id="table"></table>
+
+<table id="g"></table>
+
+
+<iframe frameborder="0"></iframe>
+
+</center>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+    <script type="text/javascript">
+
+Array.prototype.makeObj = function () {
+  let header = this.shift()
+  return this.map(function (each) {
+    let obj = {}
+    for (let i = 0; i < header.length; i++) {
+      obj[header[i]] = each[i] || null
+    }
+    return obj
+  })
+}
+
+function getPlayers() {
+  return fetch(
+    "https://sheets.googleapis.com/v4/spreadsheets/1DJ0d2YDxPNN38v7uCgU-Netkvl-betAGEvM8TsCOBGw/values/PLAYERS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      return res.values.makeObj()
+    })
+}
+
+function getPicks() {
+  return fetch(
+    "https://sheets.googleapis.com/v4/spreadsheets/1DJ0d2YDxPNN38v7uCgU-Netkvl-betAGEvM8TsCOBGw/values/TEAMS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      return res.values.makeObj()
+    })
+}
+
+function getTeams() {
+  return fetch("https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams").then(function(res) {
+    return res.json()
+  }).then(function(res) {
+    res = res.sports[0].leagues[0].teams
+    return res.map(function(team) {
+      return team.team
+    })
+  })
+}
+getTeams().then(function(res) {
+  console.log(res)
+})
+
+function post(teamid, playerid) {
+  fetch(
+    "https://script.google.com/macros/s/AKfycbymkB_0-cVqloMZ2iBRnjQ2rvpgoB1IKLWIAjFdaMHKK8vyZ0JBI0AZ49pbQY7_tBVU/exec?NFLPICKS",
+    {
+      method: "post",
+      body: JSON.stringify([teamid, playerid]),
+    },
+  )
+}
+
+//-------------------------
+
+
+function init() {
+  getPicks().then(function(picks) {
+    getPlayers().then(function(players) {
+      picks = picks.map(function(pick) {
+        pick.PLAYERNAME = players.find(function(player) {
+          return player.ID == pick.PLAYERID
+        })?.NAME
+        return pick
+      })
+      console.log("Picks", picks)
+      picks.forEach(function(pick) {
+        let tr = table.insertRow()
+        tr.insertCell().innerHTML = "<img src='" + pick.LOGO + "' width='45' />"
+        tr.insertCell().innerText = pick.NAME
+        let td = tr.insertCell()
+        let select = document.createElement("SELECT")
+        let option = document.createElement("OPTION")
+        select.add(option)
+        players.forEach(function(player) {
+          let opt = document.createElement("OPTION")
+          opt.value = player.ID
+          opt.text = player.NAME
+          select.add(opt)
+        })
+        select.onchange = function() {
+          post(pick.ID, this.value)
+        }
+        select.value = pick.PLAYERID
+        td.append(select)
+      })
+    })
+  })
+}
+init()
+
+
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "cfn9d1sm"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
+</html>
