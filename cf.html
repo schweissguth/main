@@ -1,304 +1,288 @@
-<head>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" href="css.css">
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>College football fantasy</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <style id="compiled-css" type="text/css">
 
-    center center {
-      max-width: 1000px;
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
       
-    }
+    ></script>
 
+
+
+    <style id="compiled-css" type="text/css">
+      center {
+  margin: auto;
+  max-width: 300px;
+}
+
+* {
+  
+  vertical-align: middle;
+}
+
+td {
+  padding: 10px 5px 10px 5px;
+}
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+  </head>
+  <body>
     
-    sup, sub {
-      color: lightgray;
-      font-family: sans-serif;
-      font-size: 0.5em;
+<center>
+  <link rel="stylesheet" href="https://stupid-fast.com/css.css">
+
+<h1 style="display: inline-block;">🏈 Upset Alert</h1>
+<p>Select the matchup most likely to result in an upset.  If an upset occurs, a point will be awarded to the player accordingly.</p>
+<p style="color: gray;">(Each college football week starts on Monday.)</p>
+</p>
+<br>
+
+
+<mark id="loading"></mark>
+
+
+<table id="table"></table>
+
+<ol id="ol">
+
+</ol>
+<main id="main"></main>
+
+<dialog id="dia">
+  <a href="javascript:" onclick="(function() { dia.close(); })()" style="display: block; text-align: right;">Close</a>
+<select id="selectplayer" onchange="selectPlayer(this.value)">
+  <option id="loadingthing" disabled>Select player...</option>
+</select>
+</dialog>
+
+<iframe frameborder="0"></iframe>
+
+</center>
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+    <script type="text/javascript">
+
+Array.prototype.makeObj = function () {
+  let header = this.shift()
+  return this.map(function (each) {
+    let obj = {}
+    for (let i = 0; i < header.length; i++) {
+      obj[header[i]] = each[i] || null
     }
+    return obj
+  })
+}
 
-
-    th,
-    td {
-      white-space: nowrap;
-    }
-
-
-    .upset {
-      background: LightCoral !important;
-    }
-
-    #tbody tr:nth-child(odd) td {
-      border-top: 10px solid white;
-    }
-
-  </style>
-
-
-</head>
-
-<body>
-  <center>
-    <center>
-
-      <div>
-      <a href="../" class="banner" width="290">
-        <img src="./sfbanner.png" width="290">
-      </a></div>
-      <h1>College Football Scoreboard</h1>
-
-      <h3>Matchups of top 25 teams</h3>
-
-      <br>
-      <hr>
-
-      <table>
-        <thead>
-          <tr>
-            <th colspan="1"></th>
-            <th colspan="1"></th>
-            <th colspan="1"></th>
-            <th colspan="1">&nbsp;&nbsp;&nbsp;&nbsp;</th>
-            <th></th>
-            <th></th>
-
-
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-
-      <br>
-
-      <a href="https://www.google.com/search?q=mizzou+college+football&rlz=1C1GCEA_enUS899US899&oq=mizzou+college+football&aqs=chrome..69i57.5463j0j7&sourceid=chrome&ie=UTF-8"
-        target="_blank">Mizzou Score</a>
-
-
-      <br><br><br>
-
-      <h3>Top 25 list vs opponent</h3>
-
-      <table>
-
-        <tbody id="tb">
-        </tbody>
-      </table>
-
-
-
-
-      <br><br><br><br><br><br>
-
-      <script type="text/javascript">//<![CDATA[
-
-
-        var EVENTS = []
-        var SORT = []
-        var AVGRANK = []
-        var TOP25 = []
-
-        fetch("https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard").then(function (item) {
-          return item.json()
-        }).then(function (result) {
-          EVENTS = result.events
-          console.log(EVENTS)
-
-          EVENTS.forEach(function (item) {
-            var team = item.competitions[0].competitors
-
-            team.map(function (jtem) {
-              item.avgrank = (team[0].curatedRank.current + team[1].curatedRank.current) / 2
-              team[0].score = parseInt(team[0].score)
-              team[1].score = parseInt(team[1].score)
-            })
-
-            team.map(function (jtem) {
-              item.avgrank = (team[0].curatedRank.current + team[1].curatedRank.current) / 2
-            })
-
-            item.upset = false
-            if (team[0].curatedRank.current > team[1].curatedRank.current && team[0].score > team[1].score) {
-              item.upset = true
-            } else if (team[1].curatedRank.current > team[0].curatedRank.current && team[1].score > team[0].score) {
-              item.upset = true
-            }
-
-
-
-            team.map(function (jtem) {
-              var rank = jtem.curatedRank.current
-              if (rank == 99) {
-                jtem.curatedRank.current = ""
-              }
-            })
-
-            //var odds = item.competitions[0].odds[0]
-            //var spread = odds.details.split("-")[1]
-            //spread = parseInt(spread)
-            //item.spread = spread
-            //item.combine = item.avgrank + item.spread
-
-          })
-
-          /*
-          try {
-            EVENTS.sort(function(a, b) {
-              return a.competitions[0].odds[0].details.split("-")[1] - b.competitions[0].odds[0].details.split("-")[1]
-            })
-          } catch (err) {
-
+function getScoreboard() {
+  return fetch(
+    "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (games) {
+      games = games.events
+      //console.log("Games", games)
+      return games.map(function (game) {
+        let name = game.name
+        let week = game.week.number
+        game = game.competitions[0]
+        game.name = name
+        game.week = week
+        game.competitors.forEach(function (team) {
+          if (team.curatedRank.current > 25) {
+            team.curatedRank.current = ""
           }
-          */
-
-
-          displayGames()
-
-
+          game[team.homeAway] = team
         })
+        return game
+      })
+    })
+}
 
+function getPlayers() {
+  return fetch(
+    "https://sheets.googleapis.com/v4/spreadsheets/1DJ0d2YDxPNN38v7uCgU-Netkvl-betAGEvM8TsCOBGw/values/PLAYERS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      return res.values.makeObj()
+    })
+}
 
+function getPicks() {
+  return fetch(
+    "https://sheets.googleapis.com/v4/spreadsheets/1DJ0d2YDxPNN38v7uCgU-Netkvl-betAGEvM8TsCOBGw/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      return res.values.makeObj()
+    })
+}
 
-        function displayGames() {
-          tbody.innerHTML = ""
+function post(week, gameid, playerid, playername, gamename) {
+  fetch(
+    "https://script.google.com/macros/s/AKfycbymkB_0-cVqloMZ2iBRnjQ2rvpgoB1IKLWIAjFdaMHKK8vyZ0JBI0AZ49pbQY7_tBVU/exec?PICKS",
+    {
+      method: "post",
+      body: JSON.stringify([week, gameid, playerid, playername, gamename]),
+    },
+  )
+}
 
-          EVENTS.forEach(function (item) {
-            var game = item.competitions[0]
-            var home = game.competitors[0]
-            var away = game.competitors[1]
-            var date = new Date(game.startDate)
+//-------------------------
 
-            var tr = tbody.insertRow()
-            tr.classList.add("newrow")
-            var tra = tbody.insertRow()
-            
-            tr.insertCell().innerHTML = "<img src='" +
-              home.team.logo + "' width='20'/>"
+function buildTable() {
+  loading.innerText = "Loading players..."
+  table.innerHTML = null
+  getPlayers().then(function (players) {
+    console.log("Players", players)
+    loading.innerText = "Loading picks..."
+    getPicks().then(function (picks) {
+      console.log("Picks", picks)
+      loading.innerText = "Loading games..."
+      getScoreboard().then(function (games) {
+        loading.innerText = ""
+        //console.log("Games", games)
+        games.forEach(function (game) {
+          game.pick = picks.findLast(function (pick) {
+            return pick.GAMEID == game.id
+          })?.PLAYERID
+        })
+        console.log("Games", games)
+        games.forEach(function (game) {
+          let tr = table.insertRow()
+          tr.insertCell().innerHTML =
+            "<img src='" +
+            game.away.team.logo +
+            "' width='25' />" +
+            "  <small>" +
+            game.away.curatedRank.current +
+            "</small> " +
+            game.away.team.shortDisplayName +
+            " <small>" +
+            game.away.records[0].summary +
+            "</small>" +
+            "<br>" +
+            "<img src='" +
+            game.home.team.logo +
+            "' width='25' />" +
+            "  <small>" +
+            game.home.curatedRank.current +
+            "</small> " +
+            game.home.team.shortDisplayName +
+            " <small>" +
+            game.home.records[0].summary +
+            "</small>"
 
-            tr.insertCell().innerHTML = 
-                "<sup>" + home.curatedRank.current + "</sup>"
+          let td = tr.insertCell()
+          if (game.status.period > 0) {
+            td.innerHTML = game.away.score + "<br>" + game.home.score
+          }
 
-            tr.insertCell().innerHTML = home.team.location
-              + "<sup>" + home.records[0].summary + "</sup>"
-
-            tra.insertCell().innerHTML = "<img src='" +
-              away.team.logo + "' width='20'/>"
-
-            tra.insertCell().innerHTML = 
-                "<sup>" + away.curatedRank.current + "</sup>"
-
-            tra.insertCell().innerHTML = away.team.location
-              + "<sup>" + away.records[0].summary + "</sup>"
-
-            if (game.status.period > 0) {
-              tr.insertCell().innerHTML = "<b>" + home.score + "</b>"
-              tra.insertCell().innerHTML = "<b>" + away.score + "</b>"
-              tr.insertCell().innerHTML = game.status.displayClock
-              tra.insertCell().innerHTML = "Q" + game.status.period + " - " + game.broadcasts[0].names[0].slice(0, 5)
-              
-            } else {
-              tr.insertCell().innerHTML = ""
-              tra.insertCell().innerHTML = ""
-              tr.insertCell().innerHTML = date.toString().split(" ")[0] + " " + date.toLocaleTimeString().replace(":00", "")
-              tra.insertCell().innerHTML = game.broadcasts[0].names[0].slice(0, 5)
-              
-              
-            }
-
-            
-            try {
-              //tra.insertCell().innerHTML =  game.odds[0].details.split("-")[1]
-            } catch (err) {
-              
-            }
-            //tr.insertCell().innerHTML = item.competitions[0].odds[0].details
-            //tra.insertCell().innerHTML = item.avgrank
-            //tra.insertCell().innerHTML = item.combine
-
-            if (item.upset) {
-              tr.classList.add("upset")
-            }
-
+          td = tr.insertCell()
+          let select = document.createElement("SELECT")
+          let option = document.createElement("OPTION")
+          select.add(option)
+          select.onchange = function () {
+            post(
+              game.week,
+              game.id,
+              this.value,
+              select.options[select.selectedIndex].text,
+              game.name,
+            )
+          }
+          if (game.status.period > 0) {
+            select.disabled = true
+          }
+          players.forEach(function (player) {
+            let opt = document.createElement("OPTION")
+            opt.text = player.NAME
+            opt.value = player.ID
+            select.add(opt)
           })
+          select.value = game.pick
+          td.append(select)
 
-          getRankings()
-        }
-
-
-        function getRankings() {
-          fetch("https://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings").then(function (result) {
-            return result.json()
-          }).then(function (result) {
-            console.log("RESULT", result)
-            TOP25 = result.rankings[0].ranks
-            console.log("TOP25", TOP25)
-
-            TOP25.map(function (item) {
-
-              var tr = tb.insertRow()
-              tr.insertCell().innerHTML = item.current
-              tr.insertCell().innerHTML = "<img src='" +
-                item.team.logo + "' width='20'/>"
-              var tdl = tr.insertCell()
-                tdl.innerHTML = "<b>" + item.team.location + "</b>"
-
-
-              var find = EVENTS.find(function (jtem) {
-                var path = jtem.competitions[0].competitors
-                return path[0].id == item.team.id || path[1].id == item.team.id
-              }) || false
-
-              if (find) {
-                var finda = find.competitions[0].competitors.find(function (jtem) {
-                  return jtem.id == item.team.id
-                })
-                var findb = find.competitions[0].competitors.find(function (jtem) {
-                  return jtem.id !== item.team.id
-                })
-                item.c = find
-                item.a = finda
-                item.b = findb
-                var compts = item.c.competitions[0]
-                var date = new Date(item.c.competitions[0].startDate)
-                
-                tdl.innerHTML += "<small>"
-                  + "<sup>" + item.a.records[0].summary + "</sup> vs. " 
-                  + "<sup>" + item.b.curatedRank.current + "</sup>"
-                  + "" + item.b.team.location + ""
-                  + "<sup>" + item.b.records[0].summary + "</sup>"
-                  + "</small>"
-
-                tr.insertCell().innerHTML = "<b>" 
-                  + item.a.score + "</b>-" + item.b.score
-                
-                var tdp = tr.insertCell()
-                  tdp.innerHTML = compts.status.displayClock 
-                    + " Q" + item.c.status.period
-                    + compts.broadcasts[0].names[0].slice(0, 5)
-                
-                if (item.c.status.period == 0) {
-                tdp.innerHTML = date.toString().split(" ")[0] + " @ " 
-                  + date.toLocaleTimeString().replace(":00", "")
-                  + " on "
-                  + compts.broadcasts[0].names[0].slice(0, 5)
-                }
-
-              } else {
-                tr.insertCell().innerHTML = ""
-                tr.insertCell().innerHTML = ""
-                tr.insertCell().innerHTML = ""
-                tr.insertCell().innerHTML = ""
-                tr.insertCell().innerHTML = ""
-                tr.insertCell().innerHTML = ""
-              }
-            })
-
-          })
-
-        }
+          let div = document.createElement("small")
+          if (game.status.period > 0) {
+            div.innerText =
+              "\n Q" + game.status.period + "-" + game.status.displayClock + " " + game.broadcast.substring(0, 5)
+          } else {
+            div.innerText =
+              "\n" +
+              new Date(game.startDate).toLocaleTimeString().split(":00 ")[0] +
+              "/" +
+              game.broadcast.substring(0, 5)
+          }
+          td.append(div)
+        })
+      })
+    })
+  })
+}
+buildTable()
 
 
 
-        //]]></script>
-    </center>
-  </center>
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "cfn9d1sm"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
+</html>
