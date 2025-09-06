@@ -90,7 +90,12 @@ td {
 
     <script type="text/javascript">
 
-Array.prototype.makeObj = function () {
+
+
+
+
+  </script>
+  Array.prototype.makeObj = function () {
   let header = this.shift()
   return this.map(function (each) {
     let obj = {}
@@ -190,6 +195,7 @@ function buildTable() {
         console.log("Games", games)
         games.forEach(function (game) {
           let tr = table.insertRow()
+          tr.classList.add(game.status.type.name)
           tr.insertCell().innerHTML =
             "<img src='" +
             game.away.team.logo +
@@ -256,15 +262,12 @@ function buildTable() {
           }
           td.append(div)
         })
+        table.querySelector(".STATUS_SCHEDULED").style.borderTop = "100px solid white"
       })
     })
   })
 }
 buildTable()
-
-
-
-  </script>
 
   <script>
     // tell the embed parent frame the height of the content
