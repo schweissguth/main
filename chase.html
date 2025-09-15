@@ -1,20 +1,17 @@
 
+
 <!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Chase Standings - StupidFast</title>
+  <title>Season Standings - StupidFast</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="robots" content="noindex, nofollow">
   <meta name="googlebot" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <script
-    type="text/javascript"
-    src="/js/lib/dummy.js"
-    
-  ></script>
+  <script src="https://stupid-fast.com/server.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css.css">
 
@@ -25,83 +22,54 @@
     /* EOS */
   </style>
 
-  <script id="insert"></script>
 
 </head>
 <body>
     
 <center>
 
-  <center>
-    
-    <h1>Chase standings</h1>
+	  <br><br>
+<a href="https://stupid-fast.com">
+  <img src="https://stupid-fast.com/sfbanner.png" alt="">
+</a>
 
-<table border cellpadding="2">
-<thead>
-  <tr>
-    <th>Player</th>
-    <th>Total</th>
-  </tr>
-</thead>
-  <tbody id="tbody"></tbody>
+<br><br>
+
+<table id="table" cellpadding="3">
+
 </table>
 
 
-  </center>
 
 </center>
 
 
-    <script type="text/javascript">//<![CDATA[
+    <script type="text/javascript">
+	    
 
 
-
-	fetch("https://docs.google.com/spreadsheets/u/0/d/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/gviz/tq?sheet=SCORES&tqx=out:csv&tq=SELECT%20I,%20sum(G)%20WHERE%20A%20=%205417%20or%20A%20=%205421%20or%20A%20=%205428%20or%20A%20=%205427%20or%20A%20=%205426%20or%20A%20=%205425%20or%20A%20=%205424%20or%20A%20=%205423%20or%20A%20=%205420%20or%20A%20=%205421%20or%20A%20=%205411%20group%20by%20I%20order%20by%20sum(G)%20DESC%20label%20I%20%27Player%27,%20sum(G)%20%27Total%27").then(function(res) {
-  	return res.text()
-  }).then(function(res) {
-  console.log("PICKS raw", res)
-  	//res = res.split("setResponse(")[1]
-  	//res = res.split(");")[0]
-    //PICKS = JSON.parse(res)
-    res = res.split("\n")
-    
-    res.forEach(function(item, i) {
-    	var str = item.replace(/"/g, "")
-    	str = str.split(",")
-      res[i] = str
-      
-      
-    })
-    
-  	makeTable(res)
-    
+getChase().then(function(points) {
+  console.log(points)
+  points.forEach(function(point, i) {
+    let tr = table.insertRow()
+    tr.insertCell().innerText = (i + 1) + "."
+    let td = tr.insertCell()
+    td.id = point.PLAYERID
+    td.innerText = point.PLAYERID
+    td.style.fontWeight = "bold"
+    tr.insertCell().innerText = point.SUM
+    td = tr.insertCell()
+    td.innerHTML = "<small><i>" + (parseInt(point.DELTA) || "") + "</i></small>"
   })
-  
-  
-  function makeTable(res) {
-  res.shift()
-  	res.forEach(function(item) {
-    	var tr = tbody.insertRow()
-      item.forEach(function(jtem) {
-      	tr.insertCell().innerHTML = jtem
-      })
+  getPlayers().then(function(players) {
+    players.forEach(function(player) {
+      let td = document.getElementById(player.PLAYERID)
+      if (td) {
+        td.innerText = player.PLAYERNAME
+      }
     })
-  }
-
-
-  //]]></script>
-
-  <script>
-    // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent){
-      window.parent.parent.postMessage(["resultsFrame", {
-        height: document.body.getBoundingClientRect().height,
-        slug: "dv653k28"
-      }], "*")
-    }
-
-    // always overwrite window.name, in case users try to set it manually
-    window.name = "result"
+  })
+})
   </script>
 
 
