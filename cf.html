@@ -157,7 +157,7 @@ function post(week, gameid, playerid, playername, gamename) {
     "https://script.google.com/macros/s/AKfycbymkB_0-cVqloMZ2iBRnjQ2rvpgoB1IKLWIAjFdaMHKK8vyZ0JBI0AZ49pbQY7_tBVU/exec?PICKS",
     {
       method: "post",
-      body: JSON.stringify([week, gameid, playerid, playername, gamename]),
+      body: JSON.stringify([[week, gameid, playerid, playername, gamename]]),
     },
   )
 }
