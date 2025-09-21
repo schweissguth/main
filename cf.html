@@ -170,6 +170,9 @@ function buildTable() {
   getPlayers().then(function (players) {
     console.log("Players", players)
     loading.innerText = "Loading picks..."
+    players.sort(function(a, b) {
+      return a.ORDER - b.ORDER
+    })
     getPicks().then(function (picks) {
       console.log("Picks", picks)
       loading.innerText = "Loading games..."
