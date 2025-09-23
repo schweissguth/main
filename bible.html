@@ -42,8 +42,19 @@
   <h1>Bible app</h1>
 
 
-<select id="select" onchange="selectVerse(this.value)">
+<select id="selectverse" onchange="selectVerse()">
   <option></option>
+</select>
+
+<br><br>
+
+<select id="selecttrans" onchange="selectVerse()">
+  <option value="NLT">NLT</option>
+  <option value="ESV">ESV</option>
+  <option value="NIV">NIV</option>
+  <option value="NASB">NASB</option>
+  <option value="NKJV">NKJV</option>
+  <option value="MSG">MSG</option>
 </select>
 
 <hr>
@@ -74,14 +85,14 @@ getVerses().then(function(verses) {
     let opt = document.createElement("OPTION")
     opt.text = verse[1]
     opt.value = verse[1]
-    select.add(opt)
+    selectverse.add(opt)
   })
 })
 
 
 
-function selectVerse(x) {
-  document.getElementsByName("iframe")[0].src = "https://www.biblegateway.com/passage?version=NLT&interface=print&search=" + encodeURIComponent(x)
+function selectVerse() {
+  document.getElementsByName("iframe")[0].src = "https://www.biblegateway.com/passage?version=" + selecttrans.value + "&interface=print&search=" + encodeURIComponent(selectverse.value)
 }
 
   </script>
