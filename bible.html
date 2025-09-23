@@ -39,12 +39,7 @@
 
 <center>
 
-<select id="selectverse" onchange="selectVerse()">
-  <option></option>
-</select>
-
-<br><br>
-
+<select id="selectverse" onchange="selectVerse()"></select> | 
 <select id="selecttrans" onchange="selectVerse()">
   <option value="NLT">NLT</option>
   <option value="ESV">ESV</option>
@@ -56,7 +51,7 @@
 
 <hr>
 
-<iframe src="https://www.biblegateway.com/passage/?search=Luke%204%3A1-15&version=NLT&interface=print" frameborder="0" width="100%" height="600" name="iframe"></iframe>
+<iframe src="" frameborder="0" width="100%" height="600" name="iframe"></iframe>
 </center>
 
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
@@ -84,6 +79,7 @@ getVerses().then(function(verses) {
     opt.value = verse[1]
     selectverse.add(opt)
   })
+  selectVerse()
 })
 
 
