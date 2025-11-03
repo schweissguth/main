@@ -49,6 +49,9 @@
 
 getSeason().then(function(points) {
   console.log(points)
+	points.sort(function(a,b) {
+		return b.SUM - a.SUM
+	})
   points.forEach(function(point, i) {
     let tr = table.insertRow()
     tr.insertCell().innerText = (i + 1) + "."
