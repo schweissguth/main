@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Arduino Control</title>
+</head>
+<body>
+  <h1>Control Arduino Pin 13</h1>
+  <button id="connect">Connect to Arduino</button>
+  <button id="onBtn">Turn on light</button>
+  <button id="offBtn">Stop</button>
+  <button id="bBtn">Blink</button>
+
+  <script>
+    let port;
+    let writer;
+
+    document.getElementById('connect').addEventListener('click', async () => {
+      try {
+        port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 9600 });
+        writer = port.writable.getWriter();
+        alert('Connected to Arduino!');
+      } catch (err) {
+        alert('Error: ' + err);
+      }
+    });
+
+    async function sendCommand(cmd) {
+      if (!writer) {
+        alert('Connect to Arduino first!');
+        return;
+      }
+      const data = new TextEncoder().encode(cmd + '\n');
+      await writer.write(data);
+    }
+
+    document.getElementById('onBtn').addEventListener('click', () => sendCommand('ON'));
+    document.getElementById('offBtn').addEventListener('click', () => sendCommand('OFF'));
+    document.getElementById('bBtn').addEventListener('click', () => sendCommand('BLINK'));
+  </script>
+</body>
+</html>
