@@ -23,4 +23,5 @@ table {
 
 tr:nth-child(even) td {
   background-color: white;
+  padding: 3px;
 }
