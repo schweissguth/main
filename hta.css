@@ -2,6 +2,11 @@ body {
   background-color: whitesmoke;
   padding: 5px;
   margin: 5px;
-  font-family: Microsoft Sans Serif, sans serif;
+  font-family: Microsoft Sans Serif, sans serif !important;
+  font-size: 8.25pt;
+}
+
+button {
+  font-family:  Microsoft Sans Serif, sans serif !important;
   font-size: 8.25pt;
 }
