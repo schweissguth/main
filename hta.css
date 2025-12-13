@@ -6,6 +6,10 @@ body {
   font-size: 8.25pt;
 }
 
+body > * {
+  vertical-align: top;
+}
+
 button {
   font-family:  Microsoft Sans Serif, sans serif !important;
   font-size: 9.5pt;
