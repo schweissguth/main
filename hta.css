@@ -39,3 +39,8 @@ th button {
   width: 100%;
   margin: 0px;
 }
+
+select {
+  font-family:  Microsoft Sans Serif, sans serif !important;
+  font-size: 9.5pt;
+}
