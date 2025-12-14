@@ -28,3 +28,14 @@ td {
 tr:nth-child(even) td {
   background-color: white;
 }
+
+th {
+  padding: 0px;
+}
+
+th button {
+  font-size: 8pt;
+  padding: 0px;
+  width: 100%;
+  margin: 0px;
+}
