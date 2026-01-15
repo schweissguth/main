@@ -9,6 +9,13 @@ Array.prototype.makeObj = function() {
   })
 }
 
+//https://cf.nascar.com/cacher/2025/1/final/1-owners-points.json
+//https://cf.nascar.com/data/cacher/production/2025/1/racinginsights-points-feed.json
+//https://www.nascar.com/json/tracks/
+//https://cf.nascar.com/cacher/2026/1/schedule-combined-feed.json
+//https://www.nascar.com/json/drivers/
+//https://fantasygames.nascar.com/api/v1/live/odds/race/5585.json
+
 
 function currentResults() {
   return fetch("https://cf.nascar.com/data/cacher/production/live/current-results.json").then(
