@@ -9,6 +9,15 @@ Array.prototype.makeObj = function() {
   })
 }
 
+
+function currentResults() {
+  return fetch("https://cf.nascar.com/data/cacher/production/live/current-results.json").then(
+    function (res) {
+      return res.json()
+    },
+  )
+}
+
 function getOps() {
   return fetch("https://cf.nascar.com/live-ops/live-ops.json").then(
     function (res) {
