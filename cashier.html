@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Calculate total price from button text and display it.</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <script
+      type="text/javascript"
+      src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"
+      
+    ></script>
+
+
+
+    <style id="compiled-css" type="text/css">
+      body, button {
+  background: rgb(175, 175, 255);
+  font-size: 72px;
+  font-family: Verdana, serif;
+}
+
+center button {
+  width: 30%;
+  margin-top: 2%;
+}
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+  </head>
+  <body>
+    
+
+<center>
+<span>$</span>
+<span id="span">0</span>  
+</center>
+<hr>
+<center>
+  <button>$1</button>
+  <button>$2</button>
+  <button>$3</button>
+  <br>
+  <button>$5</button>
+  <button>$7</button>
+  <button>$10</button>
+</center>
+
+<hr>
+
+<button onclick="clearSum()" style="margin: auto; display: block;">Clear</button>
+
+
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+    <script type="text/javascript">
+
+
+let sum = 0
+
+$("center button").click(function() {
+  let price = this.innerText.split("$")[1]
+  sum += parseInt(price)
+  span.innerText = sum
+})
+
+
+function clearSum() {
+  span.innerText = "0"
+  sum = 0
+}
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "ph0fubv7"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
+</html>
