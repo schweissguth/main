@@ -136,7 +136,7 @@ function getScores() {
 }
 
 function getSchedule() {
-  return fetch("https://cf.nascar.com/cacher/2025/1/race_list_basic.json").then(
+  return fetch("https://cf.nascar.com/cacher/2026/1/race_list_basic.json").then(
     function (res) {
       return res.json()
     },
@@ -152,7 +152,7 @@ function getLiveFeed() {
 }
 
 function getStandings() {
-  return fetch("https://cf.nascar.com/cacher/2025/1/points-feed.json").then(
+  return fetch("https://cf.nascar.com/cacher/2026/1/points-feed.json").then(
     function (res) {
       return res.json()
     },
@@ -161,7 +161,7 @@ function getStandings() {
 
 function getResults(x) {
   return fetch(
-    "https://cf.nascar.com/data/cacher/production/2025/1/" +
+    "https://cf.nascar.com/data/cacher/production/2026/1/" +
       x +
       "/raceResults.json",
   ).then(function (res) {
@@ -184,7 +184,7 @@ function getLapNotes() {
     })
     .then(function (raceid) {
       return fetch(
-        "https://cf.nascar.com/cacher/2025/1/" + raceid + "/lap-notes.json",
+        "https://cf.nascar.com/cacher/2026/1/" + raceid + "/lap-notes.json",
       )
     })
     .then(function (res) {
@@ -197,7 +197,7 @@ function getLapNotes() {
 
 function getStages(x) {
   return fetch(
-    "https://cf.nascar.com/cacher/2025/1/" + x + "/live-stage-points.json",
+    "https://cf.nascar.com/cacher/2026/1/" + x + "/live-stage-points.json",
   ).then(function (res) {
     return res.json()
   })
