@@ -2,9 +2,8 @@
 <html>
 
 <head>
-    <title>Picks - StupidFast.com</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://stupid-fast.com/server.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css.css" />
 </head>
 
 <body>
@@ -12,27 +11,32 @@
         <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
     </header>
     <main>
-        <select id="selectplayer" onchange="window.location.href = './picks.html?playerid=' + this.value">
-            <option disabled selected>Select player</option>
-        </select>
+
     </main>
 </body>
 
 <script>
-    getPlayers().then(function (res) {
-        res = res.filter(function (each) {
-            return each.ACTIVE == "TRUE"
-        })
-        res.forEach(function (each) {
-            let option = document.createElement('option')
-            option.value = each.PLAYERID
-            option.innerText = each.PLAYERNAME
-            selectplayer.appendChild(option)
-        })
-    });
+    let playerid = localStorage.getItem("playerid")
+    if (playerid) {
+        window.location.href = "./picks.html?playerid=" + playerid
+    } else {
+        getPlayers().then(function (res) {
+            res = res.filter(function (each) {
+                return each.ACTIVE == "TRUE"
+            })
+            res.forEach(function (each) {
+                let a = document.createElement("A")
+                a.onclick = function () {
+                    localStorage.setItem("playerid", each.PLAYERID)
+                }
+                a.href = "./picks.html?playerid=" + each.PLAYERID
+                a.innerText = each.PLAYERNAME
+                document.querySelector("main").appendChild(a)
+            })
+        });
+
+    }
 
 </script>
 
-
 </html>
-
