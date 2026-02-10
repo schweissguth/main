@@ -1,11 +1,9 @@
+
 <!DOCTYPE html>
 <html>
 
 <head>
-  
-    <title>Picks - StupidFast.com</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
+    <link rel="stylesheet" type="text/css" href="./css.css" />
     <script src="https://stupid-fast.com/server.js"></script>
     <script>
         function getGroupLines(x) {
@@ -29,13 +27,15 @@
 </head>
 
 <body>
-
     <header>
-        <a href="./index.html">Home</a>
+        <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
     </header>
 
 
     <main id="main">
+        <section>
+            <span id="spanplayerid">Hello, </span>!  <a href="./players.html" style="display: inline;" onclick="localStorage.removeItem('playerid')">Log out</a>?
+        </section>
     </main>
 </body>
 
@@ -44,64 +44,94 @@
     const url = new URL(window.location.href);
     const params = new URLSearchParams(url.search)
     const playerid = params.get('playerid')
+    spanplayerid.innerText += playerid.toUpperCase()
+    if (!playerid) {
+        window.location.href = "./players.html"
+    }
 
     nextRace().then(function (res) {
         const raceid = res
-        getStandings().then(function (res) {
+        getPickOrder().then(function (res) {
             console.log(res)
-            res.forEach(function (each) {
-                let span = document.createElement('span')
-                span.title = each.driver_id
-                let lbl = document.createElement('label')
-                lbl.style.display = "table";
-                span.innerText = each.driver_name + " "
-                let cb = document.createElement('input')
-                cb.id = each.driver_id
-                cb.type = "checkbox"
-                cb.disabled = true
-                cb.onchange = function () {
-                    let arr = [raceid, each.driver_id, playerid, each.driver_name]
-                    if (!cb.checked) {
-                        arr[2] = ""
-                    }
-                    fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKS", {
-                        method: 'POST',
-                        body: JSON.stringify([arr]),
-                    }).then(function (res) {
-                        return res.text()
-                    }).then(function (res) {
-                        console.log(res)
-                    })
-                }
-                lbl.appendChild(cb)
-                lbl.appendChild(span)
-                main.appendChild(lbl)
+            let group = res.find(function (each) {
+                return each.PLAYERID == playerid
             })
-            getGroupLines().then(function (res) {
+            getStandings().then(function (res) {
+                console.log(res)
+                res.forEach(function (each) {
+                    let span = document.createElement('span')
+                    span.title = each.driver_id
+                    let lbl = document.createElement('label')
+                    lbl.style.display = "table";
+                    span.innerText = each.driver_name + " "
+                    let cb = document.createElement('input')
+                    cb.id = each.driver_id
+                    cb.type = "checkbox"
+                    cb.disabled = true
+                    cb.onchange = function () {
+                        let arr = [raceid, each.driver_id, playerid, group.GROUPID, each.driver_name]
+                        if (!cb.checked) {
+                            arr[2] = ""
+                        }
+                        fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKS", {
+                            method: 'POST',
+                            body: JSON.stringify([arr]),
+                        }).then(function (res) {
+                            return res.text()
+                        }).then(function (res) {
+                            console.log(res)
+                        })
+                    }
+                    let img = document.createElement('img')
+                    img.src = "https://cf.nascar.com/data/images/carbadges/1/" + each.car_no + ".png"
+                    img.width = 50
+                    img.style.verticalAlign = "middle"
+                    img.style.margin = "0px 5px"
+                    lbl.appendChild(cb)
+                    lbl.appendChild(img)
+                    lbl.appendChild(span)
+                    main.appendChild(lbl)
+                })
+
+
+                getPicks().then(function (res) {
+                    document.querySelectorAll("input[type=checkbox]").forEach(function (each) {
+                        each.disabled = false
+                    })
+                    res = res.filter(function (each) {
+                        return each.RACEID == raceid && each.GROUPID == group.GROUPID
+                    })
+                    console.log(res)
+                    res.forEach(function (each) {
+                        let cb = document.getElementById(each.DRIVERID)
+                        if (each.PLAYERID == playerid) {
+                            cb.checked = true
+                            cb.disabled = false
+                            cb.title = each.PLAYERID
+                        } else if (each.PLAYERID) {
+                            cb.checked = true
+                            cb.disabled = true
+                            cb.title = each.PLAYERID
+
+                        } else {
+                            cb.checked = false
+                            cb.disabled = false
+                        }
+                    })
+                    addSeparator()
+                })
+
 
             })
         })
-        getPicks().then(function (res) {
-            res = res.filter(function (each) {
-                return each.RACEID == raceid
-            })
-            console.log(res)
-            res.forEach(function (each) {
-                let cb = document.getElementById(each.DRIVERID)
-                if (each.PLAYERID == playerid) {
-                    cb.checked = true
-                    cb.disabled = false
-                } else if (each.PLAYERID) {
-                    cb.checked = true
-                    
-                } else {
-                    cb.checked = false
-                    cb.disabled = false
-                }
-            })
-        })
+
     });
-    
+
+    function addSeparator() {
+        let sep = document.createElement('hr')
+        document.querySelectorAll("label")[10].before(sep)
+    }
+
 
 
 </script>
