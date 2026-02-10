@@ -1,141 +1,83 @@
-<!DOCTYPE html>
-<html>
+body, html {
+  font-family: Verdana;
+  font-size: 0.92em;
+  padding-bottom: 30px;
+}
 
-<head>
-    <link rel="stylesheet" type="text/css" href="./css.css" />
-    <script src="https://stupid-fast.com/server.js"></script>
-    <title>Stupid-Fast.com - make picks</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script>
-        function getGroupLines(x) {
-            return fetch(
-                "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
-            )
-                .then(function (res) {
-                    return res.json()
-                })
-                .then(function (res) {
-                    if (x) {
-                        return res.values.makeObj().filter(function (filter) {
-                            return filter.RACEID == x
-                        })
-                    } else {
-                        return res.values.makeObj()
-                    }
-                })
-        }
-    </script>
-</head>
+body {
+  max-width: 290px;
+  margin: auto;
+  text-align: center;
+}
 
-<body>
-    <header>
-        <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
-    </header>
+header {
+  margin-top: 30px;
+}
 
-    <section>
-        <span id="spanplayerid">Hello, </span>! <a href="./players.html" style="display: inline;"
-            onclick="localStorage.removeItem('playerid')">Log out</a>?
-    </section>
+main {
+  text-align: center;
+  margin: 30px auto 30px auto;
+  display: inline-block;
+}
 
-    <main id="main">
-    </main>
-</body>
+a {
+  margin: 15px auto 15px auto !important;
+  display: table;
+  
+}
 
-<script>
+.heading {
+  color: darkgoldenrod;
+  font-size: 1.2em;
+  display: block;
+  margin-top: 25px;
+}
 
-    const url = new URL(window.location.href);
-    const params = new URLSearchParams(url.search)
-    const playerid = params.get('player')
-    if (!playerid) {
-        window.location.href = "./players.html"
-    }
-    spanplayerid.innerText += playerid.toUpperCase()
+label {
+  display: block;
+  margin: 5px;
+}
 
-    nextRace().then(function (res) {
-        const raceid = res
-        getPickOrder().then(function (res) {
-            console.log(res)
-            let group = res.find(function (each) {
-                return each.PLAYERID == playerid
-            })
-            getStandings().then(function (res) {
-                console.log(res)
-                res.forEach(function (each) {
-                    let span = document.createElement('span')
-                    span.title = each.driver_id
-                    let lbl = document.createElement('label')
-                    lbl.style.display = "table";
-                    span.innerText = each.driver_name + " "
-                    let cb = document.createElement('input')
-                    cb.id = each.driver_id
-                    cb.type = "checkbox"
-                    cb.disabled = true
-                    cb.onchange = function () {
-                        let arr = [raceid, each.driver_id, playerid, group.GROUPID, each.driver_name]
-                        if (!cb.checked) {
-                            arr[2] = ""
-                        }
-                        fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKS", {
-                            method: 'POST',
-                            body: JSON.stringify([arr]),
-                        }).then(function (res) {
-                            return res.text()
-                        }).then(function (res) {
-                            console.log(res)
-                        })
-                    }
-                    let img = document.createElement('img')
-                    img.src = "https://cf.nascar.com/data/images/carbadges/1/" + each.car_no + ".png"
-                    img.width = 50
-                    img.style.verticalAlign = "middle"
-                    img.style.margin = "0px 5px"
-                    lbl.appendChild(cb)
-                    lbl.appendChild(img)
-                    lbl.appendChild(span)
-                    main.appendChild(lbl)
-                })
+input[type="checkbox"] {
+  scale: 1.25;
+}
 
+hr {
+  margin: 20px auto 20px auto;
+}
 
-                getPicks().then(function (res) {
-                    document.querySelectorAll("input[type=checkbox]").forEach(function (each) {
-                        each.disabled = false
-                    })
-                    res = res.filter(function (each) {
-                        return each.RACEID == raceid && each.GROUPID == group.GROUPID
-                    })
-                    console.log(res)
-                    res.forEach(function (each) {
-                        let cb = document.getElementById(each.DRIVERID)
-                        if (each.PLAYERID == playerid) {
-                            cb.checked = true
-                            cb.disabled = false
-                            cb.title = each.PLAYERID
-                        } else if (each.PLAYERID) {
-                            cb.checked = true
-                            cb.disabled = true
-                            cb.title = each.PLAYERID
+table {
+  border-collapse: collapse;
+  text-align: left;
+}
 
-                        } else {
-                            cb.checked = false
-                            cb.disabled = false
-                        }
-                    })
-                    addSeparator()
-                })
+caption {
+  margin-top: 35px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
 
+tbody tr:nth-child(even) {
+  background: #FFE;
+}
 
-            })
-        })
+tbody tbody tr:nth-child(even) {
+  background: inherit;
+}
 
-    });
+th, td {
+  border-spacing: 3px 3px;
+  padding-left: 3px;
+}
 
-    function addSeparator() {
-        let sep = document.createElement('hr')
-        document.querySelectorAll("label")[10].before(sep)
-    }
+th {
+  text-align: left;
+}
 
+ol, ul {
+  text-align: left;
+}
 
-
-</script>
-
-</html>
+small {
+  color: gray;
+}
