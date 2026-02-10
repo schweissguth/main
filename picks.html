@@ -43,11 +43,11 @@
 
     const url = new URL(window.location.href);
     const params = new URLSearchParams(url.search)
-    const playerid = params.get('playerid')
-    spanplayerid.innerText += playerid.toUpperCase()
+    const playerid = params.get('player')
     if (!playerid) {
         window.location.href = "./players.html"
     }
+    spanplayerid.innerText += playerid.toUpperCase()
 
     nextRace().then(function (res) {
         const raceid = res
