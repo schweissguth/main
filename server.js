@@ -57,7 +57,7 @@ function prevRace(x) {
     })
 }
 
-function getPlayers() {
+function getPlayers(x) {
   return fetch(
     "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PLAYERS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
   )
@@ -65,7 +65,13 @@ function getPlayers() {
       return res.json()
     })
     .then(function (res) {
-      return res.values.makeObj()
+      if (true) {
+        return res.values.makeObj().filter(function(filter) {
+          return filter.ACTIVE == "TRUE"
+        })
+      } else {
+        return res.values.makeObj()
+      }
     })
 }
 
@@ -87,7 +93,7 @@ function getPicks(x) {
     })
 }
 
-function getPickOrder() {
+function getPickOrder(x) {
   return fetch(
     "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKORDER?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
   )
@@ -95,7 +101,17 @@ function getPickOrder() {
       return res.json()
     })
     .then(function (res) {
-      return res.values.makeObj()
+      if (x) {
+        return res.values.makeObj().filter(function(filter) {
+          return filter.RACEID == x
+        }).sort(function(a, b) {
+          return a.RANK - b.RANK
+        })
+      } else {
+        return res.values.makeObj().sort(function(a, b) {
+          return a.RANK - b.RANK
+        })
+      }
     })
 }
 
@@ -209,6 +225,18 @@ function getPoints(x) {
   ).then(function (res) {
     return res.json()
   })
+}
+
+function getGroups() {
+  return fetch(
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/GROUPS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      return res.values.makeObj()
+    })
 }
 
 
