@@ -1,236 +1,273 @@
-
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Stupid-Fast.com</title>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta name="robots" content="noindex, nofollow">
-    <meta name="googlebot" content="noindex, nofollow">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://stupid-fast.com/server.js"></script>
-    
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://stupid-fast.com/css.css"
-    />
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Stupid-Fast.com</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="./server.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="./css.css" />
+
+
+</head>
+
+<body>
+    <header>
+      <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
+    </header>
+
+    <br />
+    <h1>UNDER CONSTRUCTION</h1>
+
+    <a href="./picks.html" class="heading">Click HERE to Make Picks</a>
+    <a href="https://www.driveraverages.com/">DriverAverages.com</a>
+    <a href="https://stupid-fast.com/results">Results and schedule</a>
+    <a href="https://stupid-fast.com/rules">Rules and info</a>
+    <a href="https://stupid-fast.com/season" class="heading">Season standings</a>
+    <a href="https://stupid-fast.com/chase" class="heading">Chase standings</a>
+
+    <section id="PICKS"></section>
+
+    <br><br>
+
+    <p id="TRACK"></p>
+    <p id="BROADCAST"></p>
+    <p id="RADIO"></p>
+    <p id="LAPS"></p>
+    <p id="STAGE"></p>
+
+    <br>
+
+    <table id="LIVEFEED" cellpadding="3"></table>
+
+    <br><br>
+
+    <table id="LAPNOTES" cellpadding="3"></table>
 
 
 
-    <style id="compiled-css" type="text/css">
-      
+  <script type="text/javascript">
 
-      /* EOS */
-    </style>
+    async function init() {
+      const raceid = await nextRace()
+      const pickorder = await getPickOrder(raceid)
+      const standings = await getStandings()
+      const players = await getPlayers(true)
+      console.log("Players", players)
+      const picks = await getPicks(raceid)
+      const groups = await getGroups()
 
-    <style type="text/css">
-      :root {
-        color-scheme: light;
-      }
-    </style>
+      groups.forEach(function (group) {
+        let table = document.createElement("TABLE")
+        table.id = group.ID
+        table.cellPadding = 5
+        let caption = document.createElement("CAPTION")
+        caption.innerText = group.TITLE
+        table.append(caption)
+        PICKS.append(table)
+      })
 
-    
-  </head>
-  <body>
-    <center>
-  <br /><br />
-  <a href="./index.html">
-    <img src="./sfbanner.png" alt="" />
-  </a>
+      pickorder.forEach(function (picker) {
+        console.log(picker.GROUPID)
+        let tr = document.getElementById("g" + picker.GROUPID).insertRow()
+        tr.id = picker.PLAYERID
+        let td = tr.insertCell()
+        td.innerText = picker.PLAYERID
+        td.width = "75px";
+        tr.insertCell()
+      })
 
-  <br />
-      <h1>UNDER CONSTRUCTION</h1>
-
-  <a href="./picks.html" class="heading"
-    >Click HERE to Make Picks</a
-  >
-  <a href="https://www.driveraverages.com/">DriverAverages.com</a>
-  <a href="https://stupid-fast.com/results">Results and schedule</a>
-  <a href="https://stupid-fast.com/rules">Rules and info</a>
-  <a href="https://stupid-fast.com/season" class="heading">Season standings</a>
-  <a href="https://stupid-fast.com/chase" class="heading">Chase standings</a>
-
-  <br /><br />
-
-<table id="PICKS" cellpadding="3">
-  <tr><th>LOADING...</th></tr>
-</table>
-
-<br><br>
-
-<p id="TRACK"></p>
-<p id="BROADCAST"></p>
-<p id="RADIO"></p>
-<p id="LAPS"></p>
-<p id="STAGE"></p>
-
-<br>
-
-<table id="LIVEFEED" cellpadding="3"></table>
-
-<br><br>
-
-<table id="LAPNOTES" cellpadding="3"></table>
-
-
-</center>
-
-
-
-     <script type="text/javascript">
-      
-getPickOrder().then(function (pickers) {
-  PICKS.innerHTML = null
-  pickers.sort(function (a, b) {
-    return a.PICKORDER - b.PICKORDER
-  })
-  pickers.forEach(function (picker) {
-    let tr = PICKS.insertRow()
-    tr.id = picker.PLAYERID
-    let td = tr.insertCell()
-    let span = document.createElement("SPAN")
-    span.innerText = picker.PLAYERID
-    span.style.fontWeight = "bold"
-    td.append(span)
-    let small = document.createElement("SMALL")
-    small.innerText = " (" + Math.round(picker.PICKORDER) + ")"
-    td.append(small)
-    tr.insertCell().setAttribute("class", "drivers")
-  })
-  getPlayers().then(function (players) {
-    players.forEach(function (player) {
-      let tr = document.getElementById(player.PLAYERID)
-      if (tr) {
-        tr.getElementsByTagName("SPAN")[0].innerText = player.PLAYERNAME
-      }
-    })
-  })
-  nextRace().then(function (currentrace) {
-    getPicks(currentrace).then(function (picks) {
-      console.log("Picks", picks)
-      getStandings().then(function (standings) {
-        standings = standings.map(function (standing) {
-          standing.playerid =
-            picks.findLast(function (pick) {
-              return pick.DRIVERID == standing.driver_id
-            })?.PLAYERID || ""
-          return standing
+      groups.forEach(function (group, index) {
+        const groupfilter = picks.filter(function (pick) {
+          return pick.GROUPID == index
         })
-        console.log("Standings", standings)
         standings.forEach(function (standing) {
-          if (standing.playerid) {
-            let tr = document.getElementById(standing.playerid)
-            let td = tr.querySelector(".drivers")
-            let div = document.createElement("DIV")
-            div.innerText = standing.driver_name
-            td.append(div)
+          let pick = groupfilter.findLast(function (pick) {
+            return pick.DRIVERID == standing.driver_id
+          })
+          if (pick && pick.PLAYERID) {
+            let tr = document.getElementById(pick.PLAYERID)
+            console.log(tr)
+            tr.cells[1].innerHTML += "<div>" + standing.driver_name + "</div>"
           }
         })
       })
-    })
-  })
-})
 
-function feed() {
-  getLiveFeed().then(function (liverace) {
-    console.log("liverace", liverace)
-    TRACK.innerHTML = "<u>" + liverace.track_name.toUpperCase() + "</u>"
-    LAPS.innerText =
-      "Lap " +
-      liverace.lap_number +
-      " of " +
-      liverace.laps_in_race +
-      " (" +
-      liverace.laps_to_go +
-      " laps to go)"
-    let flags = [, "🟢", "🟡", , "🏁", , , , "🏴", "🏁"]
-    STAGE.innerHTML =
-      "Stage " +
-      liverace.stage.stage_num +
-      " <big>" +
-      flags[liverace.flag_state] +
-      "</big> flag"
-    getSchedule().then(function (schedule) {
-      let findrace = schedule.find(function (schedule) {
-        return schedule.race_id == liverace.race_id
-      })
-      BROADCAST.innerText =
-        findrace.television_broadcaster + " / " + findrace.radio_broadcaster
-    })
-
-    LIVEFEED.innerHTML = null
-    liverace.vehicles.forEach(function (driver) {
-      let tr = LIVEFEED.insertRow()
-      tr.insertCell().innerText = driver.running_position
-      let td = tr.insertCell()
-      if (driver.delta) {
-        driver.delta = Math.abs(driver.delta.toFixed(2)) * -1
-      }
-      td.innerHTML =
-        driver.driver.full_name +
-        " <small><i>" +
-        (driver.delta || "") +
-        "</i></small>"
-      td = tr.insertCell()
-      td.id = driver.driver.driver_id
-      td.classList.add("driverid")
-    })
-    getPicks().then(function (picks) {
-      picks = picks.filter(function (pick) {
-        return pick.RACEID == liverace.race_id
-      })
-      getPlayers().then(function (players) {
-        picks = picks.map(function (pick) {
-          pick.playername =
-            players.find(function (player) {
-              return player.PLAYERID == pick.PLAYERID
-            })?.PLAYERNAME || ""
-          return pick
-        })
-        picks.forEach(function (pick) {
-          try {
-          document.getElementById(pick.DRIVERID).innerHTML =
-            "<b>" + (pick.playername || "") + "</b>"
-          } catch (err) {}
-        })
-        let count = 24
-        let tds = document.getElementsByClassName("driverid")
-        for (let i = 0; i < tds.length; i++) {
-          if (tds[i].innerText) {
-            tds[i].innerHTML += " <small><i>" + count-- + "</i></small>"
-          }
+      players.forEach(function (player) {
+        let tr = document.getElementById(player.PLAYERID)
+        if (tr) {
+          tr.cells[0].innerHTML = player.PLAYERNAME + "<br>"
         }
       })
-    })
-  })
 
-  getLapNotes().then(function (notes) {
-    console.log("Notes", notes)
-    LAPNOTES.innerHTML = null
-    notes = Object.entries(notes)
-    notes.reverse().forEach(function (note) {
-      let tr = LAPNOTES.insertRow()
-      tr.insertCell().innerText = note[0]
-      tr.insertCell().innerText = note[1][0].Note
-    })
-  })
-}
-feed()
 
-setInterval(function () {
-  feed()
-}, 30000)
+
+
+    }
+
+    init()
+
+
+
+    /*
+
+    getPickOrder().then(function (pickers) {
+      PICKS.innerHTML = null
+      pickers.sort(function (a, b) {
+        return a.PICKORDER - b.PICKORDER
+      })
+      pickers.forEach(function (picker) {
+        let tr = PICKS.insertRow()
+        tr.id = picker.PLAYERID
+        let td = tr.insertCell()
+        let span = document.createElement("SPAN")
+        span.innerText = picker.PLAYERID
+        span.style.fontWeight = "bold"
+        td.append(span)
+        let small = document.createElement("SMALL")
+        small.innerText = " (" + Math.round(picker.PICKORDER) + ")"
+        td.append(small)
+        tr.insertCell().setAttribute("class", "drivers")
+      })
+      getPlayers().then(function (players) {
+        players.forEach(function (player) {
+          let tr = document.getElementById(player.PLAYERID)
+          if (tr) {
+            tr.getElementsByTagName("SPAN")[0].innerText = player.PLAYERNAME
+          }
+        })
+      })
+      nextRace().then(function (currentrace) {
+        getPicks(currentrace).then(function (picks) {
+          console.log("Picks", picks)
+          getStandings().then(function (standings) {
+            standings = standings.map(function (standing) {
+              standing.playerid =
+                picks.findLast(function (pick) {
+                  return pick.DRIVERID == standing.driver_id
+                })?.PLAYERID || ""
+              return standing
+            })
+            console.log("Standings", standings)
+            standings.forEach(function (standing) {
+              if (standing.playerid) {
+                let tr = document.getElementById(standing.playerid)
+                let td = tr.querySelector(".drivers")
+                let div = document.createElement("DIV")
+                div.innerText = standing.driver_name
+                td.append(div)
+              }
+            })
+          })
+        })
+      })
+    })
+
+    */
+
+    function feed() {
+      getLiveFeed().then(function (liverace) {
+        console.log("liverace", liverace)
+        TRACK.innerHTML = "<u>" + liverace.track_name.toUpperCase() + "</u>"
+        LAPS.innerText =
+          "Lap " +
+          liverace.lap_number +
+          " of " +
+          liverace.laps_in_race +
+          " (" +
+          liverace.laps_to_go +
+          " laps to go)"
+        let flags = [, "🟢", "🟡", , "🏁", , , , "🏴", "🏁"]
+        STAGE.innerHTML =
+          "Stage " +
+          liverace.stage.stage_num +
+          " <big>" +
+          flags[liverace.flag_state] +
+          "</big> flag"
+        getSchedule().then(function (schedule) {
+          let findrace = schedule.find(function (schedule) {
+            return schedule.race_id == liverace.race_id
+          })
+          BROADCAST.innerText =
+            findrace.television_broadcaster + " / " + findrace.radio_broadcaster
+        })
+
+        LIVEFEED.innerHTML = null
+        liverace.vehicles.forEach(function (driver) {
+          let tr = LIVEFEED.insertRow()
+          tr.insertCell().innerText = driver.running_position
+          let td = tr.insertCell()
+          if (driver.delta) {
+            driver.delta = Math.abs(driver.delta.toFixed(2)) * -1
+          }
+          td.innerHTML =
+            driver.driver.full_name +
+            " <small><i>" +
+            (driver.delta || "") +
+            "</i></small>"
+          td = tr.insertCell()
+          td.id = driver.driver.driver_id
+          td.classList.add("driverid")
+        })
+        getPicks().then(function (picks) {
+          picks = picks.filter(function (pick) {
+            return pick.RACEID == liverace.race_id
+          })
+          getPlayers().then(function (players) {
+            picks = picks.map(function (pick) {
+              pick.playername =
+                players.find(function (player) {
+                  return player.PLAYERID == pick.PLAYERID
+                })?.PLAYERNAME || ""
+              return pick
+            })
+            picks.forEach(function (pick) {
+              try {
+                document.getElementById(pick.DRIVERID).innerHTML =
+                  "<b>" + (pick.playername || "") + "</b>"
+              } catch (err) { }
+            })
+            let count = 24
+            let tds = document.getElementsByClassName("driverid")
+            for (let i = 0; i < tds.length; i++) {
+              if (tds[i].innerText) {
+                tds[i].innerHTML += " <small><i>" + count-- + "</i></small>"
+              }
+            }
+          })
+        })
+      })
+
+      getLapNotes().then(function (notes) {
+        console.log("Notes", notes)
+        LAPNOTES.innerHTML = null
+        notes = Object.entries(notes)
+        notes.reverse().forEach(function (note) {
+          let tr = LAPNOTES.insertRow()
+          tr.insertCell().innerText = note[0]
+          tr.insertCell().innerText = note[1][0].Note
+        })
+      })
+    }
+    feed()
+
+    setInterval(function () {
+      feed()
+    }, 30000)
 
 
 
 
   </script>
 
-    
+
 </body>
 
-   
+
 
 
 </html>
