@@ -1,118 +1,109 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+<head>
+  
     <title>Picks - StupidFast.com</title>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="googlebot" content="noindex, nofollow" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <script
-      type="text/javascript"
-      src="https://stupid-fast.com/server.js"
-    ></script>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://stupid-fast.com/css.css"
-    />
-  </head>
-  <body>
-    <center>
-      <br /><br />
-      <a href="https://stupid-fast.com">
-        <img src="https://stupid-fast.com/sfbanner.png" />
-      </a>
-      <br /><br />
-
-      <table id="table" cellpadding="5">
-        <tr>
-          <th>LOADING...</th>
-        </tr>
-      </table>
-    </center>
-  </body>
-
-  <script type="text/javascript">
-    nextRace().then(function (currentrace) {
-  table.innerHTML = null
-  getStandings().then(function (res) {
-    console.log(res)
-    res.sort(function (a, b) {
-      return a.position - b.position
-    })
-    res.forEach(function (driver) {
-      let tr = table.insertRow()
-      tr.id = driver.driver_id
-      tr.insertCell().innerHTML =
-        "<img src ='https://cf.nascar.com/data/images/carbadges/1/" +
-        driver.car_no +
-        ".png' width='50' />"
-      tr.insertCell().innerText = driver.driver_name
-      let select = document.createElement("SELECT")
-      select.id = driver.driver_id
-      select.onchange = function () {
-        fetch(
-          "https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKS",
-          {
-            method: "post",
-            body: JSON.stringify({
-              RACEID: currentrace,
-              DRIVERID: this.id,
-              PLAYERID: this.value,
-            }),
-          },
-        )
-      }
-      let option = document.createElement("OPTION")
-      select.add(option)
-      tr.insertCell().append(select)
-    })
-    getPickOrder().then(function (players) {
-      players = players.sort(function (a, b) {
-        return a.PICKORDER - b.PICKORDER
-      })
-      let sels = document.getElementsByTagName("SELECT")
-      for (let i = 0; i < sels.length; i++) {
-        players.forEach(function (player) {
-          let opt = document.createElement("OPTION")
-          opt.value = player.PLAYERID
-          opt.text = player.PLAYERID
-          opt.name = player.PLAYERID
-          sels[i].add(opt)
-        })
-      }
-      getPlayers().then(function (players) {
-        let sels = document.getElementsByTagName("SELECT")
-        for (let i = 0; i < sels.length; i++) {
-          let opts = sels[i].getElementsByTagName("OPTION")
-          for (let j = 0; j < opts.length; j++) {
-            let findplayer = players.find(function (player) {
-              return player.PLAYERID == opts[j].name
-            })
-            if (findplayer) {
-              opts[j].text = findplayer?.PLAYERNAME
-            }
-          }
+  
+    <script src="https://stupid-fast.com/server.js"></script>
+    <script>
+        function getGroupLines(x) {
+            return fetch(
+                "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+            )
+                .then(function (res) {
+                    return res.json()
+                })
+                .then(function (res) {
+                    if (x) {
+                        return res.values.makeObj().filter(function (filter) {
+                            return filter.RACEID == x
+                        })
+                    } else {
+                        return res.values.makeObj()
+                    }
+                })
         }
-        getPicks().then(function (picks) {
-          picks = picks.filter(function (pick) {
-            return pick.RACEID == currentrace
-          })
-          picks.forEach(function (pick) {
-            let tr = document.getElementById(pick.DRIVERID)
-            tr.getElementsByTagName("SELECT")[0].value = pick.PLAYERID
-          })
-          let td13 = table.insertRow(13).insertCell()
-          td13.setAttribute("colspan", 5)
-          td13.innerHTML = "<br><hr><br>"
+    </script>
+</head>
+
+<body>
+
+    <header>
+        <a href="./index.html">Home</a>
+    </header>
+
+
+    <main id="main">
+    </main>
+</body>
+
+<script>
+
+    const url = new URL(window.location.href);
+    const params = new URLSearchParams(url.search)
+    const playerid = params.get('playerid')
+
+    nextRace().then(function (res) {
+        const raceid = res
+        getStandings().then(function (res) {
+            console.log(res)
+            res.forEach(function (each) {
+                let span = document.createElement('span')
+                span.title = each.driver_id
+                let lbl = document.createElement('label')
+                lbl.style.display = "table";
+                span.innerText = each.driver_name + " "
+                let cb = document.createElement('input')
+                cb.id = each.driver_id
+                cb.type = "checkbox"
+                cb.disabled = true
+                cb.onchange = function () {
+                    let arr = [raceid, each.driver_id, playerid, each.driver_name]
+                    if (!cb.checked) {
+                        arr[2] = ""
+                    }
+                    fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKS", {
+                        method: 'POST',
+                        body: JSON.stringify([arr]),
+                    }).then(function (res) {
+                        return res.text()
+                    }).then(function (res) {
+                        console.log(res)
+                    })
+                }
+                lbl.appendChild(cb)
+                lbl.appendChild(span)
+                main.appendChild(lbl)
+            })
+            getGroupLines().then(function (res) {
+
+            })
         })
-      })
-    })
-  })
-})
+        getPicks().then(function (res) {
+            res = res.filter(function (each) {
+                return each.RACEID == raceid
+            })
+            console.log(res)
+            res.forEach(function (each) {
+                let cb = document.getElementById(each.DRIVERID)
+                if (each.PLAYERID == playerid) {
+                    cb.checked = true
+                    cb.disabled = false
+                } else if (each.PLAYERID) {
+                    cb.checked = true
+                    
+                } else {
+                    cb.checked = false
+                    cb.disabled = false
+                }
+            })
+        })
+    });
+    
 
 
-  </script>
+</script>
+
 </html>
