@@ -21,7 +21,7 @@
     </header>
 
     <br />
-    <!--h1>UNDER CONSTRUCTION</h1-->
+    <h1>UNDER CONSTRUCTION</h1>
 
     <a href="./picks.html" class="heading">Click HERE to Make Picks</a>
     <a href="https://www.driveraverages.com/">DriverAverages.com</a>
@@ -64,6 +64,7 @@
       groups.forEach(function (group) {
         let table = document.createElement("TABLE")
         table.id = group.ID
+        table.style.width = "100%";
         table.cellPadding = 5
         let caption = document.createElement("CAPTION")
         caption.innerText = group.TITLE
