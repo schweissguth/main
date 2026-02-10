@@ -11,6 +11,9 @@
         <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
     </header>
     <main>
+        <select id="selectplayer" onchange='localStorage.setItem("playerid", this.value); window.location.href = "./picks.html?player=" + this.value'>
+            <option disabled selected>Select player </option>
+        </select>
 
     </main>
 </body>
@@ -18,20 +21,17 @@
 <script>
     let playerid = localStorage.getItem("playerid")
     if (playerid) {
-        window.location.href = "./picks.html?playerid=" + playerid
+        window.location.href = "./picks.html?player=" + playerid
     } else {
         getPlayers().then(function (res) {
             res = res.filter(function (each) {
                 return each.ACTIVE == "TRUE"
             })
             res.forEach(function (each) {
-                let a = document.createElement("A")
-                a.onclick = function () {
-                    localStorage.setItem("playerid", each.PLAYERID)
-                }
-                a.href = "./picks.html?playerid=" + each.PLAYERID
-                a.innerText = each.PLAYERNAME
-                document.querySelector("main").appendChild(a)
+                let o = document.createElement("OPTION")
+                o.value = each.PLAYERID
+                o.text = each.PLAYERNAME
+                selectplayer.add(o)
             })
         });
 
