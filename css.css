@@ -2,16 +2,28 @@ body, html {
   font-family: Verdana;
   font-size: 0.92em;
   padding-bottom: 30px;
-  margin: 0px;
 }
 
-center center {
+body {
   max-width: 290px;
+  margin: auto;
+  text-align: center;
+}
+
+header {
+  margin-top: 30px;
+}
+
+main {
+  text-align: center;
+  margin: 30px auto 30px auto;
+  display: inline-block;
 }
 
 a {
-  margin: 0px 0px 15px 0px !important;
+  margin: 15px auto 15px auto !important;
   display: table;
+  
 }
 
 .heading {
@@ -21,8 +33,29 @@ a {
   margin-top: 25px;
 }
 
+label {
+  display: block;
+  margin: 5px;
+}
+
+input[type="checkbox"] {
+  scale: 1.25;
+}
+
+hr {
+  margin: 20px auto 20px auto;
+}
+
 table {
   border-collapse: collapse;
+  text-align: left;
+}
+
+caption {
+  margin-top: 35px;
+  margin-bottom: 5px;
+  font-weight: bold;
+  text-align: left;
 }
 
 tbody tr:nth-child(even) {
@@ -49,4 +82,3 @@ ol, ul {
 small {
   color: gray;
 }
-
