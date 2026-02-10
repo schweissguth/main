@@ -1,83 +1,44 @@
-body, html {
-  font-family: Verdana;
-  font-size: 0.92em;
-  padding-bottom: 30px;
-}
+<!DOCTYPE html>
+<html>
 
-body {
-  max-width: 290px;
-  margin: auto;
-  text-align: center;
-}
+<head>
+    <script src="https://stupid-fast.com/server.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stupid-Fast.com - select player</title>
+</head>
 
-header {
-  margin-top: 30px;
-}
+<body>
+    <header>
+        <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
+    </header>
+    <main>
+        <select id="selectplayer" onchange='localStorage.setItem("playerid", this.value); window.location.href = "./picks.html?player=" + this.value'>
+            <option disabled selected>Select player </option>
+        </select>
 
-main {
-  text-align: center;
-  margin: 30px auto 30px auto;
-  display: inline-block;
-}
+    </main>
+</body>
 
-a {
-  margin: 15px auto 15px auto !important;
-  display: table;
-  
-}
+<script>
+    let playerid = localStorage.getItem("playerid")
+    if (playerid) {
+        window.location.href = "./picks.html?player=" + playerid
+    } else {
+        getPlayers().then(function (res) {
+            res = res.filter(function (each) {
+                return each.ACTIVE == "TRUE"
+            })
+            res.forEach(function (each) {
+                let o = document.createElement("OPTION")
+                o.value = each.PLAYERID
+                o.text = each.PLAYERNAME
+                selectplayer.add(o)
+            })
+        });
 
-.heading {
-  color: darkgoldenrod;
-  font-size: 1.2em;
-  display: block;
-  margin-top: 25px;
-}
+    }
 
-label {
-  display: block;
-  margin: 5px;
-}
+</script>
 
-input[type="checkbox"] {
-  scale: 1.25;
-}
-
-hr {
-  margin: 20px auto 20px auto;
-}
-
-table {
-  border-collapse: collapse;
-  text-align: left;
-}
-
-caption {
-  margin-top: 35px;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-tbody tr:nth-child(even) {
-  background: #FFE;
-}
-
-tbody tbody tr:nth-child(even) {
-  background: inherit;
-}
-
-th, td {
-  border-spacing: 3px 3px;
-  padding-left: 3px;
-}
-
-th {
-  text-align: left;
-}
-
-ol, ul {
-  text-align: left;
-}
-
-small {
-  color: gray;
-}
+</html>
