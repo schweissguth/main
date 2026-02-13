@@ -64,6 +64,8 @@
         table.id = group.ID
         table.style.width = "100%";
         table.cellPadding = 5
+        table.style.tableLayout = "fixed"
+
         let caption = document.createElement("CAPTION")
         caption.innerText = group.TITLE
         table.append(caption)
@@ -75,9 +77,11 @@
         let tr = document.getElementById("g" + picker.GROUPID).insertRow()
         tr.id = picker.PLAYERID
         let td = tr.insertCell()
+        td.style.width = "50%"
+        td.style.textAlign = "center"
         td.innerText = picker.PLAYERID
         td.width = "75px";
-        tr.insertCell()
+        tr.insertCell().style.textAlign = "left"
       })
 
       groups.forEach(function (group, index) {
