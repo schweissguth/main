@@ -16,35 +16,39 @@
 </head>
 
 <body>
-    <header>
-      <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
-    </header>
+  <header>
+    <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
+  </header>
 
 
-    <a href="./picks.html" class="heading">Click HERE to Make Picks</a>
-    <a href="https://www.driveraverages.com/">DriverAverages.com</a>
-    <a href="https://stupid-fast.com/results">Results and schedule</a>
-    <a href="https://stupid-fast.com/rules">Rules and info</a>
-    <a href="https://stupid-fast.com/season" class="heading">Season standings</a>
-    <a href="https://stupid-fast.com/chase" class="heading">Chase standings</a>
+  <a href="./picks.html" class="heading">Click HERE to Make Picks</a>
+  <a href="https://www.driveraverages.com/">DriverAverages.com</a>
+  <a href="https://stupid-fast.com/results">Results and schedule</a>
+  <a href="https://stupid-fast.com/rules">Rules and info</a>
+  <a href="https://stupid-fast.com/season" class="heading">Season standings</a>
+  <a href="https://stupid-fast.com/chase" class="heading">Chase standings</a>
 
-    <section id="PICKS"></section>
+  <section id="PICKS"></section>
 
-    <br><br>
+  <br><br>
 
-    <p id="TRACK"></p>
-    <p id="BROADCAST"></p>
-    <p id="RADIO"></p>
-    <p id="LAPS"></p>
-    <p id="STAGE"></p>
+  <p id="TRACK"></p>
+  <p id="BROADCAST"></p>
+  <p id="RADIO"></p>
+  <p id="LAPS"></p>
+  <p id="STAGE"></p>
 
-    <br>
+  <br>
 
-    <table id="LIVEFEED" cellpadding="3"></table>
+  <table id="t2" cellpadding="3">
+    <tr>
+      <th>LOADING...</th>
+    </tr>
+  </table>
 
-    <br><br>
+  <br><br>
 
-    <table id="LAPNOTES" cellpadding="3"></table>
+  <table id="LAPNOTES" cellpadding="3"></table>
 
 
 
@@ -55,7 +59,6 @@
       const pickorder = await getPickOrder(raceid)
       const standings = await getStandings()
       const players = await getPlayers(true)
-      console.log("Players", players)
       const picks = await getPicks(raceid)
       const groups = await getGroups()
 
@@ -65,7 +68,6 @@
         table.style.width = "100%";
         table.cellPadding = 5
         table.style.tableLayout = "fixed"
-
         let caption = document.createElement("CAPTION")
         caption.innerText = group.TITLE
         table.append(caption)
@@ -73,7 +75,6 @@
       })
 
       pickorder.forEach(function (picker) {
-        console.log(picker.GROUPID)
         let tr = document.getElementById("g" + picker.GROUPID).insertRow()
         tr.id = picker.PLAYERID
         let td = tr.insertCell()
@@ -94,7 +95,6 @@
           })
           if (pick && pick.PLAYERID) {
             let tr = document.getElementById(pick.PLAYERID)
-            console.log(tr)
             tr.cells[1].innerHTML += "<div>" + standing.driver_name + "</div>"
           }
         })
@@ -106,71 +106,64 @@
           tr.cells[0].innerHTML = player.PLAYERNAME + "<br>"
         }
       })
-
-
-
-
     }
 
     init()
 
 
+    async function init2() {
+      const players = await getPlayers()
+      const picks = await getPicks()
+      const groups = await getGroups()
+      const race = await getLiveFeed()
 
-    /*
-
-    getPickOrder().then(function (pickers) {
-      PICKS.innerHTML = null
-      pickers.sort(function (a, b) {
-        return a.PICKORDER - b.PICKORDER
-      })
-      pickers.forEach(function (picker) {
-        let tr = PICKS.insertRow()
-        tr.id = picker.PLAYERID
+      t2.innerHTML = ""
+      race.vehicles.forEach(function (driver) {
+        let tr = t2.insertRow()
+        tr.id = driver.driver.driver_id
+        tr.insertCell().innerText = driver.running_position
         let td = tr.insertCell()
-        let span = document.createElement("SPAN")
-        span.innerText = picker.PLAYERID
-        span.style.fontWeight = "bold"
-        td.append(span)
-        let small = document.createElement("SMALL")
-        small.innerText = " (" + Math.round(picker.PICKORDER) + ")"
-        td.append(small)
-        tr.insertCell().setAttribute("class", "drivers")
+        td.innerHTML = driver.driver.full_name +
+          " <small><i>" + (Math.abs(driver.delta.toFixed(2)) * -1) + "</i></small>"
+        td = tr.insertCell()
       })
-      getPlayers().then(function (players) {
-        players.forEach(function (player) {
-          let tr = document.getElementById(player.PLAYERID)
-          if (tr) {
-            tr.getElementsByTagName("SPAN")[0].innerText = player.PLAYERNAME
-          }
-        })
-      })
-      nextRace().then(function (currentrace) {
-        getPicks(currentrace).then(function (picks) {
-          console.log("Picks", picks)
-          getStandings().then(function (standings) {
-            standings = standings.map(function (standing) {
-              standing.playerid =
-                picks.findLast(function (pick) {
-                  return pick.DRIVERID == standing.driver_id
-                })?.PLAYERID || ""
-              return standing
-            })
-            console.log("Standings", standings)
-            standings.forEach(function (standing) {
-              if (standing.playerid) {
-                let tr = document.getElementById(standing.playerid)
-                let td = tr.querySelector(".drivers")
-                let div = document.createElement("DIV")
-                div.innerText = standing.driver_name
-                td.append(div)
-              }
-            })
-          })
-        })
-      })
-    })
 
-    */
+      let filter = picks.filter(function (pick) {
+        return pick.RACEID == race.race_id
+      })
+
+      filter.forEach(function (pick) {
+        pick.PLAYERNAME =
+          players.find(function (find) {
+            return find.PLAYERID == pick.PLAYERID
+          })?.PLAYERNAME || ""
+      })
+
+      filter.forEach(function (pick) {
+        let tr = document.getElementById(pick.DRIVERID)
+        if (tr) {
+          tr.cells[2].innerHTML += "<div>" + pick.PLAYERNAME + "</div>"
+        }
+      })
+
+      groups.forEach(function (group, g) {
+        let counter = 0
+        for (let i = t2.rows.length - 1; i >= 0; i--) {
+          let td = t2.rows[i].cells[2]
+          let div = td.querySelectorAll("div")[g]
+          if (div) {
+            div.innerText += " +" + ++counter
+          }
+        }
+      })
+
+      t2.rows[0].cells[1].querySelector("small").remove()
+    }
+
+    init2()
+
+
+
 
     function feed() {
       getLiveFeed().then(function (liverace) {
@@ -199,50 +192,8 @@
             findrace.television_broadcaster + " / " + findrace.radio_broadcaster
         })
 
-        LIVEFEED.innerHTML = null
-        liverace.vehicles.forEach(function (driver) {
-          let tr = LIVEFEED.insertRow()
-          tr.insertCell().innerText = driver.running_position
-          let td = tr.insertCell()
-          if (driver.delta) {
-            driver.delta = Math.abs(driver.delta.toFixed(2)) * -1
-          }
-          td.innerHTML =
-            driver.driver.full_name +
-            " <small><i>" +
-            (driver.delta || "") +
-            "</i></small>"
-          td = tr.insertCell()
-          td.id = driver.driver.driver_id
-          td.classList.add("driverid")
-        })
-        getPicks().then(function (picks) {
-          picks = picks.filter(function (pick) {
-            return pick.RACEID == liverace.race_id
-          })
-          getPlayers().then(function (players) {
-            picks = picks.map(function (pick) {
-              pick.playername =
-                players.find(function (player) {
-                  return player.PLAYERID == pick.PLAYERID
-                })?.PLAYERNAME || ""
-              return pick
-            })
-            picks.forEach(function (pick) {
-              try {
-                document.getElementById(pick.DRIVERID).innerHTML =
-                  "<b>" + (pick.playername || "") + "</b>"
-              } catch (err) { }
-            })
-            let count = 24
-            let tds = document.getElementsByClassName("driverid")
-            for (let i = 0; i < tds.length; i++) {
-              if (tds[i].innerText) {
-                tds[i].innerHTML += " <small><i>" + count-- + "</i></small>"
-              }
-            }
-          })
-        })
+
+
       })
 
       getLapNotes().then(function (notes) {
@@ -260,6 +211,7 @@
 
     setInterval(function () {
       feed()
+      init2()
     }, 30000)
 
 
