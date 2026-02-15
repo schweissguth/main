@@ -28,196 +28,194 @@
   <a href="https://stupid-fast.com/season" class="heading">Season standings</a>
   <a href="https://stupid-fast.com/chase" class="heading">Chase standings</a>
 
-  <section id="PICKS"></section>
+      <center>
+  <table id="t1" cellpadding="3">
+    <table>
+    </center>
 
-  <br><br>
+      <br><br>
 
-  <p id="TRACK"></p>
-  <p id="BROADCAST"></p>
-  <p id="RADIO"></p>
-  <p id="LAPS"></p>
-  <p id="STAGE"></p>
+      <p id="TRACK"></p>
+      <p id="BROADCAST"></p>
+      <p id="RADIO"></p>
+      <p id="LAPS"></p>
+      <p id="STAGE"></p>
 
-  <br>
+      <br>
 
-  <table id="t2" cellpadding="3">
-    <tr>
-      <th>LOADING...</th>
-    </tr>
-  </table>
+      <table id="t2" cellpadding="3">
+        <tr>
+          <th>LOADING...</th>
+        </tr>
+      </table>
 
-  <br><br>
+      <br><br>
 
-  <table id="LAPNOTES" cellpadding="3"></table>
+      <table id="LAPNOTES" cellpadding="3"></table>
 
 
 
-  <script type="text/javascript">
+      <script type="text/javascript">
 
-    async function init() {
-      const raceid = await nextRace()
-      const pickorder = await getPickOrder(raceid)
-      const standings = await getStandings()
-      const players = await getPlayers(true)
-      const picks = await getPicks(raceid)
-      const groups = await getGroups()
+        async function init() {
+          const raceid = await nextRace()
+          const pickorder = await getPickOrder(raceid)
+          const standings = await getStandings()
+          const players = await getPlayers(true)
+          const picks = await getPicks(raceid)
+          const groups = await getGroups()
+          const race = await getLiveFeed()
 
-      groups.forEach(function (group) {
-        let table = document.createElement("TABLE")
-        table.id = group.ID
-        table.style.width = "100%";
-        table.cellPadding = 5
-        table.style.tableLayout = "fixed"
-        let caption = document.createElement("CAPTION")
-        caption.innerText = group.TITLE
-        table.append(caption)
-        PICKS.append(table)
-      })
+          function table1() {
+            groups.forEach(function (group, g) {
+              let tr = t1.insertRow()
+              let th = document.createElement("th")
+              th.innerText = "\n" + group.TITLE
+              th.setAttribute("colspan", "2")
+              th.style.backgroundColor = "white"
+              th.style.textAlign = "center"
+              tr.appendChild(th)
+              let filter = pickorder.filter(function (pick) {
+                return pick.GROUPID == g
+              })
+              filter.forEach(function (picker) {
+                let tr = t1.insertRow()
+                tr.id = picker.PLAYERID
+                td = tr.insertCell()
+                td.innerText = picker.PLAYERID
+                td = tr.insertCell()
+              })
+            })
 
-      pickorder.forEach(function (picker) {
-        let tr = document.getElementById("g" + picker.GROUPID).insertRow()
-        tr.id = picker.PLAYERID
-        let td = tr.insertCell()
-        td.style.width = "50%"
-        td.style.textAlign = "center"
-        td.innerText = picker.PLAYERID
-        td.width = "75px";
-        tr.insertCell().style.textAlign = "left"
-      })
 
-      groups.forEach(function (group, index) {
-        const groupfilter = picks.filter(function (pick) {
-          return pick.GROUPID == index
-        })
-        standings.forEach(function (standing) {
-          let pick = groupfilter.findLast(function (pick) {
-            return pick.DRIVERID == standing.driver_id
-          })
-          if (pick && pick.PLAYERID) {
-            let tr = document.getElementById(pick.PLAYERID)
-            tr.cells[1].innerHTML += "<div>" + standing.driver_name + "</div>"
+            groups.forEach(function (group, index) {
+              const groupfilter = picks.filter(function (pick) {
+                return pick.GROUPID == index
+              })
+              standings.forEach(function (standing) {
+                let pick = groupfilter.findLast(function (pick) {
+                  return pick.DRIVERID == standing.driver_id
+                })
+                if (pick && pick.PLAYERID) {
+                  let tr = document.getElementById(pick.PLAYERID)
+                  tr.cells[1].innerHTML += "<div>" + standing.driver_name + "</div>"
+                }
+              })
+            })
+
+            players.forEach(function (player) {
+              let tr = document.getElementById(player.PLAYERID)
+              if (tr) {
+                tr.cells[0].innerHTML = player.PLAYERNAME + "<br>"
+              }
+            })
           }
-        })
-      })
-
-      players.forEach(function (player) {
-        let tr = document.getElementById(player.PLAYERID)
-        if (tr) {
-          tr.cells[0].innerHTML = player.PLAYERNAME + "<br>"
-        }
-      })
-    }
-
-    init()
+          table1()
 
 
-    async function init2() {
-      const players = await getPlayers()
-      const picks = await getPicks()
-      const groups = await getGroups()
-      const race = await getLiveFeed()
 
-      t2.innerHTML = ""
-      race.vehicles.forEach(function (driver) {
-        let tr = t2.insertRow()
-        tr.id = driver.driver.driver_id
-        tr.insertCell().innerText = driver.running_position
-        let td = tr.insertCell()
-        td.innerHTML = driver.driver.full_name +
-          " <small><i>" + (Math.abs(driver.delta.toFixed(2)) * -1) + "</i></small>"
-        td = tr.insertCell()
-      })
+          function table2() {
+            t2.innerHTML = ""
+            race.vehicles.forEach(function (driver) {
+              let tr = t2.insertRow()
+              tr.id = driver.driver.driver_id
+              tr.insertCell().innerText = driver.running_position
+              let td = tr.insertCell()
+              td.innerHTML = driver.driver.full_name +
+                " <small><i>" + (Math.abs(driver.delta.toFixed(2)) * -1) + "</i></small>"
+              td = tr.insertCell()
+            })
 
-      let filter = picks.filter(function (pick) {
-        return pick.RACEID == race.race_id
-      })
+            let filter = picks.filter(function (pick) {
+              return pick.RACEID == race.race_id
+            })
 
-      filter.forEach(function (pick) {
-        pick.PLAYERNAME =
-          players.find(function (find) {
-            return find.PLAYERID == pick.PLAYERID
-          })?.PLAYERNAME || ""
-      })
+            filter.forEach(function (pick) {
+              pick.PLAYERNAME =
+                players.find(function (find) {
+                  return find.PLAYERID == pick.PLAYERID
+                })?.PLAYERNAME || ""
+            })
 
-      filter.forEach(function (pick) {
-        let tr = document.getElementById(pick.DRIVERID)
-        if (tr) {
-          tr.cells[2].innerHTML += "<div>" + pick.PLAYERNAME + "</div>"
-        }
-      })
+            filter.forEach(function (pick) {
+              let tr = document.getElementById(pick.DRIVERID)
+              if (tr) {
+                tr.cells[2].innerHTML += "<div>" + pick.PLAYERNAME + "</div>"
+              }
+            })
 
-      groups.forEach(function (group, g) {
-        let counter = 0
-        for (let i = t2.rows.length - 1; i >= 0; i--) {
-          let td = t2.rows[i].cells[2]
-          let div = td.querySelectorAll("div")[g]
-          if (div) {
-            div.innerText += " +" + ++counter
+            groups.forEach(function (group, g) {
+              let counter = 0
+              for (let i = t2.rows.length - 1; i >= 0; i--) {
+                let td = t2.rows[i].cells[2]
+                let div = td.querySelectorAll("div")[g]
+                if (div) {
+                  div.innerText += " +" + ++counter
+                }
+              }
+            })
+
+            t2.rows[0].cells[1].querySelector("small").remove()
           }
+
+          table2()
         }
-      })
 
-      t2.rows[0].cells[1].querySelector("small").remove()
-    }
-
-    init2()
+        init()
 
 
 
 
-    function feed() {
-      getLiveFeed().then(function (liverace) {
-        console.log("liverace", liverace)
-        TRACK.innerHTML = "<u>" + liverace.track_name.toUpperCase() + "</u>"
-        LAPS.innerText =
-          "Lap " +
-          liverace.lap_number +
-          " of " +
-          liverace.laps_in_race +
-          " (" +
-          liverace.laps_to_go +
-          " laps to go)"
-        let flags = [, "🟢", "🟡", , "🏁", , , , "🏴", "🏁"]
-        STAGE.innerHTML =
-          "Stage " +
-          liverace.stage.stage_num +
-          " <big>" +
-          flags[liverace.flag_state] +
-          "</big> flag"
-        getSchedule().then(function (schedule) {
-          let findrace = schedule.find(function (schedule) {
-            return schedule.race_id == liverace.race_id
+        function feed() {
+          getLiveFeed().then(function (liverace) {
+            //console.log("liverace", liverace)
+            TRACK.innerHTML = "<u>" + liverace.track_name.toUpperCase() + "</u>"
+            LAPS.innerText =
+              "Lap " +
+              liverace.lap_number +
+              " of " +
+              liverace.laps_in_race +
+              " (" +
+              liverace.laps_to_go +
+              " laps to go)"
+            let flags = [, "🟢", "🟡", , "🏁", , , , "🏴", "🏁"]
+            STAGE.innerHTML =
+              "Stage " +
+              liverace.stage.stage_num +
+              " <big>" +
+              flags[liverace.flag_state] +
+              "</big> flag"
+            getSchedule().then(function (schedule) {
+              let findrace = schedule.find(function (schedule) {
+                return schedule.race_id == liverace.race_id
+              })
+              BROADCAST.innerText =
+                findrace.television_broadcaster + " / " + findrace.radio_broadcaster
+            })
           })
-          BROADCAST.innerText =
-            findrace.television_broadcaster + " / " + findrace.radio_broadcaster
-        })
 
+          getLapNotes().then(function (notes) {
+            console.log("Notes", notes)
+            LAPNOTES.innerHTML = null
+            notes = Object.entries(notes)
+            notes.reverse().forEach(function (note) {
+              let tr = LAPNOTES.insertRow()
+              tr.insertCell().innerText = note[0]
+              tr.insertCell().innerText = note[1][0].Note
+            })
+          })
+        }
+        feed()
 
-
-      })
-
-      getLapNotes().then(function (notes) {
-        console.log("Notes", notes)
-        LAPNOTES.innerHTML = null
-        notes = Object.entries(notes)
-        notes.reverse().forEach(function (note) {
-          let tr = LAPNOTES.insertRow()
-          tr.insertCell().innerText = note[0]
-          tr.insertCell().innerText = note[1][0].Note
-        })
-      })
-    }
-    feed()
-
-    setInterval(function () {
-      feed()
-      init2()
-    }, 30000)
+        setInterval(function () {
+          feed()
+          table2()
+        }, 30000)
 
 
 
 
-  </script>
+      </script>
 
 
 </body>
