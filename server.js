@@ -9,6 +9,15 @@ Array.prototype.makeObj = function() {
   })
 }
 
+
+Array.prototype.fid = function(id, oid) {
+  oid = oid || "id"
+  return this.find(function(find) {
+    return find[oid] == id
+  }) || {}
+}
+
+
 //https://cf.nascar.com/cacher/2025/1/final/1-owners-points.json
 //https://cf.nascar.com/data/cacher/production/2025/1/racinginsights-points-feed.json
 //https://www.nascar.com/json/tracks/
@@ -240,15 +249,6 @@ function getGroups() {
 }
 
 
-Array.prototype.fid = function(id, oid) {
-  oid = oid || "id"
-  return this.find(function(find) {
-    return find[oid] == id
-  }) || {}
-}
-
-
-
 
 async function getRunningOrder() {
   const race = await getLiveFeed()
@@ -268,7 +268,8 @@ async function getRunningOrder() {
         delta: driver.delta,
         playerid: "",
         playername: "",
-        pos: driver.running_position
+        pos: driver.running_position,
+        raceid: race.race_id
       })
     })
   })
