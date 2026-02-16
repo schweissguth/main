@@ -57,7 +57,7 @@
 
   <script type="text/javascript">
 
-    async function init() {
+    async function table1() {
       const liverace = await getLiveFeed()
       const pickorder = await getPickOrder(liverace.race_id)
       const standings = await getStandings()
@@ -67,76 +67,76 @@
       const groups = await getGroups()
       const race = await getLiveFeed()
 
-      function table1() {
-        groups.forEach(function (group, g) {
+      groups.forEach(function (group, g) {
+        let tr = t1.insertRow()
+        let th = document.createElement("th")
+        th.innerText = "\n" + group.TITLE
+        th.setAttribute("colspan", "2")
+        th.style.backgroundColor = "white"
+        th.style.textAlign = "center"
+        tr.appendChild(th)
+        let filter = pickorder.filter(function (pick) {
+          return pick.GROUPID == g
+        })
+        filter.forEach(function (picker) {
           let tr = t1.insertRow()
-          let th = document.createElement("th")
-          th.innerText = "\n" + group.TITLE
-          th.setAttribute("colspan", "2")
-          th.style.backgroundColor = "white"
-          th.style.textAlign = "center"
-          tr.appendChild(th)
-          let filter = pickorder.filter(function (pick) {
-            return pick.GROUPID == g
-          })
-          filter.forEach(function (picker) {
-            let tr = t1.insertRow()
-            tr.id = picker.PLAYERID
-            td = tr.insertCell()
-            td.innerText = picker.PLAYERID
-            td = tr.insertCell()
-          })
+          tr.id = picker.PLAYERID
+          td = tr.insertCell()
+          td.innerText = picker.PLAYERID
+          td = tr.insertCell()
         })
+      })
 
 
-        groups.forEach(function (group, index) {
-          const groupfilter = picks.filter(function (pick) {
-            return pick.GROUPID == index
-          })
-          standings.forEach(function (standing) {
-            let pick = groupfilter.findLast(function (pick) {
-              return pick.DRIVERID == standing.driver_id
-            })
-            if (pick && pick.PLAYERID) {
-              let tr = document.getElementById(pick.PLAYERID)
-              tr.cells[1].innerHTML += "<div>" + standing.driver_name + "</div>"
-            }
-          })
+      groups.forEach(function (group, index) {
+        const groupfilter = picks.filter(function (pick) {
+          return pick.GROUPID == index
         })
-
-        players.forEach(function (player) {
-          let tr = document.getElementById(player.PLAYERID)
-          if (tr) {
-            tr.cells[0].innerHTML = player.PLAYERNAME + "<br>"
+        standings.forEach(function (standing) {
+          let pick = groupfilter.findLast(function (pick) {
+            return pick.DRIVERID == standing.driver_id
+          })
+          if (pick && pick.PLAYERID) {
+            let tr = document.getElementById(pick.PLAYERID)
+            tr.cells[1].innerHTML += "<div>" + standing.driver_name + "</div>"
           }
         })
-      }
-      table1()
+      })
 
-      function table2() {
-        getRunningOrder().then(function (res) {
-          //console.log(res)
-          t2.innerHTML = ""
-          res[0].drivers.forEach(function (driver) {
-            let tr = t2.insertRow()
-            tr.insertCell().innerText = driver.pos
-            tr.insertCell().innerHTML = driver.name
-              + " <small>" + (driver.delta.toFixed(2) || "") + "</small>"
-            let td = tr.insertCell()
-            td.id = driver.id
-          })
-          res.forEach(function (group) {
-            group.drivers.forEach(function (driver) {
-              let div = document.createElement("SMALL")
-              div.style.display = "block"
-              div.innerHTML = driver.playername || "&nbsp;"
-              if (driver.score) div.innerText += " - " + driver.score
-              document.getElementById(driver.id).append(div)
-            })
+      players.forEach(function (player) {
+        let tr = document.getElementById(player.PLAYERID)
+        if (tr) {
+          tr.cells[0].innerHTML = player.PLAYERNAME + "<br>"
+        }
+      })
+
+    }
+    table1()
+
+    function table2() {
+      getRunningOrder().then(function (res) {
+        //console.log(res)
+        t2.innerHTML = ""
+        res[0].drivers.forEach(function (driver) {
+          let tr = t2.insertRow()
+          tr.insertCell().innerText = driver.pos
+          tr.insertCell().innerHTML = driver.name
+            + " <small>" + (driver.delta.toFixed(2) || "") + "</small>"
+          let td = tr.insertCell()
+          td.id = driver.id
+        })
+        res.forEach(function (group) {
+          group.drivers.forEach(function (driver) {
+            let div = document.createElement("SMALL")
+            div.style.display = "block"
+            div.innerHTML = driver.playername || "&nbsp;"
+            if (driver.score) div.innerText += " - " + driver.score
+            document.getElementById(driver.id).append(div)
           })
         })
-      }
+      })
     }
+    table2()
 
 
 
