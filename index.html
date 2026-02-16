@@ -58,14 +58,14 @@
   <script type="text/javascript">
 
     async function init() {
-      const raceid = await nextRace()
-      const pickorder = await getPickOrder(raceid)
+      const liverace = await getLiveFeed()
+      const pickorder = await getPickOrder(liverace.race_id)
       const standings = await getStandings()
       const players = await getPlayers(true)
-      const picks = await getPicks(raceid)
+      const picks = await getPicks(liverace.race_id)
+      console.log("opicks", picks)
       const groups = await getGroups()
       const race = await getLiveFeed()
-      const liverace = await getLiveFeed()
 
       function table1() {
         groups.forEach(function (group, g) {
