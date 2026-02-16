@@ -267,8 +267,8 @@ async function getRunningOrder() {
         name: driver.driver.full_name,
         delta: driver.delta,
         playerid: "",
-        playername: ""
-
+        playername: "",
+        pos: driver.running_position
       })
     })
   })
