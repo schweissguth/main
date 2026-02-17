@@ -300,6 +300,85 @@ async function getRunningOrder() {
   return ARR
 }
 
+async function getPlayerResults() {
+  let runningorder = await getRunningOrder()
+  let players = await getPlayers()
+  let pickorder = await getPickOrder()
+  let groups = await getGroups()
+
+  let playersobj = {}
+  players.forEach(function (player) {
+    playersobj[player.PLAYERID] = player.PLAYERNAME
+  })
+
+  let OBJ = []
+  groups.forEach(function () {
+    OBJ.push({})
+  })
+
+  pickorder.forEach(function (picker, p) {
+    OBJ[picker.GROUPID][picker.PLAYERID] = {
+      id: picker.PLAYERID,
+      name: playersobj[picker.PLAYERID],
+      order: p,
+      driverids: [],
+      drivernames: [],
+      scores: [],
+      total: 0,
+      pos: [],
+      winnings: 0,
+    }
+  })
+
+  runningorder.forEach(function (group, g) {
+    group.drivers.forEach(function (driver) {
+      if (driver.playerid) {
+        let obj = OBJ[g][driver.playerid]
+        obj.driverids.push(driver.id)
+        obj.drivernames.push(driver.name)
+        obj.scores.push(driver.score)
+        obj.total += driver.score
+        obj.pos.push(driver.pos)
+      }
+    })
+  })
+
+  OBJ.forEach(function (group, g) {
+    let max = 0
+    let len = 0
+    for (let i in group) {
+      let total = group[i].total
+      if (total > max) max = total
+    }
+    for (let i in group) {
+      if (group[i].total == max) len++
+    }
+    for (let i in group) {
+      if (group[i].total == max) group[i].winnings = 2 / len
+    }
+  })
+
+  console.log(OBJ)
+
+  let ARR = []
+
+  OBJ.forEach(function (group, g) {
+    let arr = []
+    for (let i in group) {
+      arr.push(group[i])
+    }
+    ARR.push(arr)
+  })
+
+  ARR.forEach(function (group) {
+    group.sort(function (a, b) {
+      return b.total - a.total
+    })
+  })
+
+  return ARR
+}
+
 
 
 /*
