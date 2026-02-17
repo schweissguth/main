@@ -277,16 +277,35 @@ function getGroups() {
 
 function getPickOrder(x) {
   return fetch(
-    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKORDER?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+    'https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKORDER?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI',
   )
     .then(function (res) {
       return res.json()
     })
     .then(function (res) {
       if (x) {
-      return res.values.makeObj().filter(function(filter) {
-        return filter.RACEID == x
-      })
+        getGroups().then(function (groups) {
+        let ARR = []
+          groups.forEach(function () {
+            ARR.push([])
+          })
+          res = res.values.makeObj()
+          res = res.filter(function (filter) {
+            return filter.RACEID == x
+          })
+          groups.forEach(function (group, g) {
+            let filter = res.filter(function (picker) {
+              return picker.GROUPID == g
+            })
+            filter = filter.sort(function (a, b) {
+              return a.RANK - b.RANK
+            })
+            filter.forEach(function (picker) {
+              ARR[g].push(picker)
+            })
+          })
+          return ARR
+        })
       } else {
         return res.values.makeObj()
       }
