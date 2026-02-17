@@ -141,27 +141,6 @@ function playersObj() {
   })
 }
 
-async function picksObj() {
-  const schedule = await getSchedule()
-  const groups = await getGroups()
-  const standings = await getStandings()
-  
-  let picksobj = {}
-  schedule.forEach(function (race) {
-    picksobj[race.race_id] = {}
-    groups.forEach(function (group, g) {
-      picksobj[race.race_id][g] = {}
-      standings.forEach(function (driver) {
-        picksobj[race.race_id][g][driver.driver_id] = ""
-      })
-    })
-  })
-  picks.forEach(function (pick) {
-    picksobj[pick.RACEID][pick.GROUPID][pick.DRIVERID] = pick.PLAYERID || ""
-  })
-  return picksobj
-}
-
 async function groupObj() {
   const schedule = await getSchedule()
   const pickorder = await getPickOrder()
@@ -177,6 +156,18 @@ async function groupObj() {
     }
   })
   return groupobj
+}
+
+async function picksObj(x) {
+  const picks = await getPicks(x)
+  let picksobj = []
+  picks.forEach(function(pick) {
+    picksobj[pick.GROUPID] = {}
+  })
+  picks.forEach(function(pick) {
+    picksobj[pick.GROUPID][pick.DRIVERID] = pick.PLAYERID
+  })
+  return picksobj
 }
 
 
