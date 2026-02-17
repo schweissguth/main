@@ -71,7 +71,7 @@
                     cb.type = "checkbox"
                     cb.disabled = true
                     cb.onchange = function () {
-                        let arr = [raceid, each.driver_id, playerid, group.GROUPID, each.driver_name]
+                        let arr = [Date.now(), raceid, each.driver_id, playerid, group.GROUPID, each.driver_name]
                         if (!cb.checked) {
                             arr[2] = ""
                         }
