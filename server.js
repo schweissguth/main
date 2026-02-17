@@ -80,29 +80,6 @@ function getPicks(x) {
     })
 }
 
-function getPickOrder(x) {
-  return fetch(
-    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKORDER?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
-  )
-    .then(function (res) {
-      return res.json()
-    })
-    .then(function (res) {
-      if (x) {
-        return res.values.makeObj().filter(function(filter) {
-          return filter.RACEID == x
-        }).sort(function(a, b) {
-          return a.RANK - b.RANK
-        })
-      } else {
-        return res.values.makeObj().sort(function(a, b) {
-          return a.RANK - b.RANK
-        })
-      }
-    })
-}
-
-
 
 function getChase() {
   return fetch(
