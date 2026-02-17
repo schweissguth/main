@@ -1,151 +1,61 @@
 
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>dele t this noe</title>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta name="robots" content="noindex, nofollow">
-    <meta name="googlebot" content="noindex, nofollow">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+  <script src="https://stupid-fast.com/server.js?jhjhh"></script>
+</head>
 
+<body>
+  <table id="t2" cellpadding="3" border></table>
+  
+  <hr>
 
+<button onclick="submitResults()">Submit</button>
 
-    <script
-      type="text/javascript"
-      src="/js/lib/dummy.js"
-      
-    ></script>
+<script>
 
-        <script type="text/javascript" src="https://stupid-fast.com/server.js"></script>
+getRunningOrder().then(function (groups) {
+  console.log(groups)
 
-
-    <style id="compiled-css" type="text/css">
-      
-
-      /* EOS */
-    </style>
-
-    <style type="text/css">
-      :root {
-        color-scheme: light;
-      }
-    </style>
-
-    <script id="insert"></script>
-
-  </head>
-  <body>
-    <center>
-<h1>Stupid-Fast Scoring</h1>
-<table id="table" border="1" cellpadding="3"></table>
-
-<br><br>
-
-<form action="https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec" method="get" target="iframe">
-<textarea name="ta" style="width: 290px; height: 400px"></textarea>
-<br>
-<input type="submit">
-<br>
-<iframe frameborder="0" name="iframe"></iframe>
-</form>
-</center>
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"957baa6a1cde8637","version":"2025.6.2","r":1,"token":"95d4af946c9a4d229ea725f950960b54","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}}}' crossorigin="anonymous"></script>
-</body>
-
-    <script type="text/javascript">
-
-const points = []
-
-getLiveFeed().then(function (race) {
-  console.log("Live feed", race)
-  getPicks(race.race_id).then(function (picks) {
-    race.vehicles = race.vehicles.map(function (driver) {
-      driver.playerid = picks.findLast(function (pick) {
-        return pick.DRIVERID == driver.driver.driver_id
-      })?.PLAYERID
-      return driver
-    })
-    let count = 0
-    race.vehicles = race.vehicles.reverse().map(function (driver) {
-      driver.score = 0
-      driver.bonus = 0
+  groups.forEach(function (group, gid) {
+    group.drivers.forEach(function (driver) {
       if (driver.playerid) {
-        driver.score = ++count
+        let tr = t2.insertRow()
+        tr.insertCell().innerText = driver.raceid
+        tr.insertCell().innerText = gid
+        tr.insertCell().innerText = driver.id
+        tr.insertCell().innerText = driver.pos
+        tr.insertCell().innerText = driver.score
+        tr.insertCell().innerText = driver.playerid
+        tr.insertCell().setAttribute("contenteditable", true)
+        tr.insertCell().innerText = driver.playername
+        tr.insertCell().innerText = driver.name
       }
-      return driver
-    })
-    race.vehicles.reverse()
-    race.vehicles[0].bonus++
-    race.vehicles[0].bonus++
-    getStages(race.race_id).then(function (stages) {
-      console.log("Stages", stages)
-      stages.forEach(function (stage) {
-        let driverid = stage.results[0].driver_id
-        race.vehicles.find(function (driver) {
-          return driver.driver.driver_id == driverid
-        }).bonus++
-      })
-      race.vehicles.forEach(function (driver) {
-        let tr = table.insertRow()
-        tr.insertCell().innerText = driver.running_position
-        tr.insertCell().innerText = driver.driver.full_name
-        tr.insertCell().innerText = driver.driver.driver_id
-        tr.insertCell().innerText = driver.playerid || ""
-        tr.insertCell().innerText = driver.score || null
-        tr.insertCell().innerText = driver.bonus || null
-        tr.insertCell().innerText = race.race_id
-      })
-      race.vehicles.forEach(function (driver) {
-        if (driver.playerid) {
-          points.push([
-            race.race_id,
-            driver.playerid,
-            driver.driver.driver_id,
-            driver.running_position,
-            driver.score,
-            driver.bonus || null,
-          ])
-        }
-      })
-      document.getElementsByName("ta")[0].value = JSON.stringify(points)
     })
   })
 })
 
-
-  </script>
-
-  <script>
-    // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent){
-      window.parent.parent.postMessage(["resultsFrame", {
-        height: document.body.getBoundingClientRect().height,
-        slug: "h0tsf1cq"
-      }], "*")
+function submitResults() {
+  let ARR = []
+  for (let r of document.querySelector("TABLE").rows) {
+    let arr = []
+    for (let c of r.cells) {
+      arr.push(c.innerText)
     }
-
-    // always overwrite window.name, in case users try to set it manually
-    window.name = "result"
-  </script>
-
-  <script>
-    const allLines = []
-    const cssElement = document.querySelector("#compiled-css")
-
-    window.addEventListener("message", (message) => {
-
-      if (message.data.css){
-        cssElement.textContent = message.data.css.payload
-      }
-
-      if (message.data.html){
-        document.body.innerHTML = message.data.html.payload
-      }
+    ARR.push(arr)
+  }
+  console.log(ARR)
+  if (confirm("Submit?")) {
+    fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SCORES", {
+      method: "post",
+      body: JSON.stringify(ARR)
     })
+  }
+}
 
-    if (window.parent){
-      window.parent.postMessage({loaded: true}, "*")
-    }
-  </script>
+</script>
+
+</body>
+
+
 </html>
