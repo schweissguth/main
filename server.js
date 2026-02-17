@@ -150,7 +150,7 @@ function getChase() {
 
 function getScores() {
   return fetch(
-    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/SCORING?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/SCORES?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
   )
     .then(function (res) {
       return res.json()
