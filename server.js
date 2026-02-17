@@ -259,9 +259,13 @@ function getPickOrder(x) {
       return res.json()
     })
     .then(function (res) {
+      if (x) {
       return res.values.makeObj().filter(function(filter) {
         return filter.RACEID == x
       })
+      } else {
+        return res.values.makeObj()
+      }
     })
 }
 
