@@ -284,7 +284,7 @@ function getPickOrder(x) {
     })
     .then(function (res) {
       if (x) {
-        getGroups().then(function (groups) {
+        return getGroups().then(function (groups) {
         let ARR = []
           groups.forEach(function () {
             ARR.push([])
