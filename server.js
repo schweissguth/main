@@ -388,7 +388,7 @@ async function getPickOrder(raceid) {
   })
   map = [...map.values()]
   map.sort(function (a, b) {
-    return b.rank - a.rank
+    return a.rank - b.rank
   })
   map.forEach(function(item, i) {
     item.groupid = i % 2
