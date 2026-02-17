@@ -2,179 +2,199 @@
 <html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="./css.css" />
-    <script src="https://stupid-fast.com/server.js"></script>
-    <title>Stupid-Fast.com - make picks</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script>
-        function getGroupLines(x) {
-            return fetch(
-                "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
-            )
-                .then(function (res) {
-                    return res.json()
-                })
-                .then(function (res) {
-                    if (x) {
-                        return res.values.makeObj().filter(function (filter) {
-                            return filter.RACEID == x
-                        })
-                    } else {
-                        return res.values.makeObj()
-                    }
-                })
-        }
-    </script>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Stupid-Fast.com</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="./server.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="./css.css" />
+
+
 </head>
 
 <body>
-    <header>
-        <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
-    </header>
+  <header>
+    <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
+  </header>
 
-    <h1>POINTS AND PICKING WILL BE UPDATED LATER TODAY</h1>
 
-    <section>
-        <span id="spanplayerid">Hello, </span>! <a href="./players.html" style="display: inline;"
-            onclick="localStorage.removeItem('playerid')">Log out</a>?
-    </section>
+  <a href="./picks.html" class="heading">Click HERE to Make Picks</a>
+  <a href="https://www.driveraverages.com/">DriverAverages.com</a>
+  <a href="https://stupid-fast.com/results">Results and schedule</a>
+  <a href="https://stupid-fast.com/rules">Rules and info</a>
+  <a href="https://stupid-fast.com/season" class="heading">Season standings</a>
+  <a href="https://stupid-fast.com/chase" class="heading">Chase standings</a>
 
-    <br>
-    <select id="selectrace" onchange="setPicks()" disabled></select>
+  <center>
+    <table id="t1" cellpadding="3">
+      <table>
+  </center>
 
-    <main id="main">
-    </main>
+  <br><br>
+
+  <p id="TRACK"></p>
+  <p id="BROADCAST"></p>
+  <p id="RADIO"></p>
+  <p id="LAPS"></p>
+  <p id="STAGE"></p>
+
+  <br>
+
+  <table id="t2" cellpadding="3">
+    <tr>
+      <th>LOADING...</th>
+    </tr>
+  </table>
+
+  <br><br>
+
+  <table id="LAPNOTES" cellpadding="3"></table>
+
+
+
+  <script type="text/javascript">
+
+    async function table1() {
+      const liverace = await getLiveFeed()
+      const pickorder = await getPickOrder(liverace.race_id)
+      const standings = await getStandings()
+      const players = await getPlayers(true)
+      const picks = await getPicks(liverace.race_id)
+      console.log("opicks", picks)
+      const groups = await getGroups()
+      const race = await getLiveFeed()
+
+      groups.forEach(function (group, g) {
+        let tr = t1.insertRow()
+        let th = document.createElement("th")
+        th.innerText = "\n" + group.TITLE
+        th.setAttribute("colspan", "2")
+        th.style.backgroundColor = "white"
+        th.style.textAlign = "center"
+        tr.appendChild(th)
+        let filter = pickorder.filter(function (pick) {
+          return pick.GROUPID == g
+        })
+        filter.forEach(function (picker) {
+          let tr = t1.insertRow()
+          tr.id = picker.PLAYERID
+          td = tr.insertCell()
+          td.innerText = picker.PLAYERID
+          td = tr.insertCell()
+        })
+      })
+
+
+      groups.forEach(function (group, index) {
+        const groupfilter = picks.filter(function (pick) {
+          return pick.GROUPID == index
+        })
+        standings.forEach(function (standing) {
+          let pick = groupfilter.findLast(function (pick) {
+            return pick.DRIVERID == standing.driver_id
+          })
+          if (pick && pick.PLAYERID) {
+            let tr = document.getElementById(pick.PLAYERID)
+            tr.cells[1].innerHTML += "<div>" + standing.driver_name + "</div>"
+          }
+        })
+      })
+
+      players.forEach(function (player) {
+        let tr = document.getElementById(player.PLAYERID)
+        if (tr) {
+          tr.cells[0].innerHTML = player.PLAYERNAME + "<br>"
+        }
+      })
+
+    }
+    table1()
+
+    function table2() {
+      getRunningOrder().then(function (res) {
+        //console.log(res)
+        t2.innerHTML = ""
+        res[0].drivers.forEach(function (driver) {
+          let tr = t2.insertRow()
+          tr.insertCell().innerText = driver.pos
+          tr.insertCell().innerHTML = driver.name
+            + " <small>" + (driver.delta.toFixed(2) || "") + "</small>"
+          let td = tr.insertCell()
+          td.id = driver.id
+        })
+        res.forEach(function (group) {
+          group.drivers.forEach(function (driver) {
+            let div = document.createElement("SMALL")
+            div.style.display = "block"
+            div.innerHTML = driver.playername || "&nbsp;"
+            if (driver.score) div.innerText += " - " + driver.score
+            document.getElementById(driver.id).append(div)
+          })
+        })
+      })
+    }
+    table2()
+
+
+
+    function feed() {
+      getLiveFeed().then(function (liverace) {
+        //console.log("liverace", liverace)
+        TRACK.innerHTML = "<u>" + liverace.track_name.toUpperCase() + "</u>"
+        LAPS.innerText =
+          "Lap " +
+          liverace.lap_number +
+          " of " +
+          liverace.laps_in_race +
+          " (" +
+          liverace.laps_to_go +
+          " laps to go)"
+        let flags = [, "🟢", "🟡", , "🏁", , , , "🏴", "🏁"]
+        STAGE.innerHTML =
+          "Stage " +
+          liverace.stage.stage_num +
+          " <big>" +
+          flags[liverace.flag_state] +
+          "</big> flag"
+        getSchedule().then(function (schedule) {
+          let findrace = schedule.find(function (schedule) {
+            return schedule.race_id == liverace.race_id
+          })
+          BROADCAST.innerText =
+            findrace.television_broadcaster + " / " + findrace.radio_broadcaster
+        })
+      })
+
+      getLapNotes().then(function (notes) {
+        console.log("Notes", notes)
+        LAPNOTES.innerHTML = null
+        notes = Object.entries(notes)
+        notes.reverse().forEach(function (note) {
+          let tr = LAPNOTES.insertRow()
+          tr.insertCell().innerText = note[0]
+          tr.insertCell().innerText = note[1][0].Note
+        })
+      })
+    }
+    feed()
+
+    setInterval(function () {
+      feed()
+      table2()
+    }, 30000)
+
+
+
+
+  </script>
+
+
 </body>
 
-<script>
-    function getPickOrder(x) {
-        return fetch(
-            'https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKORDER?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI',
-        )
-            .then(function (res) {
-                return res.json();
-            })
-            .then(function (res) {
-                return res.values.makeObj().filter(function (filter) {
-                    return filter.RACEID == x;
-                });
-            });
-    }
-
-    const url = new URL(window.location.href);
-    const params = new URLSearchParams(url.search);
-    const playerid = params.get('player') || 'nick';
-    if (!playerid) {
-        window.location.href = './players.html';
-    }
-
-    spanplayerid.innerText += playerid.toUpperCase();
-
-    async function init() {
-        const schedule = await getSchedule();
-        let race = schedule.find(function (race) {
-            return !race.winner_driver_id;
-        });
-        const pickorder = await getPickOrder(race.race_id);
-        const drivers = await getStandings();
-        console.log('pickorder', pickorder);
-        const groupid = pickorder.find(function (picker) {
-            return picker.PLAYERID == playerid
-        }).GROUPID
-
-        schedule.forEach(function (race) {
-            let opt = document.createElement('OPTION');
-            opt.text =
-                race.track_name.substring(0,20) +
-                ' (' +
-                race.television_broadcaster.substring(0, 5) +
-                '/' +
-                race.radio_broadcaster +
-                ') @ ' +
-                new Date(race.date_scheduled).toLocaleTimeString().split(':00 ')[0];
-            opt.value = race.race_id;
-            selectrace.add(opt);
-        });
-        selectrace.value = race.race_id;
-
-        drivers.forEach(function (driver) {
-            let label = document.createElement('LABEL');
-            label.style.display = 'block';
-            label.style.textAlign = 'left';
-            let cb = document.createElement('INPUT');
-            cb.type = 'checkbox';
-            cb.id = driver.driver_id;
-            cb.disabled = true;
-            cb.style.scale = '1.2';
-            cb.onchange = function () {
-                let player = ""
-                if (this.checked) player == playerid
-                let arr = [
-                    Date.now(),
-                    selectrace.value,
-                    driver.driver_id,
-                    player,
-                    groupid,
-                    driver.driver_name,
-                ];
-                console.log(arr)
-                fetch(
-                    'https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKS',
-                    {
-                        method: 'POST',
-                        body: JSON.stringify([arr]),
-                    },
-                )
-                    .then(function (res) {
-                        return res.text();
-                    })
-                    .then(function (res) {
-                        console.log(res);
-                    });
-            };
-            label.append(cb);
-            let img = document.createElement("IMG")
-            img.src = "https://cf.nascar.com/data/images/carbadges/1/" + driver.car_no + ".png"
-            img.width = 50
-            img.style.verticalAlign = "middle"
-            label.append(img)
-
-            let span = document.createElement("SPAN")
-            span.innerText = driver.driver_name
-            label.append(span)
-
-            main.append(label);
-        });
-
-        let sep = document.createElement('hr');
-        document.querySelectorAll('label')[10].before(sep);
-
-        setPicks()
-    }
-    init();
-
-    async function setPicks() {
-        const picks = await getPicks(selectrace.value)
-        console.log("picks", picks)
-        for (let cb of document.querySelectorAll("input[type=checkbox]")) {
-            cb.disabled = false
-            cb.checked = false
-        }
-        picks.forEach(function (pick) {
-            let cb = document.getElementById(pick.DRIVERID)
-            cb.checked = pick.PLAYERID || false
-            if (pick.PLAYERID != playerid) cb.disabled = true
-            if (!pick.PLAYERID) cb.disabled = false
-            if (pick.PLAYERID == playerid) cb.disabled = false
-
-        })
-    }
 
 
-
-
-
-
-</script>
 
 </html>
