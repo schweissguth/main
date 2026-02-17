@@ -393,7 +393,7 @@ async function getPickOrder(raceid) {
   map.forEach(function(item, i) {
     item.groupid = i % 2
   })
-  console.log(map)
+  return map
 }
 
 
