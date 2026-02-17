@@ -366,7 +366,7 @@ async function getPlayerResults() {
   return ARR
 }
 
-async function getPickOrder(raceid) {
+async function makePickOrder(raceid) {
   const scores = await getScores(raceid)
   const season = await getSeason()
   const players = await playersObj()
