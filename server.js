@@ -61,23 +61,6 @@ function prevRace(x) {
     })
 }
 
-function getPlayers(x) {
-  return fetch(
-    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PLAYERS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
-  )
-    .then(function (res) {
-      return res.json()
-    })
-    .then(function (res) {
-      if (true) {
-        return res.values.makeObj().filter(function(filter) {
-          return filter.ACTIVE == "TRUE"
-        })
-      } else {
-        return res.values.makeObj()
-      }
-    })
-}
 
 function getPicks(x) {
   return fetch(
@@ -119,17 +102,7 @@ function getPickOrder(x) {
     })
 }
 
-function getSeason() {
-  return fetch(
-    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/SEASON?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
-  )
-    .then(function (res) {
-      return res.json()
-    })
-    .then(function (res) {
-      return res.values.makeObj()
-    })
-}
+
 
 function getChase() {
   return fetch(
@@ -163,6 +136,38 @@ function getScores(raceid) {
       return filter.RACEID == raceid
     })
   })
+}
+
+function getScores(raceid) {
+  return getData('SCORES').then(function (res) {
+    return res.filter(function (filter) {
+      return filter.RACEID == raceid
+    })
+  })
+}
+
+function getPlayers() {
+  return getData('PLAYERS').then(function (res) {
+    return res.filter(function (filter) {
+      return filter.ACTIVE == "TRUE"
+    })
+  })
+}
+
+function playersObj() {
+  return getPlayers().then(function(res) {
+    let obj = {}
+    res.forEach(function(player) {
+      obj[player.ID] = player
+    })
+    return obj
+  })
+}
+
+
+
+function getSeason() {
+  return getData('SEASON')
 }
 
 function getSchedule() {
