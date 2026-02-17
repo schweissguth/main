@@ -1,0 +1,72 @@
+<head>
+  <script src="https://stupid-fast.com/server.js?j"></script>
+</head>
+<body>
+  Select current race:
+  <br />
+  <select id="selectcurrentrace"></select>
+  <br />
+  Select next race:
+  <br />
+  <select
+    id="selectnextrace"
+    onchange="pickOrder(selectcurrentrace.value)"
+  ></select>
+  <br />
+  <table id="t"></table>
+  <br />
+  <button onclick="submitPickOrder()">Submit pick order</button>
+
+  <script>
+    getSchedule().then(function (res) {
+      console.log(res)
+      res.forEach(function (race) {
+        let opt = document.createElement('OPTION')
+        opt.text = race.track_name
+        opt.value = race.race_id
+        selectcurrentrace.add(opt)
+      })
+      res.forEach(function (race) {
+        let opt = document.createElement('OPTION')
+        opt.text = race.track_name
+        opt.value = race.race_id
+        selectnextrace.add(opt)
+      })
+    })
+
+    function pickOrder(x) {
+      getPickOrder(x).then(function (res) {
+        console.log(res)
+        res.forEach(function (item) {
+          let tr = t.insertRow()
+          tr.insertCell().innerText = selectnextrace.value
+          tr.insertCell().innerText = item.id
+          tr.insertCell().innerText = item.rank
+          tr.insertCell().innerText = item.groupid
+        })
+      })
+    }
+
+    function submitPickOrder(x) {
+      if (confirm('Are you sure?')) {
+        let ARR = []
+        for (let r of t.rows) {
+          let arr = []
+          for (let c of r.cells) {
+            arr.push(c.innerText)
+          }
+          ARR.push(arr)
+        }
+        console.log(ARR)
+
+        fetch(
+          'https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKORDER',
+          {
+            method: 'post',
+            body: JSON.stringify(ARR),
+          },
+        )
+      }
+    }
+  </script>
+</body>
