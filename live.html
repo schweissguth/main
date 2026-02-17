@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <script src="./server.js"></script>
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <table id="t"></table>
+
+  <script>
+    
+getPlayerResults().then(function (res) {
+  res.forEach(function (group) {
+    group.forEach(function (player, i) {
+      let tr = t.insertRow()
+      tr.insertCell().innerText = i + 1
+      tr.insertCell().innerText = player.name
+      player.driverids.forEach(function (item, i) {
+        tr.insertCell().innerText = player.drivernames[i]
+        tr.insertCell().innerText = player.pos[i]
+        tr.insertCell().innerText = player.scores[i]
+      })
+      tr.insertCell().innerText = player.total
+      let td = tr.insertCell()
+      if (player.winnings) td.innerText = '$' + player.winnings.toFixed(2)
+    })
+  })
+  t.insertRow(8).innerHTML = '<hr>'
+})
+
+  </script>
+  
+</body>
+
+</html>
