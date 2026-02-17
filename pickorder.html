@@ -40,7 +40,7 @@
     })
 
     function pickOrder(x) {
-      getPickOrder(x).then(function (res) {
+      makePickOrder(x).then(function (res) {
         console.log(res)
         res.forEach(function (item) {
           let tr = t.insertRow()
