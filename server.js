@@ -141,6 +141,20 @@ function playersObj() {
   })
 }
 
+  let picksobj = {}
+  schedule.forEach(function (race) {
+    picksobj[race.race_id] = {}
+    groups.forEach(function (group, g) {
+      picksobj[race.race_id][g] = {}
+      standings.forEach(function (driver) {
+        picksobj[race.race_id][g][driver.driver_id] = ""
+      })
+    })
+  })
+  picks.forEach(function (pick) {
+    picksobj[pick.RACEID][pick.GROUPID][pick.DRIVERID] = pick.PLAYERID || ""
+  })
+
 
 
 function getSeason() {
