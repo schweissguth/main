@@ -389,6 +389,37 @@ async function getPlayerResults() {
   return ARR
 }
 
+async function getPickOrder(raceid) {
+  const scores = await getScores(raceid)
+  const season = await getSeason()
+  const players = await playersObj()
+
+  let map = new Map()
+  scores.forEach(function (score) {
+    map.set(score.PLAYERID, {
+      id: score.PLAYERID,
+      name: players[score.PLAYERID].NAME,
+      rank: 0,
+    })
+  })
+  scores.forEach(function (score) {
+    map.get(score.PLAYERID).rank += parseInt(score.SCORE)
+  })
+
+  console.log('season', season)
+  season.forEach(function (player) {
+    map.get(player.ID).rank += parseInt(player.SUM) / 1000
+  })
+  map = [...map.values()]
+  map.sort(function (a, b) {
+    return b.rank - a.rank
+  })
+  map.forEach(function(item, i) {
+    item.groupid = i % 2
+  })
+  console.log(map)
+}
+
 
 
 /*
