@@ -83,8 +83,12 @@
 
 
             })
+            
+            let filter = picks.filter(function (pick) {
+            return pick.GROUPID == groupid
+            })
 
-            picks.forEach(function (pick) {
+            filter.forEach(function (pick) {
                 let cb = document.getElementById(pick.DRIVERID)
                 console.log(cb)
                 cb.checked = pick.PLAYERID || false
