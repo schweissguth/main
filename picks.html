@@ -1,30 +1,17 @@
+
 <!DOCTYPE html>
 <html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="./css.css" />
-    <script src="https://stupid-fast.com/server.js"></script>
-    <title>Stupid-Fast.com - make picks</title>
+    <title>Stupid-Fast.com - Make Picks</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script>
-        function getGroupLines(x) {
-            return fetch(
-                "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
-            )
-                .then(function (res) {
-                    return res.json()
-                })
-                .then(function (res) {
-                    if (x) {
-                        return res.values.makeObj().filter(function (filter) {
-                            return filter.RACEID == x
-                        })
-                    } else {
-                        return res.values.makeObj()
-                    }
-                })
-        }
-    </script>
+    <script src="https://stupid-fast.com/server.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css.css" />
+
 </head>
 
 <body>
@@ -36,143 +23,94 @@
         <span id="spanplayerid">Hello, </span>! <a href="./players.html" style="display: inline;"
             onclick="localStorage.removeItem('playerid')">Log out</a>?
     </section>
+    <main id="main"></main>
 
-    <br>
-    <select id="selectrace" onchange="setPicks()" disabled></select>
+    <script>
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        const playerid = params.get('player');
+        console.log(playerid)
+        if (!playerid) {
+            window.location.href = './players.html';
+        }
+        spanplayerid.innerText += playerid.toUpperCase();
 
-    <main id="main">
-    </main>
+
+        async function init() {
+            const raceid = await nextRace()
+            const groupobj = await groupObj()
+            const groupid = groupobj[raceid][playerid].group
+            const standings = await getStandings()
+            const picks = await getPicks(raceid)
+            console.log(picks)
+
+            standings.forEach(function (driver) {
+                let label = document.createElement("LABEL")
+                let cb = document.createElement("INPUT")
+                let img = document.createElement("IMG")
+                let span = document.createElement("SPAN")
+
+                label.style.display = "block"
+                label.style.textAlign = "left"
+
+                cb.type = "checkbox"
+                cb.style.scale = "1.25"
+                cb.id = driver.driver_id
+                cb.disabled = false
+                cb.onchange = function () {
+                    let player = playerid
+                    if (!this.checked) player = ""
+                    let arr = [Date.now(), raceid, driver.driver_id, player, groupid, driver.driver_name]
+                    fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKS", {
+                        method: "post",
+                        body: JSON.stringify([arr])
+                    })
+                }
+
+                img.src = "https://cf.nascar.com/data/images/carbadges/1/" + driver.car_no + ".png"
+                img.alt = ""
+                img.style.verticalAlign = "middle"
+                img.width = 65
+
+                span.innerText = driver.driver_name
+
+                label.append(cb)
+                label.append(img)
+                label.append(span)
+                main.append(label)
+
+
+
+
+
+            })
+
+            picks.forEach(function (pick) {
+                let cb = document.getElementById(pick.DRIVERID)
+                console.log(cb)
+                cb.checked = pick.PLAYERID || false
+                if (pick.PLAYERID != playerid) cb.disabled = true
+                if (!pick.PLAYERID) cb.disabled = false
+                if (pick.PLAYERID == playerid) cb.disabled = false
+            })
+
+            document.querySelectorAll("LABEL")[10].before(document.createElement("HR"))
+
+
+        }
+
+        init()
+
+    </script>
+
 </body>
 
-<script>
-    function getPickOrder(x) {
-        return fetch(
-            'https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKORDER?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI',
-        )
-            .then(function (res) {
-                return res.json();
-            })
-            .then(function (res) {
-                return res.values.makeObj().filter(function (filter) {
-                    return filter.RACEID == x;
-                });
-            });
-    }
-
-    const url = new URL(window.location.href);
-    const params = new URLSearchParams(url.search);
-    const playerid = params.get('player') || 'nick';
-    if (!playerid) {
-        window.location.href = './players.html';
-    }
-
-    spanplayerid.innerText += playerid.toUpperCase();
-
-    async function init() {
-        const schedule = await getSchedule();
-        let race = schedule.find(function (race) {
-            return !race.winner_driver_id;
-        });
-        const pickorder = await getPickOrder(race.race_id);
-        const drivers = await getStandings();
-        console.log('pickorder', pickorder);
-        const groupid = pickorder.find(function (picker) {
-            return picker.PLAYERID == playerid
-        }).GROUPID
-
-        schedule.forEach(function (race) {
-            let opt = document.createElement('OPTION');
-            opt.text =
-                race.track_name.substring(0,20) +
-                ' (' +
-                race.television_broadcaster.substring(0, 5) +
-                '/' +
-                race.radio_broadcaster +
-                ') @ ' +
-                new Date(race.date_scheduled).toLocaleTimeString().split(':00 ')[0];
-            opt.value = race.race_id;
-            selectrace.add(opt);
-        });
-        selectrace.value = race.race_id;
-
-        drivers.forEach(function (driver) {
-            let label = document.createElement('LABEL');
-            label.style.display = 'block';
-            label.style.textAlign = 'left';
-            let cb = document.createElement('INPUT');
-            cb.type = 'checkbox';
-            cb.id = driver.driver_id;
-            cb.disabled = true;
-            cb.style.scale = '1.2';
-            cb.onchange = function () {
-                let player = ""
-                if (this.checked) player == playerid
-                let arr = [
-                    Date.now(),
-                    selectrace.value,
-                    driver.driver_id,
-                    player,
-                    groupid,
-                    driver.driver_name,
-                ];
-                console.log(arr)
-                fetch(
-                    'https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKS',
-                    {
-                        method: 'POST',
-                        body: JSON.stringify([arr]),
-                    },
-                )
-                    .then(function (res) {
-                        return res.text();
-                    })
-                    .then(function (res) {
-                        console.log(res);
-                    });
-            };
-            label.append(cb);
-            let img = document.createElement("IMG")
-            img.src = "https://cf.nascar.com/data/images/carbadges/1/" + driver.car_no + ".png"
-            img.width = 50
-            img.style.verticalAlign = "middle"
-            label.append(img)
-
-            let span = document.createElement("SPAN")
-            span.innerText = driver.driver_name
-            label.append(span)
-
-            main.append(label);
-        });
-
-        let sep = document.createElement('hr');
-        document.querySelectorAll('label')[10].before(sep);
-
-        setPicks()
-    }
-    init();
-
-    async function setPicks() {
-        const picks = await getPicks(selectrace.value)
-        console.log("picks", picks)
-        for (let cb of document.querySelectorAll("input[type=checkbox]")) {
-            cb.disabled = false
-            cb.checked = false
-        }
-        picks.forEach(function (pick) {
-            let cb = document.getElementById(pick.DRIVERID)
-            cb.checked = pick.PLAYERID || false
-            if (pick.PLAYERID != playerid) cb.disabled = true
-            if (!pick.PLAYERID) cb.disabled = false
-            if (pick.PLAYERID == playerid) cb.disabled = false
-
-        })
-    }
 
 
 
 
 
 
-</script>
+
 
 </html>
