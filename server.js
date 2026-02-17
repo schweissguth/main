@@ -237,6 +237,22 @@ function getGroups() {
 
 
 
+function getPickOrder(x) {
+  return fetch(
+    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/PICKORDER?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+  )
+    .then(function (res) {
+      return res.json()
+    })
+    .then(function (res) {
+      return res.values.makeObj().filter(function(filter) {
+        return filter.RACEID == x
+      })
+    })
+}
+
+
+
 async function getRunningOrder() {
   const race = await getLiveFeed()
   const groups = await getGroups()
