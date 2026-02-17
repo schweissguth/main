@@ -141,7 +141,11 @@ function playersObj() {
   })
 }
 
-function picksObj() {
+async function picksObj() {
+  const schedule = await getSchedule()
+  const groups = await getGroups()
+  const standings = await getStandings()
+  
   let picksobj = {}
   schedule.forEach(function (race) {
     picksobj[race.race_id] = {}
@@ -158,7 +162,10 @@ function picksObj() {
   return picksobj
 }
 
-function groupObj() {
+async function groupObj() {
+  const schedule = await getSchedule()
+  const pickorder = await getPickOrder()
+  
   let groupobj = {}
   schedule.forEach(function (race) {
     groupobj[race.race_id] = {}
