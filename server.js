@@ -18,12 +18,7 @@ Array.prototype.fid = function(id, oid) {
 }
 
 
-//https://cf.nascar.com/cacher/2025/1/final/1-owners-points.json
-//https://cf.nascar.com/data/cacher/production/2025/1/racinginsights-points-feed.json
-//https://www.nascar.com/json/tracks/
-//https://cf.nascar.com/cacher/2026/1/schedule-combined-feed.json
-//https://www.nascar.com/json/drivers/
-//https://fantasygames.nascar.com/api/v1/live/odds/race/5585.json
+
 
 
 function currentResults() {
@@ -148,9 +143,11 @@ function getChase() {
     })
 }
 
-function getScores() {
+function getData(x) {
   return fetch(
-    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/SCORES?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+    'https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/' +
+      x +
+      '?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI',
   )
     .then(function (res) {
       return res.json()
@@ -158,6 +155,14 @@ function getScores() {
     .then(function (res) {
       return res.values.makeObj()
     })
+}
+
+function getScores(raceid) {
+  return getData('SCORES').then(function (res) {
+    return res.filter(function(filter) {
+      return filter.RACEID == raceid
+    })
+  })
 }
 
 function getSchedule() {
@@ -409,4 +414,10 @@ https://www.nascar.com/wp-json/wp/v2/weekend_schedule
 https://cf.nascar.com/data/images/carbadges/1/01.png
 https://cf.nascar.com/cacher/2025/1/final/1-owners-points.json
 https://cf.nascar.com/cacher/staging/live/live-feed.json
+//https://cf.nascar.com/cacher/2025/1/final/1-owners-points.json
+//https://cf.nascar.com/data/cacher/production/2025/1/racinginsights-points-feed.json
+//https://www.nascar.com/json/tracks/
+//https://cf.nascar.com/cacher/2026/1/schedule-combined-feed.json
+//https://www.nascar.com/json/drivers/
+//https://fantasygames.nascar.com/api/v1/live/odds/race/5585.json
 */
