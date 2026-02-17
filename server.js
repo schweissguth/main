@@ -406,7 +406,6 @@ async function getPickOrder(raceid) {
     map.get(score.PLAYERID).rank += parseInt(score.SCORE)
   })
 
-  console.log('season', season)
   season.forEach(function (player) {
     map.get(player.ID).rank += parseInt(player.SUM) / 1000
   })
