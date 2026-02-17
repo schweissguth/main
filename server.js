@@ -141,6 +141,7 @@ function playersObj() {
   })
 }
 
+function picksObj() {
   let picksobj = {}
   schedule.forEach(function (race) {
     picksobj[race.race_id] = {}
@@ -154,6 +155,22 @@ function playersObj() {
   picks.forEach(function (pick) {
     picksobj[pick.RACEID][pick.GROUPID][pick.DRIVERID] = pick.PLAYERID || ""
   })
+  return picksobj
+}
+
+function groupObj() {
+  let groupobj = {}
+  schedule.forEach(function (race) {
+    groupobj[race.race_id] = {}
+  })
+  pickorder.forEach(function (picker) {
+    groupobj[picker.RACEID][picker.PLAYERID] = {
+      group: picker.GROUPID,
+      rank: picker.RANK,
+    }
+  })
+  return groupobj
+}
 
 
 
