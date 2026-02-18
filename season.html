@@ -35,7 +35,7 @@
         season.forEach(function (player, i) {
           let tr = t.insertRow()
           tr.insertCell().innerText = i + 1
-          tr.insertCell().innerText = players[player.ID].NAME
+          tr.insertCell().innerHTML = "<b>" + players[player.ID].NAME + "</b>"
           tr.insertCell().innerText = player.SUM
           tr.insertCell().innerText = player.DELTA
         })
