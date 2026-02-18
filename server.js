@@ -1,3 +1,44 @@
+
+    async function picksObj(x) {
+  const picks = await getPicks(x)
+  let picksobj = []
+  picks.forEach(function(pick) {
+    picksobj[pick.GROUPID] = {}
+  })
+  picks.forEach(function(pick) {
+    picksobj[pick.GROUPID][pick.DRIVERID] = pick.PLAYERID
+  })
+  return picksobj
+}
+
+async function getPickSummary(x) {
+  const pickorder = await pickorderObj(5596)
+  const playersobj = await playersObj()
+  const playerpicksobj = await playerpicksObj(5596)
+  const driversobj = await driversObj()
+  console.log("driversobj", driversobj)
+
+  let picksummary = []
+  pickorder.forEach(function(group, g) {
+    picksummary[g] = []
+  })
+  pickorder.forEach(function(group, g) {
+    group.forEach(function(playerid) {
+      let arr = []
+      playerpicksobj[playerid].forEach(function(driverid) {
+        arr.push(driversobj[driverid].driver_name)
+      })
+      picksummary[g].push({
+        id: playerid,
+        name: playersobj[playerid].NAME,
+        driverids: playerpicksobj[playerid],
+        drivernames: arr
+      })
+    })
+  })
+  return picksummary
+}
+
 Array.prototype.makeObj = function() {
   let header = this.shift()
   return this.map(function(each) {
@@ -8,15 +49,6 @@ Array.prototype.makeObj = function() {
     return obj
   })
 }
-
-
-Array.prototype.fid = function(id, oid) {
-  oid = oid || "id"
-  return this.find(function(find) {
-    return find[oid] == id
-  }) || {}
-}
-
 
 
 
@@ -40,6 +72,9 @@ function getOps() {
 function nextRace() {
   return getSchedule().then(function(res) {
     console.log(res)
+    res = res.filter(function(race) {
+      return race.race_type_id == 1
+    })
     res = res.find(function(race) {
     return !race.winner_driver_id
   }).race_id
@@ -48,17 +83,17 @@ function nextRace() {
 }
 
 
-function prevRace(x) {
-  return fetch(
-    "https://sheets.googleapis.com/v4/spreadsheets/1jwadkJYYfBmf-SbjUokDV0S_yzC7gD39-jHxVatJfLU/values/SCORING?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
-  )
-    .then(function (res) {
-      return res.json()
+function prevRace() {
+  return getSchedule().then(function(res) {
+    res = res.filter(function(race) {
+      return race.race_type_id == 1
     })
-    .then(function (res) {
-      res = res.values.makeObj().pop()
-      return res.RACEID
-    })
+    res.reverse()
+    res = res.find(function(race) {
+    return race.winner_driver_id
+  }).race_id
+  return res
+  })
 }
 
 
@@ -276,8 +311,11 @@ function getPickOrder(x) {
     .then(function (res) {
       if (x) {
           res = res.values.makeObj()
-          return res.filter(function (filter) {
+          res = res.filter(function (filter) {
             return filter.RACEID == x
+          })
+          return res.sort(function(a, b) {
+            return parseFloat(a.RANK) - parseFloat(b.RANK)
           })
       } else {
         return res.values.makeObj()
@@ -483,3 +521,114 @@ https://cf.nascar.com/cacher/staging/live/live-feed.json
 //https://www.nascar.com/json/drivers/
 //https://fantasygames.nascar.com/api/v1/live/odds/race/5585.json
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function playersobj() {
+  const players = await getPlayers()
+  let obj = {}
+  players.forEach(function(player) {
+    obj[player.ID] = player
+  })
+  return obj
+}
+
+async function driversobj() {
+  const drivers = await getStandings()
+  let obj = {}
+  drivers.forEach(function(driver) {
+    obj[driver.driver_id] = {
+      name: driver.driver_name,
+      id: driver.driver_id,
+      badge: driver.car_no
+    }
+  })
+  return obj
+}
+
+async function playerpicksobj(raceid) {
+  const players = await getPlayers()
+  const array = await driverpicksobj(raceid)
+  let obj = {}
+  players.forEach(function(player) {
+    obj[player.ID] = []
+  })
+  array.forEach(function(group) {
+    for (let i in group) {
+      if (group[i]) obj[group[i]].push(i)
+    }
+  })
+  return obj
+}
+
+async function driverpicksobj(raceid) {
+  const array = await getPicks(raceid)
+  let arr = []
+  array.forEach(function(item) {
+    arr[item.GROUPID] = {}
+  })
+  array.forEach(function(item) {
+    arr[item.GROUPID][item.DRIVERID] = item.PLAYERID || ""
+  })
+  return arr
+}
+
+async function pickorderobj(raceid) {
+  const array = await getPickOrder(raceid)
+  let arr = []
+  array.forEach(function(group) {
+    arr[group.GROUPID] = []
+  })
+  array.forEach(function(group) {
+    arr[group.GROUPID].push({
+      id: group.PLAYERID,
+      rank: group.RANK
+    })
+  })
+  return arr
+}
+
+async function driverscoresobj(raceid) {
+  const array = await getScores(raceid)
+  let arr = []
+  array.forEach(function(driver) {
+    arr[driver.GROUPID] = {}
+  })
+  array.forEach(function(driver) {
+    arr[driver.GROUPID][driver.DRIVERID] = driver
+  })
+  return arr
+}
+
+async function playerscoresobj(raceid) {
+  const array = await getScores(raceid)
+  let arr = []
+  array.forEach(function(driver) {
+    arr[driver.PLAYERID] = []
+  })
+  array.forEach(function(driver) {
+    arr[driver.PLAYERID].push(driver)
+  })
+  array.forEach(function(item) {
+    arr[item.PLAYERID].total = 0
+    arr[item.PLAYERID].forEach(function(d) {
+      arr[item.PLAYERID].total += parseInt(d.SCORE)
+    })
+  })
+  return arr
+}
+
+
+
