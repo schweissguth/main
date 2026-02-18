@@ -327,52 +327,43 @@ function getPickOrder(x) {
 
 async function getRunningOrder() {
   const race = await getLiveFeed()
-  const groups = await getGroups()
-  const picks = await getPicks(race.race_id)
-  const players = await getPlayers()
+  const picks = await driverpicksobj(race.race_id)
+  const players = await playersobj()
 
-  let ARR = []
-  groups.forEach(function (group, g) {
-    ARR.push({
-      drivers: [],
-    })
-    race.vehicles.forEach(function(driver) {
-      ARR[g].drivers.push({
-        id: driver.driver.driver_id,
-        name: driver.driver.full_name,
-        delta: driver.delta,
-        playerid: "",
-        playername: "",
-        pos: driver.running_position,
-        raceid: race.race_id
-      })
+  let MAP = new Map()
+  race.vehicles.forEach(function(driver) {
+    MAP.set(driver.driver.driver_id, {
+      id: driver.driver.driver_id,
+      name: driver.driver.full_name,
+      pos: driver.running_position,
+      delta: driver.delta
     })
   })
 
-  picks.forEach(function(pick) {
-    pick.PLAYERNAME = players.fid(pick.PLAYERID, "PLAYERID").PLAYERNAME || ""
+  MAP.forEach(function(driver) {
+    driver.groups = new Array(picks.length)
   })
 
-  console.log("PICKS", picks)
-
-  picks.forEach(function(pick) {
-    let obj = ARR[pick.GROUPID].drivers.fid(pick.DRIVERID)
-    obj.playerid = pick.PLAYERID
-    obj.playername = pick.PLAYERNAME
-  })
-
-  ARR.forEach(function(group) {
-    group.drivers.reverse()
-    let counter = 1
-    group.drivers.forEach(function(driver) {
-      driver.score = 0
-      if (driver.playerid) driver.score = counter++
+  picks.forEach(function(pick, p) {
+    MAP.forEach(function(driver) {
+      driver.groups[p] = {
+        id: picks[p][driver.id] || null,
+        name: players[picks[p][driver.id]]?.NAME,
+        pts: 0
+      }
     })
-    group.drivers.reverse()
-    group.drivers[0].score++
-    group.drivers[0].score++
   })
-  return ARR
+
+  MAP = new Map([...MAP].reverse())
+  picks.forEach(function(pick, p) {
+    let counter = 0
+    MAP.forEach(function(driver) {
+      let loc = driver.groups[p]
+      if (loc.id) loc.pts = ++counter
+    })
+  })
+  MAP = new Map([...MAP].reverse())
+  return [...MAP]
 }
 
 async function getPlayerResults() {
