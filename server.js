@@ -363,7 +363,7 @@ async function getRunningOrder() {
     })
   })
   MAP = new Map([...MAP].reverse())
-  return [...MAP]
+  return [...MAP.values()]
 }
 
 async function getPlayerResults() {
