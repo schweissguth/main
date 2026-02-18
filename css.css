@@ -16,14 +16,12 @@ header, table, section, main, footer {
 
 main {
   text-align: center;
-  margin: 30px auto 30px auto;
   display: inline-block;
 }
 
 a {
   margin: 15px auto 15px auto !important;
   display: table;
-  
 }
 
 .heading {
@@ -38,7 +36,7 @@ label {
   margin: 5px;
 }
 
-input[type="checkbox"] {
+input[type=checkbox] {
   scale: 1.25;
 }
 
@@ -49,12 +47,6 @@ hr {
 table {
   border-collapse: collapse;
   text-align: left;
-}
-
-caption {
-  margin-top: 35px;
-  margin-bottom: 5px;
-  font-weight: bold;
 }
 
 tbody tr:nth-child(even) {
