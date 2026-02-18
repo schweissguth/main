@@ -29,7 +29,10 @@
   <a href="https://stupid-fast.com/chase" class="heading">Chase standings</a>
 
   <center>
-    <table id="t1" cellpadding="3"></table>
+    <table id="t1" cellpadding="3">
+    <tr>
+      <th>LOADING...</th>
+    </tr></table>
   </center>
 
 <section>
@@ -52,6 +55,7 @@
 
   <script type="text/javascript">
   async function table1() {
+    t1.innerHTML = null
   const raceid = await nextRace()
   const prevrace = await prevRace()
   const groups = await getGroups()
