@@ -39,6 +39,7 @@
       })
 
       async function showRace(raceid) {
+        t.innerHTML = null
         const race = SCHEDULE.find((r) => r.race_id == raceid)
         infosection.innerHTML = ''
         infosection.innerHTML += race.race_name + '<br>'
