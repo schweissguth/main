@@ -83,72 +83,7 @@ function selectRace(x) {
   let findrace = schedules.find(function (schedule) {
     return schedule.race_id == x
   })
-  if (findrace.winner_driver_id) {
-    table.innerHTML = null
-    getResults(findrace.race_id).then(function (results) {
-      console.log("Results", results)
-      results.sort(function(a, b) {
-        return Boolean(b.finishing_position) - Boolean(a.finishing_position)
-      })
-      results.forEach(function (result) {
-        let tr = table.insertRow()
-        tr.id = results.driver_id
-        tr.insertCell().innerText = result.finishing_position + "."
-        tr.insertCell().innerText = result.driver_fullname
-        let td = tr.insertCell()
-        td.id = result.driver_id
-        let span = document.createElement("SPAN")
-        span.style.fontWeight = "bold"
-        td.append(span)
-        let small = document.createElement("SMALL")
-        td.append(small)
-      })
-      getPicks(findrace.race_id).then(function (picks) {
-        results = results.map(function (result) {
-          result.playerid =
-            picks.findLast(function (pick) {
-              return pick.DRIVERID == result.driver_id
-            })?.PLAYERID || ""
-          return result
-        })
-        let count = 0
-        results = results.reverse().map(function (result) {
-          if (result.playerid) {
-            result.score = ++count
-          }
-          return result
-        })
-        results.forEach(function (result) {
-          if (result.playerid) {
-            let td = document.getElementById(result.driver_id)
-            let span = td.getElementsByTagName("SPAN")[0]
-            span.className = result.playerid
-            span.innerText = result.playerid
-            let small = td.getElementsByTagName("SMALL")[0]
-            small.innerText = " " + result.score
-            if (result.finishing_position == 1) {
-              small.innerText += "+2"
-            }
-          }
-        })
-        getPlayers().then(function (players) {
-          players.forEach(function (player) {
-            let spans = table.getElementsByClassName(player.PLAYERID)
-            for (let i in spans) {
-              spans[i].innerText = player.PLAYERNAME
-            }
-          })
-          getStages(findrace.race_id).then(function(stages) {
-            console.log("Stages", stages)
-            stages.forEach(function(stage) {
-              let td = document.getElementById(stage.results[0].driver_id)
-              td.getElementsByTagName("SMALL")[0].innerText += "+1"
-            })
-          })
-        })
-      })
-    })
-  } else {
+
     table.innerHTML = ""
     table.insertRow().insertCell().innerText = findrace.race_name
     table.insertRow().insertCell().innerText =
@@ -162,7 +97,7 @@ function selectRace(x) {
       findrace.television_broadcaster +
       " / " +
       findrace.radio_broadcaster
-  }
+  
 }
 
 
