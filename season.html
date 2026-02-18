@@ -1,79 +1,49 @@
-
 <!DOCTYPE html>
 <html>
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Season Standings - StupidFast</title>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="googlebot" content="noindex, nofollow">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Season Standings - StupidFast</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex, nofollow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="https://stupid-fast.com/server.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css.css" />
+
+    <style id="compiled-css" type="text/css">
 
 
-  <script src="https://stupid-fast.com/server.js"></script>
+      /* EOS */
+    </style>
+  </head>
+  <body>
+    <center>
+      <br /><br />
+      <header>
+        <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
+      </header>
 
-    <link rel="stylesheet" type="text/css" href="css.css">
+      <br /><br />
 
-
-  <style id="compiled-css" type="text/css">
-    
-
-    /* EOS */
-  </style>
-
-
-</head>
-<body>
-    
-<center>
-
-	  <br><br>
-<a href="https://stupid-fast.com">
-  <img src="https://stupid-fast.com/sfbanner.png" alt="">
-</a>
-
-<br><br>
-
-<table id="table" cellpadding="3">
-
-</table>
-
-
-
-</center>
-
+      <table id="t" cellpadding="3"></table>
+    </center>
 
     <script type="text/javascript">
-	    
+      async function init() {
+        const season = await getSeason()
+        const players = await playersobj()
 
-
-getSeason().then(function(points) {
-  console.log(points)
-	points.sort(function(a,b) {
-		return b.SUM - a.SUM
-	})
-  points.forEach(function(point, i) {
-    let tr = table.insertRow()
-    tr.insertCell().innerText = (i + 1) + "."
-    let td = tr.insertCell()
-    td.id = point.PLAYERID
-    td.innerText = point.PLAYERID
-    td.style.fontWeight = "bold"
-    tr.insertCell().innerText = point.SUM
-    td = tr.insertCell()
-    td.innerHTML = "<small><i>" + (parseInt(point.DELTA) || "") + "</i></small>"
-  })
-  getPlayers().then(function(players) {
-    players.forEach(function(player) {
-      let td = document.getElementById(player.PLAYERID)
-      if (td) {
-        td.innerText = player.PLAYERNAME
+        season.forEach(function (player, i) {
+          let tr = t.insertRow()
+          tr.insertCell().innerText = i + 1
+          tr.insertCell().innerText = players[player.ID].NAME
+          tr.insertCell().innerText = player.SUM
+          tr.insertCell().innerText = player.DELTA
+        })
       }
-    })
-  })
-})
-  </script>
-
-
-</body>
+      init()
+    </script>
+  </body>
 </html>
