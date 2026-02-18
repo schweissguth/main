@@ -1,110 +1,81 @@
-
-
-
-
-
 <!DOCTYPE html>
 <html>
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Results - StupidFast</title>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="googlebot" content="noindex, nofollow">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Results - StupidFast</title>
+    <script src="https://stupid-fast.com/server.js?jjjjj"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="./server.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css.css" />
+  </head>
 
+  <body>
+    <header>
+      <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
+    </header>
 
-  <script
-    type="text/javascript"
-    src="/js/lib/dummy.js"
-    
-  ></script>
+    <main>
+      <select id="selectrace" onchange="showRace(this.value)"></select>
+    </main>
+    <section id="infosection"></section>
 
-    <link rel="stylesheet" type="text/css" href="css.css">
+    <table id="t"></table>
 
+    <script>
+      let SCHEDULE = []
 
-  <style id="compiled-css" type="text/css">
-    
+      getSchedule().then(function (races) {
+        SCHEDULE = races
+        nextRace().then(function (currentrace) {
+          races.forEach(function (race) {
+            let opt = document.createElement('OPTION')
+            opt.value = race.race_id
+            opt.text = race.track_name
+            selectrace.add(opt)
+          })
+          selectrace.value = currentrace
+          showRace(currentrace)
+        })
+      })
 
-    /* EOS */
-  </style>
-<script src="https://stupid-fast.com/server.js"></script>
-
-</head>
-<body>
-
-<center>
-	<br><br>
-<a href="https://stupid-fast.com">
-  <img src="https://stupid-fast.com/sfbanner.png" alt="">
-</a>
-
-<br><br>
-
-
-
-
-<select onchange="selectRace(this.value)" id="select">
-  <option id="option">LOADING...</option>
-</select>
-
-<br><br>
-
-
-<table id="table"></table>
-
-</center>
-  
-
-
-
-    <script type="text/javascript">
-
-	    const schedules = []
-
-getSchedule().then(function (races) {
-  console.log("Races", races)
-  option.remove()
-  races.forEach(function (race) {
-    schedules.push(race)
-    let opt = document.createElement("OPTION")
-    opt.text = race.track_name + " #" + race.race_id
-    opt.value = race.race_id
-    select.add(opt)
-  })
-  select.value = races.find(function (race) {
-    return !race.winner_driver_id
-  }).race_id
-  selectRace(select.value)
-})
-
-function selectRace(x) {
-  table.insertRow().insertCell().innerText = "LOADING..."
-  let findrace = schedules.find(function (schedule) {
-    return schedule.race_id == x
-  })
-
-    table.innerHTML = ""
-    table.insertRow().insertCell().innerText = findrace.race_name
-    table.insertRow().insertCell().innerText =
-      new Date(findrace.date_scheduled).toUTCString().split("2025")[0] +
-      " @ " +
-      new Date(findrace.date_scheduled)
-        .toLocaleTimeString()
-        .replace(":00 PM", "PM")
-    table.insertRow().insertCell().innerText =
-      "On " +
-      findrace.television_broadcaster +
-      " / " +
-      findrace.radio_broadcaster
-  
-}
-
-
-
-
-  </script>
-
-
-</body>
+      async function showRace(raceid) {
+        const race = SCHEDULE.find((r) => r.race_id == raceid)
+        infosection.innerHTML = ''
+        infosection.innerHTML += race.race_name + '<br>'
+        infosection.innerHTML +=
+          new Date(race.date_scheduled).toLocaleString() + '<br>'
+        infosection.innerHTML +=
+          race.television_broadcaster + ' / ' + race.radio_broadcaster + '<br>'
+        infosection.innerHTML += '<i>' + race.race_comments + '</i>' + '<br>'
+        if (race.winner_driver_id) {
+          let results = await getResults(race.race_id)
+          let players = await playersobj()
+          results = results.filter(function (x) {
+            return x.finishing_position > 0
+          })
+          console.log(results)
+          results.forEach(function (driver) {
+            let tr = t.insertRow()
+            tr.insertCell().innerText = driver.finishing_position
+            tr.insertCell().innerText = driver.driver_fullname
+            tr.insertCell().id = driver.driver_id
+          })
+          driverscoresobj(raceid).then(function (scores) {
+            console.log(scores)
+            scores.forEach(function (score, s) {
+              for (let i in score) {
+                let td = document.getElementById(i)
+                td.innerHTML +=
+                  '<div><b>' +
+                  players[score[i].PLAYERID].NAME +
+                  '</b> <small>' +
+                  score[i].SCORE +
+                  '</small></div>'
+              }
+            })
+          })
+        }
+      }
+    </script>
+  </body>
 </html>
