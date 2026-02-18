@@ -81,33 +81,22 @@
 
 } 
     table1()
-/*
-    function table2() {
-      
-      getRunningOrder().then(function (res) {
-        //console.log(res)
-        t2.innerHTML = ""
-        res[0].drivers.forEach(function (driver) {
-          let tr = t2.insertRow()
-          tr.insertCell().innerText = driver.pos
-          tr.insertCell().innerHTML = driver.name
-            + " <small>" + (driver.delta.toFixed(2) || "") + "</small>"
-          let td = tr.insertCell()
-          td.id = driver.id
-        })
-        res.forEach(function (group) {
-          group.drivers.forEach(function (driver) {
-            let div = document.createElement("SMALL")
-            div.style.display = "block"
-            div.innerHTML = driver.playername || "&nbsp;"
-            if (driver.score) div.innerText += " - " + driver.score
-            document.getElementById(driver.id).append(div)
-          })
+    
+async function table2() {
+      const drivers = await getRunningOrder()
+      console.log(drivers)
+      drivers.forEach(function(driver) {
+        let tr = t2.insertRow()
+        tr.insertCell().innerText = driver.pos
+        tr.insertCell().innerHTML = driver.name + " <small>" + ((Math.abs(driver.delta.toFixed(2)) * -1) || "") + "</small>"
+        let td = tr.insertCell()
+        driver.groups.forEach(function(player) {
+          td.innerHTML += "<div><b>" + (player.name || "") + "</b> <small>" + (player.pts || "") + "</small></div>"
         })
       })
     }
     table2()
-*/
+
 
 
     function feed() {
