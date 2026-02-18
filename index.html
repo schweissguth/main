@@ -87,6 +87,7 @@
     table1()
     
 async function table2() {
+  t2.innerHTML = null
       const drivers = await getRunningOrder()
       console.log(drivers)
       drivers.forEach(function(driver) {
