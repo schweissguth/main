@@ -59,7 +59,7 @@
                 cb.onchange = function () {
                     let player = playerid
                     if (!this.checked) player = ""
-                    let arr = [Date.now(), raceid, groupid, driver.driver_id, player, driver.driver_name]
+                    let arr = [Date.now(), raceid, groupid, driver.driver_id, player]
                     fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKS", {
                         method: "post",
                         body: JSON.stringify([arr])
