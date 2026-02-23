@@ -1,63 +1,114 @@
-
 <!DOCTYPE html>
 <html>
-<head>
-  <script src="https://stupid-fast.com/server.js?jhjhh"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<head>
 </head>
 
 <body>
-  <table id="t2" cellpadding="3" border></table>
-  
-  <hr>
+    <select id="selectrace" onchange="getResults(this.value)"">
+        <option value="">Select race...</option>
+    </select>
 
-<button onclick="submitResults()">Submit</button>
+    <br><hr><br>
 
-<script>
+    <table id=" t" cellpadding="3" border></table>
 
-getRunningOrder().then(function (groups) {
-  console.log(groups)
+        <br><br>
+        <button onclick="submitScores()">Submit</button>
 
-  groups.forEach(function (group, gid) {
-    group.drivers.forEach(function (driver) {
-      if (driver.playerid) {
-        let tr = t2.insertRow()
-        tr.insertCell().innerText = driver.raceid
-        tr.insertCell().innerText = gid
-        tr.insertCell().innerText = driver.id
-        tr.insertCell().innerText = driver.pos
-        tr.insertCell().innerText = driver.score
-        tr.insertCell().innerText = driver.playerid
-        tr.insertCell().setAttribute("contenteditable", true)
-        tr.insertCell().innerText = driver.playername
-        tr.insertCell().innerText = driver.name
-      }
-    })
-  })
-})
+        <script>
+            function getJSON(x) {
+                return fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?" + x).then(function (res) {
+                    return res.json()
+                })
+            }
 
-function submitResults() {
-  let ARR = []
-  for (let r of document.querySelector("TABLE").rows) {
-    let arr = []
-    for (let c of r.cells) {
-      arr.push(c.innerText)
-    }
-    ARR.push(arr)
-  }
-  console.log(ARR)
-  if (confirm("Submit?")) {
-    fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SCORES", {
-      method: "post",
-      body: JSON.stringify(ARR)
-    })
-  }
-}
+            function getSchedule() {
+                return getJSON("getSchedule").then(function (res) {
+                    return res
+                })
+            }
 
-</script>
+            getSchedule().then(function (res) {
+                res.forEach(function (race) {
+                    let opt = document.createElement("option")
+                    opt.value = race.id
+                    opt.text = race.name
+                    selectrace.add(opt)
+                })
+                selectrace.value = 5597
+                getResults(5597)
+            })
+
+            function getResults(x) {
+                getJSON("getPicks=" + x).then(function (res) {
+                    console.log("picks", res)
+                    let groups = []
+                    res.forEach(function (pick, p) {
+                        groups[pick.groupid] = []
+                        let tr = t.insertRow()
+                        tr.id = pick.groupid + "_" + pick.driverid
+                        tr.insertCell().textContent = p + 1
+                        tr.insertCell().textContent = pick.raceid
+                        tr.insertCell().textContent = pick.groupid
+                        tr.insertCell().textContent = pick.driverid
+                        tr.insertCell().textContent = pick.playerid
+                        tr.insertCell().textContent = pick.pos
+                    })
+
+                    groups.forEach(function (group, g) {
+                        let scoreobj = {}
+                        let count = 1
+                        scoreobj[g] = {}
+                        let filter = res.filter(function (pick) {
+                            return pick.groupid == g
+                        })
+                        filter.sort(function (a, b) {
+                            return b.pos - a.pos
+                        })
+                        filter.forEach(function (pick) {
+                            pick.score = count++
+                            if (pick.pos == 1) {
+                                pick.score++
+                                pick.score++
+                            }
+                            scoreobj[pick.driverid] = pick
+                        })
+                        for (let i in scoreobj) {
+                            let tr = document.getElementById(g + "_" + i)
+                            if (tr) {
+                                tr.insertCell().textContent = scoreobj[i].score
+                            }
+                        }
+
+                    })
+
+                })
+            }
+
+
+            function submitScores() {
+                let ARR = []
+                for (let row of t.rows) {
+                    let arr = []
+                    for (let cell of row.cells) {
+                        arr.push(cell.textContent)
+                    }
+                    arr.shift()
+                    ARR.push(arr)
+                }
+                if (confirm("Are you sure?")) {
+                    console.log("Submit", ARR)
+                    fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?SCORES", {
+                        method: "POST",
+                        body: JSON.stringify(ARR)
+                    }).then(function (res) {
+                        alert("Scores submitted!")
+                    })
+                }
+            }
+        </script>
 
 </body>
-
 
 </html>
