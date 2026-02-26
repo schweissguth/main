@@ -1,46 +1,39 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>Season Standings - StupidFast</title>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="googlebot" content="noindex, nofollow" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <script src="https://stupid-fast.com/server.js"></script>
+<head>
+    <title>Stupid-Fast - Players</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="./server.js"></script>
+    <script src="./api.js"></script>
+    <link rel="stylesheet" href="./css.css">
 
-    <link rel="stylesheet" type="text/css" href="css.css" />
+</head>
 
-    <style id="compiled-css" type="text/css">
+<body>
+    <header><a href="./index.html"><img src="./sfbanner.png" alt="" /></a></header>
 
+    <table id="t" cellpadding="3"></table>
 
-      /* EOS */
-    </style>
-  </head>
-  <body>
-    <center>
-      <header>
-        <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
-      </header>
+</body>
 
-      <table id="t" cellpadding="3"></table>
-    </center>
-
-    <script type="text/javascript">
-      async function init() {
-        const season = await getSeason()
-        const players = await playersobj()
-
-        season.forEach(function (player, i) {
-          let tr = t.insertRow()
-          tr.insertCell().innerText = i + 1
-          tr.insertCell().innerHTML = "<b>" + players[player.ID].NAME + "</b>"
-          tr.insertCell().innerText = player.SUM
-          tr.insertCell().innerText = player.DELTA
+<script>
+    
+    getSeason().then(async function(res) {
+        console.log("res", res)
+        const players = await getPlayers()
+        res.forEach(function(each, i) {
+            let tr = t.insertRow()
+            tr.insertCell().innerText = i + 1
+            tr.insertCell().innerHTML = "<b>" + players[each.id] + "</b>"
+            tr.insertCell().innerText = each.sum
+            tr.insertCell().innerHTML = "<small><i>" + (each.delta || "") + "</i></small>"
         })
-      }
-      init()
-    </script>
-  </body>
+    })
+
+</script>
+
 </html>
