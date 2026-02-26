@@ -2,39 +2,44 @@
 <html>
 
 <head>
-    <script src="https://stupid-fast.com/server.js"></script>
-    <link rel="stylesheet" type="text/css" href="./css.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Stupid-Fast.com - select player</title>
+    <title>Stupid-Fast - Players</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="./server.js"></script>
+    <script src="./api.js"></script>
+    <link rel="stylesheet" href="./css.css">
+
 </head>
 
 <body>
-    <header>
-        <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
-    </header>
-    <main>
-        <select id="selectplayer" onchange='localStorage.setItem("playerid", this.value); window.location.href = "./picks.html?player=" + this.value'>
+    <header><a href="./index.html"><img src="./sfbanner.png" alt="" /></a></header>
+
+    <section>
+        <select id="selectplayer"
+            onchange='localStorage.setItem("playerid", this.value); window.location.href = "./picks.html?player=" + this.value'>
             <option disabled selected>Select player </option>
         </select>
 
-    </main>
+    </section>
 </body>
 
 <script>
     let playerid = localStorage.getItem("playerid")
+
     if (playerid) {
         window.location.href = "./picks.html?player=" + playerid
+
     } else {
         getPlayers().then(function (res) {
-            res = res.filter(function (each) {
-                return each.ACTIVE == "TRUE"
-            })
-            res.forEach(function (each) {
-                let o = document.createElement("OPTION")
-                o.value = each.PLAYERID
-                o.text = each.PLAYERNAME
-                selectplayer.add(o)
-            })
+            console.log(res)
+            for (let i in res) {
+                let opt = document.createElement("OPTION")
+                opt.value = i
+                opt.text = res[i]
+                selectplayer.add(opt)
+            }
         });
 
     }

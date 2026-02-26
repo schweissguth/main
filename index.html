@@ -2,163 +2,133 @@
 <html>
 
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Stupid-Fast.com</title>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="googlebot" content="noindex, nofollow">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="./server.js"></script>
-
-  <link rel="stylesheet" type="text/css" href="./css.css" />
-
+    <title>Stupid-Fast.com</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="./server.js"></script>
+    <script src="./api.js"></script>
+    <link rel="stylesheet" href="./css.css">
 
 </head>
 
 <body>
-  <header>
-    <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
-  </header>
-  
+    <header><a href="./index.html"><img src="./sfbanner.png" alt="" /></a></header>
 
-  <a href="./picks.html" class="heading">Click HERE to Make Picks</a>
-  <a href="https://www.driveraverages.com/">DriverAverages.com</a>
-  <a href="https://stupid-fast.com/results">Results and schedule</a>
-  <a href="https://stupid-fast.com/rules">Rules and info</a>
-  <a href="https://stupid-fast.com/season" class="heading">Season standings</a>
-  <a href="https://stupid-fast.com/chase" class="heading">Chase standings</a>
+    <h3><a href="./picks.html">Click HERE to Make Picks</a></h3>
+    <a href="https://www.driveraverages.com/">DriverAverages.com</a>
+    <a href="./results">Results and schedule</a>
+    <a href="./rules">Rules and info</a>
+    <h3><a href="./season">Season standings</a></h3>
+    <h3><a href="./chase">Chase standings</a></h3>
 
-  <center>
     <table id="t1" cellpadding="3">
-    <tr>
-      <th>LOADING...</th>
-    </tr></table>
-  </center>
+        <tr>
+            <th>LOADING PICKS...</th>
+        </tr>
 
-<section>
-  <p id="TRACK"></p>
-  <p id="BROADCAST"></p>
-  <p id="RADIO"></p>
-  <p id="LAPS"></p>
-  <p id="STAGE"></p>
-</section>
-  
-  <table id="t2" cellpadding="3">
-    <tr>
-      <th>LOADING...</th>
-    </tr>
-  </table>
+    </table>
 
-  <table id="LAPNOTES" cellpadding="3"></table>
+    <center>
+        <div id="t2track"></div>
+        <div id="t2broadcast"></div>
+        <div id="t2laps"></div>
+        <div id="t2stage"></div>
+
+    </center>
+
+    <table id="t3" cellpadding="3">
+        <tr>
+            <th>LOADING LEADERBOARD...</th>
+        </tr>
+
+    </table>
+
+    <table id="t4" cellpadding="3">
+        <tr>
+            <th>LOADING PLAY BY PLAY...</th>
+        </tr>
+
+    </table>
+
+    //--------
 
 
-
-  <script type="text/javascript">
-  async function table1() {
-    t1.innerHTML = null
-  const raceid = await nextRace()
-  const prevrace = await prevRace()
-  const groups = await getGroups()
-  const pickorder = await pickorderobj(raceid)
-  const players = await playersobj()
-  const scores = await playerscoresobj(prevrace)
-  const picks = await playerpicksobj(raceid)
-  const drivers = await driversobj()
-
-  pickorder.forEach(function(pickers, i) {
-    let tbody = t1.createTBody()
-    let tr = tbody.insertRow()
-    let th = document.createElement("TH")
-    th.innerText = groups[i].TITLE
-    th.setAttribute("colspan", 2)
-    tr.append(th)
-    pickers.forEach(function(picker) {
-      let tr = tbody.insertRow()
-      tr.id = picker.id
-      tr.insertCell().innerHTML = players[picker.id].NAME + " <small>" + scores[picker.id].total + "</small>"
-      let td = tr.insertCell()
-      picks[picker.id].forEach(function(each) {
-        td.innerHTML += "<div>" + drivers[each].name + "</div>"
-      })
-    })
-  })
-
-} 
-    table1()
-    
-async function table2() {
-  t2.innerHTML = null
-      const drivers = await getRunningOrder()
-      console.log(drivers)
-      drivers.forEach(function(driver) {
-        let tr = t2.insertRow()
-        tr.insertCell().innerText = driver.pos
-        tr.insertCell().innerHTML = driver.name + " <small>" + ((Math.abs(driver.delta.toFixed(2)) * -1) || "") + "</small>"
-        let td = tr.insertCell()
-        driver.groups.forEach(function(player) {
-          td.innerHTML += "<div><b>" + (player.name || "") + "</b> <small>" + (player.pts || "") + "</small></div>"
+    <script>
+        getPickSummary().then(function (res) {
+            console.log("PICK SUMMARY", res)
+            t1.innerHTML = null
+            res.forEach(function (each) {
+                let tr = t1.insertRow()
+                let td = tr.insertCell()
+                td.style.textAlign = "center"
+                tr.append(td)
+                td.innerHTML = '<i>Group "' + each.name + '"</i>'
+                td.setAttribute("colspan", 3)
+                each.players.forEach(function (item) {
+                    tr = t1.insertRow()
+                    tr.insertCell().innerHTML = "<b>" + item.name + "</b> <small>" + (item.score || "") + "</small>"
+                    tr.insertCell()
+                    item.drivers.forEach(function (it, i) {
+                        tr.cells[1].innerHTML += "<div>" + it.name + "</div>"
+                    })
+                })
+            })
         })
-      })
-    }
-    table2()
+        
+    </script>
 
 
-
-    function feed() {
-      getLiveFeed().then(function (liverace) {
-        //console.log("liverace", liverace)
-        TRACK.innerHTML = "<u>" + liverace.track_name.toUpperCase() + "</u>"
-        LAPS.innerText =
-          "Lap " +
-          liverace.lap_number +
-          " of " +
-          liverace.laps_in_race +
-          " (" +
-          liverace.laps_to_go +
-          " laps to go)"
-        let flags = [, "🟢", "🟡", , "🏁", , , , "🏴", "🏁"]
-        STAGE.innerHTML =
-          "Stage " +
-          liverace.stage.stage_num +
-          " <big>" +
-          flags[liverace.flag_state] +
-          "</big> flag"
-        getSchedule().then(function (schedule) {
-          let findrace = schedule.find(function (schedule) {
-            return schedule.race_id == liverace.race_id
-          })
-          BROADCAST.innerText =
-            findrace.television_broadcaster + " / " + findrace.radio_broadcaster
+    <script>
+        getLeaderboard().then(function (res) {
+            //console.log("liverace", res)
+            t2track.innerHTML = "<u>" + res.track_name.toUpperCase() + "</u>"
+            t2laps.innerText = "Lap " + res.lap_number + " of " + res.laps_in_race + " (" + res.laps_to_go + " laps to go)"
+            let flags = [, "🟢", "🟡", , "🏁", , , , "🏴", "🏁"]
+            t2stage.innerHTML = "Stage " + res.stage.stage_num + " <big>" + flags[res.flag_state] + "</big> flag"
+            getSchedule().then(function (schedule) {
+                let findrace = schedule.find(function (schedule) {
+                    return schedule.race_id == res.race_id
+                })
+                t2broadcast.innerText = findrace.television_broadcaster + " / " + findrace.radio_broadcaster
+            })
         })
-      })
 
-      getLapNotes().then(function (notes) {
-        console.log("Notes", notes)
-        LAPNOTES.innerHTML = null
-        notes = Object.entries(notes)
-        notes.reverse().forEach(function (note) {
-          let tr = LAPNOTES.insertRow()
-          tr.insertCell().innerText = note[0]
-          tr.insertCell().innerText = note[1][0].Note
+    </script>
+
+
+    <script>
+        showLeaderboard().then(function (res) {
+            t3.innerHTML = null
+            res.forEach(function (each) {
+                let tr = t3.insertRow()
+                tr.insertCell().innerText = each.pos
+                tr.insertCell().innerText = each.name
+                let td = tr.insertCell()
+                each.players.forEach(function (item) {
+                    td.innerHTML += "<div><b>" + item.name + "</b> <small>" + (item.score || "") + "</small>" + "</div>"
+                })
+            })
         })
-      })
-    }
-    feed()
+        
+    </script>
 
-    setInterval(function () {
-      feed()
-      table2()
-    }, 30000)
+    <script>
 
+        getLeaderboard().then(function (res) {
+            getLapNotes(res.race_id).then(function (res) {
+                t4.innerHTML = null
+                res.forEach(function (each) {
+                    let tr = t4.insertRow()
+                    tr.insertCell().innerHTML = "<small>" + each[0] + "</small>"
+                    tr.insertCell().innerHTML = "<small>" + each[1] + "</small>"
+                })
+            })
+        })
 
-
-
-  </script>
-
+    </script>
 
 </body>
-
-
-
 
 </html>

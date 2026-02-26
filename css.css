@@ -14,9 +14,15 @@ header, table, section, main, footer {
   margin-top: 30px;
 }
 
-main {
-  text-align: center;
+main, section {
+  text-align: left;
+  margin-left: auto;
+  margin-left: right;
   display: inline-block;
+}
+
+center {
+  text-align: center;
 }
 
 a {
@@ -24,11 +30,10 @@ a {
   display: table;
 }
 
-.heading {
+h3 a {
   color: darkgoldenrod;
-  font-size: 1.2em;
-  display: block;
-  margin-top: 25px;
+  font-weight: normal;
+
 }
 
 label {
@@ -46,7 +51,8 @@ hr {
 
 table {
   border-collapse: collapse;
-  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 tbody tr:nth-child(even) {
@@ -60,6 +66,11 @@ tbody tbody tr:nth-child(even) {
 th, td {
   border-spacing: 3px 3px;
   padding-left: 3px;
+}
+
+td {
+  
+  text-align: left;
 }
 
 ol, ul {

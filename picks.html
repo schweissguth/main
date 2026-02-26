@@ -1,30 +1,32 @@
-
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>Stupid-Fast.com - Make Picks</title>
+    <title>Stupid-Fast - Picks</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://stupid-fast.com/server.js"></script>
-    <link rel="stylesheet" type="text/css" href="./css.css" />
+    <script src="./server.js"></script>
+    <script src="./api.js"></script>
+    <link rel="stylesheet" href="./css.css">
 
 </head>
 
 <body>
-    <header>
-        <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
-    </header>
+    <header><a href="./index.html"><img src="./sfbanner.png" alt="" /></a></header>
 
     <section>
         <span id="spanplayerid">Hello, </span>! <a href="./players.html" style="display: inline;"
             onclick="localStorage.removeItem('playerid')">Log out</a>?
+
     </section>
-    <main id="main"></main>
+
+    <section id="s2"></section>
+
 
     <script>
+
         const url = new URL(window.location.href);
         const params = new URLSearchParams(url.search);
         const playerid = params.get('player');
@@ -34,86 +36,55 @@
         }
         spanplayerid.innerText += playerid.toUpperCase();
 
+        makePicks(playerid).then(function (res) {
+            console.log("RES", res)
+            res.drivers.forEach(function(each) {
+                const lbl = document.createElement("LABEL")
+                lbl.style.display = "block"
 
-        async function init() {
-            const raceid = await nextRace()
-            const groupobj = await groupObj()
-            const groupid = groupobj[raceid][playerid].group
-            const standings = await getStandings()
-            const picks = await getPicks(raceid)
-            console.log(picks)
-
-            standings.forEach(function (driver) {
-                let label = document.createElement("LABEL")
-                let cb = document.createElement("INPUT")
-                let img = document.createElement("IMG")
-                let span = document.createElement("SPAN")
-
-                label.style.display = "block"
-                label.style.textAlign = "left"
-
+                const cb = document.createElement("INPUT")
                 cb.type = "checkbox"
                 cb.style.scale = "1.25"
-                cb.id = driver.driver_id
-                cb.disabled = false
+                cb.style.verticalAlign = "middle"
+                cb.id = each.id
+                cb.checked = Boolean(each.player.id)
+                cb.disabled = Boolean(each.player.id && each.player.id != playerid)
                 cb.onchange = function () {
                     let player = playerid
                     if (!this.checked) player = ""
-                    let arr = [Date.now(), raceid, groupid, driver.driver_id, player]
                     fetch("https://script.google.com/macros/s/AKfycbyEGYd3C0Zgd-mHbBrjDrdMUSsYvj_7oky1yIuffDrRk8rURlR-gV_IteIJHzznntfO/exec?PICKS", {
                         method: "post",
-                        body: JSON.stringify([arr])
+                        body: JSON.stringify([[Date.now(), res.id, res.group, each.id, this.checked ? playerid : "", each.name]])
                     })
                 }
 
-                img.src = "https://cf.nascar.com/data/images/carbadges/1/" + driver.car_no + ".png"
-                img.alt = ""
+                const img = document.createElement("IMG")
+                img.src = "https://cf.nascar.com/data/images/carbadges/1/" + each.badge + ".png"
+                img.width = "66"
+                img.style.margin = "5px"
                 img.style.verticalAlign = "middle"
-                img.width = 65
 
-                span.innerText = driver.driver_name
+                const span = document.createElement("DIV")
+                span.style.display = "inline-block"
+                span.style.verticalAlign = "middle"
+                span.innerHTML = each.name + "<br><small>" + each.player.name + "</small>"
 
-                label.append(cb)
-                label.append(img)
-                label.append(span)
-                main.append(label)
+                lbl.append(cb)
+                lbl.append(img)
+                lbl.append(span)
+                s2.append(lbl)
 
-
-
-
-
-            })
-            
-            let filter = picks.filter(function (pick) {
-            return pick.GROUPID == groupid
-            })
-
-            filter.forEach(function (pick) {
-                let cb = document.getElementById(pick.DRIVERID)
-                console.log(cb)
-                cb.checked = pick.PLAYERID || false
-                if (pick.PLAYERID != playerid) cb.disabled = true
-                if (!pick.PLAYERID) cb.disabled = false
-                if (pick.PLAYERID == playerid) cb.disabled = false
             })
 
             document.querySelectorAll("LABEL")[10].before(document.createElement("HR"))
 
 
-        }
 
-        init()
+        })
 
     </script>
 
+
 </body>
-
-
-
-
-
-
-
-
 
 </html>
