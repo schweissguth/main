@@ -10,7 +10,7 @@ body {
   text-align: center;
 }
 
-header, table, section, main, footer {
+header, table, section, main, footer, center {
   margin-top: 30px;
 }
 
@@ -79,4 +79,5 @@ ol, ul {
 
 small {
   color: gray;
+
 }
