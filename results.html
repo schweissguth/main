@@ -1,82 +1,197 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <title>Results - StupidFast</title>
-    <script src="https://stupid-fast.com/server.js?jjjjj"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<head>
+    <title>Stupid-Fast - Results</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="./server.js"></script>
-    <link rel="stylesheet" type="text/css" href="./css.css" />
-  </head>
-
-  <body>
-    <header>
-      <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
-    </header>
-
-    <main>
-      <select id="selectrace" onchange="showRace(this.value)"></select>
-    </main>
-    <section id="infosection"></section>
-
-    <table id="t"></table>
+    <script src="./api.js"></script>
+    <link rel="stylesheet" href="./css.css">
 
     <script>
-      let SCHEDULE = []
 
-      getSchedule().then(function (races) {
-        SCHEDULE = races
-        nextRace().then(function (currentrace) {
-          races.forEach(function (race) {
-            let opt = document.createElement('OPTION')
-            opt.value = race.race_id
-            opt.text = race.track_name
-            selectrace.add(opt)
-          })
-          selectrace.value = currentrace
-          showRace(currentrace)
-        })
-      })
 
-      async function showRace(raceid) {
-        t.innerHTML = null
-        const race = SCHEDULE.find((r) => r.race_id == raceid)
-        infosection.innerHTML = ''
-        infosection.innerHTML += race.race_name + '<br>'
-        infosection.innerHTML +=
-          new Date(race.date_scheduled).toLocaleString() + '<br>'
-        infosection.innerHTML +=
-          race.television_broadcaster + ' / ' + race.radio_broadcaster + '<br>'
-        infosection.innerHTML += '<i>' + race.race_comments + '</i>' + '<br>'
-        if (race.winner_driver_id) {
-          let results = await getResults(race.race_id)
-          let players = await playersobj()
-          results = results.filter(function (x) {
-            return x.finishing_position > 0
-          })
-          console.log(results)
-          results.forEach(function (driver) {
-            let tr = t.insertRow()
-            tr.insertCell().innerText = driver.finishing_position
-            tr.insertCell().innerText = driver.driver_fullname
-            tr.insertCell().id = driver.driver_id
-          })
-          driverscoresobj(raceid).then(function (scores) {
-            console.log(scores)
-            scores.forEach(function (score, s) {
-              for (let i in score) {
-                let td = document.getElementById(i)
-                td.innerHTML +=
-                  '<div><b>' +
-                  players[score[i].PLAYERID].NAME +
-                  '</b> <small>' +
-                  score[i].SCORE +
-                  '</small></div>'
-              }
+        Array.prototype.SELECT = function (x) {
+            let split = x.split(',')
+            split = split.map(function (each) {
+                return each.trim()
             })
-          })
+            console.log(split)
+            let map = this.map(function (each) {
+                let obj = {}
+                split.forEach(function (item) {
+                    obj[item] = each[item]
+                })
+                return obj
+            })
+            return map
         }
-      }
+
+        Array.prototype.WHERE = function (x) {
+            return this.filter(function (each) {
+                return eval('each.' + x)
+            })
+        }
+
+        Array.prototype.DISTINCT = function (x) {
+            let split = x.split(',')
+            split = split.map(function (each) {
+                return each.trim()
+            })
+            let arr = []
+            split.forEach(function (each, i) {
+                arr[i] = 'item.' + each + ' == each.' + each
+            })
+            let str = arr.join(' && ')
+            console.log(str)
+            let that = this
+            return that.filter(function (each, i) {
+                return (
+                    that.findLastIndex(function (item) {
+                        return eval(str)
+                    }) == i
+                )
+            })
+        }
+
+        Array.prototype.mergeArray = function (arr, id0, id2, name) {
+            let obj = {}
+            arr.forEach(function (each) {
+                obj[each[id2]] = []
+            })
+            arr.forEach(function (each) {
+                obj[each[id2]].push(each)
+            })
+            this.forEach(function (each) {
+                each[name] = obj[each[id0]] || []
+            })
+            return this
+        }
+
+        Array.prototype.merge = function (arr, id0, id2, name) {
+            let obj = {}
+            arr.forEach(function (each) {
+                obj[each[id2]] = each
+            })
+            let keys = {}
+            arr.forEach(function (each) {
+                Object.keys(each).forEach(function (item) {
+                    keys[item] = null
+                })
+            })
+            this.forEach(function (each) {
+                Object.assign(each, structuredClone(each))
+            })
+            this.forEach(function (each) {
+                Object.assign(each, obj[each[id0]])
+            })
+            return this
+        }
+
+
+
+
+
+
+
+
+
     </script>
-  </body>
+
+</head>
+
+<body>
+    <header><a href="./index.html"><img src="./sfbanner.png" alt="" /></a></header>
+
+    <section>
+
+        <select id="selectrace" onchange="getResults(this.value)">
+            <option value="">Select race...</option>
+
+        </select>
+
+    </section>
+
+    <center id="th"></center>
+    <center id="td1"></center>
+    <center id="td2"></center>
+    <center id="td3"></center>
+
+    <table id="t"></table>
+    
+</body>
+
+<script>
+
+    let schedule = []
+    getSchedule().then(function (res) {
+        schedule = res
+        res.forEach(function (each) {
+            const opt = document.createElement("OPTION")
+            opt.value = each.race_id
+            opt.text = each.track_name
+            selectrace.add(opt)
+        })
+        let find = res.find(function (each) {
+            return !each.winner_driver_id
+        })
+        selectrace.value = find.race_id
+        getResults(find.race_id)
+
+    })
+
+    function getResults(x) {
+        t.innerHTML = null
+        let race = schedule.find(each => each.race_id == x)
+        th.innerText = race.track_name
+        td1.innerText = new Date(race.race_date).toUTCString().split("2026")[0] + " @ " + new Date(race.race_date).toLocaleTimeString()
+        td2.innerText = race.television_broadcaster + " & " + race.radio_broadcaster
+        td3.innerText = race.race_comments
+
+        if (race.winner_driver_id) {
+            fetch("https://cf.nascar.com/data/cacher/production/2026/1/" + x + "/raceResults.json").then(function (res) {
+                return res.json()
+            }).then(function (res) {
+                res = res.filter(function (each) {
+                    return each.finishing_position > 0
+                })
+                console.log('res', res)
+                res.forEach(function (each) {
+                    let tr = t.insertRow()
+                    tr.id = each.driver_id
+                    tr.insertCell().innerText = each.finishing_position
+                    tr.insertCell().innerText = each.driver_fullname
+                    tr.insertCell()
+                })
+                getScores(x).then(function (scores) {
+                    console.log("scores", scores)
+                    getPlayers().then(function (players) {
+                        let arr = []
+                        for (let i in players) {
+                            arr.push({
+                                playerid: i,
+                                playername: players[i]
+                            })
+                        };
+                        scores.merge(arr, "playerid", "playerid")
+                        scores.forEach(function (each) {
+                            let tr = document.getElementById(each.driverid)
+                            if (tr) {
+                                tr.cells[2].innerHTML += "<div title='" + each.groupid + "'><b>" + each.playername + "</b> <small>" + each.score + "</small></div>"
+                            }
+                        })
+                    })
+                })
+            })
+        }
+    }
+
+
+
+
+</script>
+
 </html>
