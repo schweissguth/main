@@ -146,7 +146,7 @@
     function getResults(x) {
         t.innerHTML = null
         let race = schedule.find(each => each.race_id == x)
-        th.innerText = race.track_name
+        th.innerHTML = "<b>" + race.track_name + "</b>"
         td1.innerText = new Date(race.race_date).toUTCString().split("2026")[0] + " @ " + new Date(race.race_date).toLocaleTimeString()
         td2.innerText = race.television_broadcaster + " & " + race.radio_broadcaster
         td3.innerText = race.race_comments
@@ -193,5 +193,6 @@
 
 
 </script>
+
 
 </html>
