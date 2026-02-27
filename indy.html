@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>INDYCAR</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
+
+
+
+    <style id="compiled-css" type="text/css">
+      
+
+table tr:nth-child(even) {
+  background-color: whitesmoke;
+}
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+  </head>
+  <body>
+    <h1>INDYCAR</h1>
+<header>
+  <div id="track"></div>
+  <div id="session"></div>
+</header>
+
+<h3>Leaderboard</h3>
+
+<main>
+  <table>
+    <thead>
+      <tr>
+        <th>Pos</th>
+        <th>Driver</th>
+        <th>Gap</th>
+        <th>Last</th>
+        <th>Tyre</th>
+        <th>Team</th>
+        <th>Pts</th>
+      </tr>
+    </thead>
+    <tbody id="t"></tbody>
+  </table>
+</main>
+
+<br><br>
+<h3>Schedule</h3>
+
+<footer>
+  <table id="s"></table>
+
+</footer>
+
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v67327c56f0bb4ef8b305cae61679db8f1769101564043" integrity="sha512-rdcWY47ByXd76cbCFzznIcEaCN71jqkWBBqlwhF1SY7KubdLKZiEGeP7AyieKZlGP9hbY/MhGrwXzJC/HulNyg==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+    <script type="text/javascript">
+
+
+
+
+fetch("https://script.google.com/macros/s/AKfycbw4f0Mwc2Vn44RE4KSr0xjaB6Kf100FqU22Se6TKIpYLdMqZzQEkfTdtIX3aoFWDkHB/exec?getTiming").then(function(res) {
+  return res.json()
+}).then(function(res) {
+  console.log(res)
+  res = res.timing_results
+
+  track.innerHTML += "<div>" + res.heartbeat.trackName + "</div>"
+  session.innerHTML += "<div>" + res.heartbeat.eventName + "</div>"
+
+  res.Item.forEach(function(each) {
+    let tr = t.insertRow()
+    tr.insertCell().innerText = each.liveRank
+    tr.insertCell().innerHTML = "<b>" + each.firstName + " " + each.lastName + "</b>" + " #" + each.no
+    tr.insertCell().innerText = Number(each.liveGap).toFixed(2)
+    tr.insertCell().innerText = Number(each.lastLapTime).toFixed(1)
+    tr.insertCell().innerText = each.Tire
+    tr.insertCell().innerHTML = "<small>" + each.team.replace("Racing", "") + "</small>"
+    tr.insertCell().innerText = each.totalDriverPoints
+  })
+
+})
+
+
+function getSchedule() {
+  fetch("https://script.google.com/macros/s/AKfycbw4f0Mwc2Vn44RE4KSr0xjaB6Kf100FqU22Se6TKIpYLdMqZzQEkfTdtIX3aoFWDkHB/exec?getSchedule").then(function(res) {
+    return res.json()
+  }).then(function(res) {
+    console.log(res)
+    res = res.schedule.race
+    res.forEach(function(each) {
+      let tr = s.insertRow()
+      tr.insertCell().innerText = new Date(each.green_flag).toUTCString().split("2026")[0]
+      tr.insertCell().innerText = each.trackname
+      tr.insertCell().innerText = each.tv.listing.channel
+      tr.insertCell().innerText = new Date(each.green_flag).toLocaleTimeString()
+    })
+
+  })
+}
+getSchedule()
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "5jLcvqst"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
+</html>
