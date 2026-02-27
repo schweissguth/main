@@ -55,7 +55,7 @@ table {
   margin-right: auto;
 }
 
-tbody tr:nth-child(even) {
+tbody tr:nth-child(even), label:nth-child(even) {
   background: #FFE;
 }
 
@@ -79,4 +79,5 @@ ol, ul {
 
 small {
   color: gray;
+
 }
