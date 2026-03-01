@@ -139,7 +139,7 @@ function getLapNotes() {
 
 
 function getLapNotes(x) {
-  return fetch("https://cf.nascar.com/cacher/2026/1/" + x + "/lap-notes.json").then(
+  return fetch("https://cf.nascar.com/cacher/2026/" + x + "/" + y + "/lap-notes.json").then(
     function (res) {
       return res.json()
     }).then(function(res) {
@@ -155,4 +155,5 @@ function getLapNotes(x) {
       return res
     })
 }
+
 
