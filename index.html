@@ -56,26 +56,9 @@
 
 
     <script>
-        getPickSummary().then(function (res) {
-            console.log("PICK SUMMARY", res)
-            t1.innerHTML = null
-            res.forEach(function (each) {
-                let tr = t1.insertRow()
-                let td = tr.insertCell()
-                td.style.textAlign = "center"
-                tr.append(td)
-                td.innerHTML = '<i>Group "' + each.name + '"</i>'
-                td.setAttribute("colspan", 3)
-                each.players.forEach(function (item) {
-                    tr = t1.insertRow()
-                    tr.insertCell().innerHTML = "<b>" + item.name + "</b> <small>" + (item.score || "") + "</small>"
-                    tr.insertCell()
-                    item.drivers.forEach(function (it, i) {
-                        tr.cells[1].innerHTML += "<div>" + it.name + "</div>"
-                    })
-                })
-            })
-        })
+        setInterval(function() {
+            getT1()
+        }, 30000)
         
     </script>
 
@@ -130,5 +113,6 @@
     </script>
 
 </body>
+
 
 </html>
