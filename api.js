@@ -300,6 +300,7 @@ async function makePicks(x) {
 
 //--------THESE ARE EXTRA HTML DOM BASED APIS ---------------
 function getT1() {
+  t1.innerHTML = null
   getSchedule().then(function (res) {
   const find = res.find((each) => !each.winner_driver_id);
   getPickOrder(find.race_id).then(function (res2) {
@@ -359,4 +360,5 @@ function getT1() {
   });
 });
 }
+
 
