@@ -163,7 +163,7 @@
             tr.insertCell()
             tr.insertCell()
           })
-          getPicks(find.race_id).then(function (picks) {
+          getPicks(drivers.race_id).then(function (picks) {
             picks.forEach(function (each) {
               const tr = document.getElementById(each.driverid)
               if (tr) {
@@ -220,3 +220,4 @@
     </script>
   </body>
 </html>
+
