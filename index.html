@@ -70,7 +70,7 @@
         tb.id = each.gid;
         const tr = tb.insertRow();
         const th = document.createElement('TH');
-        th.innerText = 'Group "' + each.name + '"';
+        th.innerText = each.name;
         th.setAttribute('colspan', 2);
         tr.append(th);
       });
@@ -172,6 +172,7 @@
 
 
 </html>
+
 
 
 
