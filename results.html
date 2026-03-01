@@ -1,118 +1,26 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <title>Stupid-Fast - Results</title>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta name="robots" content="noindex, nofollow">
-    <meta name="googlebot" content="noindex, nofollow">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex, nofollow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="./server.js"></script>
-    <script src="./api.js"></script>
-    <link rel="stylesheet" href="./css.css">
+    <link rel="stylesheet" href="./css.css" />
 
-    <script>
+    <script></script>
+  </head>
 
-
-        Array.prototype.SELECT = function (x) {
-            let split = x.split(',')
-            split = split.map(function (each) {
-                return each.trim()
-            })
-            console.log(split)
-            let map = this.map(function (each) {
-                let obj = {}
-                split.forEach(function (item) {
-                    obj[item] = each[item]
-                })
-                return obj
-            })
-            return map
-        }
-
-        Array.prototype.WHERE = function (x) {
-            return this.filter(function (each) {
-                return eval('each.' + x)
-            })
-        }
-
-        Array.prototype.DISTINCT = function (x) {
-            let split = x.split(',')
-            split = split.map(function (each) {
-                return each.trim()
-            })
-            let arr = []
-            split.forEach(function (each, i) {
-                arr[i] = 'item.' + each + ' == each.' + each
-            })
-            let str = arr.join(' && ')
-            console.log(str)
-            let that = this
-            return that.filter(function (each, i) {
-                return (
-                    that.findLastIndex(function (item) {
-                        return eval(str)
-                    }) == i
-                )
-            })
-        }
-
-        Array.prototype.mergeArray = function (arr, id0, id2, name) {
-            let obj = {}
-            arr.forEach(function (each) {
-                obj[each[id2]] = []
-            })
-            arr.forEach(function (each) {
-                obj[each[id2]].push(each)
-            })
-            this.forEach(function (each) {
-                each[name] = obj[each[id0]] || []
-            })
-            return this
-        }
-
-        Array.prototype.merge = function (arr, id0, id2, name) {
-            let obj = {}
-            arr.forEach(function (each) {
-                obj[each[id2]] = each
-            })
-            let keys = {}
-            arr.forEach(function (each) {
-                Object.keys(each).forEach(function (item) {
-                    keys[item] = null
-                })
-            })
-            this.forEach(function (each) {
-                Object.assign(each, structuredClone(each))
-            })
-            this.forEach(function (each) {
-                Object.assign(each, obj[each[id0]])
-            })
-            return this
-        }
-
-
-
-
-
-
-
-
-
-    </script>
-
-</head>
-
-<body>
-    <header><a href="./index.html"><img src="./sfbanner.png" alt="" /></a></header>
+  <body>
+    <header>
+      <a href="./index.html"><img src="./sfbanner.png" alt="" /></a>
+    </header>
 
     <section>
-
-        <select id="selectrace" onchange="getResults(this.value)">
-            <option value="">Select race...</option>
-
-        </select>
-
+      <select id="selectrace" onchange="getResults(this.value)">
+        <option value="">Select race...</option>
+      </select>
     </section>
 
     <center id="th"></center>
@@ -121,78 +29,90 @@
     <center id="td3"></center>
 
     <table id="t"></table>
-    
-</body>
+  </body>
 
-<script>
-
+  <script>
     let schedule = []
     getSchedule().then(function (res) {
-        schedule = res
-        res.forEach(function (each) {
-            const opt = document.createElement("OPTION")
-            opt.value = each.race_id
-            opt.text = each.track_name
-            selectrace.add(opt)
-        })
-        let find = res.find(function (each) {
-            return !each.winner_driver_id
-        })
-        selectrace.value = find.race_id
-        getResults(find.race_id)
-
+      schedule = res
+      res.forEach(function (each) {
+        const opt = document.createElement('OPTION')
+        opt.value = each.race_id
+        opt.text = each.track_name
+        selectrace.add(opt)
+      })
+      let find = res.find(function (each) {
+        return !each.winner_driver_id
+      })
+      selectrace.value = find.race_id
+      getResults(find.race_id)
     })
 
     function getResults(x) {
-        t.innerHTML = null
-        let race = schedule.find(each => each.race_id == x)
-        th.innerHTML = "<b>" + race.track_name + "</b>"
-        td1.innerText = new Date(race.race_date).toUTCString().split("2026")[0] + " @ " + new Date(race.race_date).toLocaleTimeString()
-        td2.innerText = race.television_broadcaster + " & " + race.radio_broadcaster
-        td3.innerText = race.race_comments
+      t.innerHTML = null
+      let race = schedule.find((each) => each.race_id == x)
+      th.innerHTML = '<b>' + race.track_name + '</b>'
+      td1.innerText =
+        new Date(race.race_date).toUTCString().split('2026')[0] +
+        ' @ ' +
+        new Date(race.race_date).toLocaleTimeString()
+      td2.innerText =
+        race.television_broadcaster + ' & ' + race.radio_broadcaster
+      td3.innerText = race.race_comments
 
-        if (race.winner_driver_id) {
-            fetch("https://cf.nascar.com/data/cacher/production/2026/1/" + x + "/raceResults.json").then(function (res) {
-                return res.json()
-            }).then(function (res) {
-                res = res.filter(function (each) {
-                    return each.finishing_position > 0
-                })
-                console.log('res', res)
-                res.forEach(function (each) {
-                    let tr = t.insertRow()
-                    tr.id = each.driver_id
-                    tr.insertCell().innerText = each.finishing_position
-                    tr.insertCell().innerText = each.driver_fullname
-                    tr.insertCell()
-                })
-                getScores(x).then(function (scores) {
-                    console.log("scores", scores)
-                    getPlayers().then(function (players) {
-                        let arr = []
-                        for (let i in players) {
-                            arr.push({
-                                playerid: i,
-                                playername: players[i]
-                            })
-                        };
-                        scores.merge(arr, "playerid", "playerid")
-                        scores.forEach(function (each) {
-                            let tr = document.getElementById(each.driverid)
-                            if (tr) {
-                                tr.cells[2].innerHTML += "<div title='" + each.groupid + "'><b>" + each.playername + "</b> <small>" + each.score + "</small></div>"
-                            }
-                        })
-                    })
-                })
+      if (race.winner_driver_id) {
+        fetch(
+          'https://cf.nascar.com/data/cacher/production/2026/1/' +
+            x +
+            '/raceResults.json',
+        )
+          .then(function (res) {
+            return res.json()
+          })
+          .then(function (res) {
+            res = res.filter(function (each) {
+              return each.finishing_position > 0
             })
-        }
+            console.log('res', res)
+            res.forEach(function (each) {
+              let tr = t.insertRow()
+              tr.id = each.driver_id
+              tr.insertCell().innerText = each.finishing_position
+              tr.insertCell().innerText = each.driver_fullname
+              tr.insertCell()
+              tr.insertCell()
+            })
+            getScores(x).then(function (scores) {
+              console.log('scores', scores)
+              scores.forEach(function (each) {
+                let tr = document.getElementById(each.driverid)
+                if (tr) {
+                  tr.cells[2 + each.groupid].innerHTML +=
+                    "<div title='" +
+                    each.groupid +
+                    "'><b class='" +
+                    each.playerid +
+                    "'>" +
+                    each.playerid +
+                    '</b> <small>' +
+                    each.score +
+                    '</small></div>'
+                }
+              })
+              getPlayers().then(function (players) {
+                for (let i in players) {
+                  let bs = document.getElementsByClassName(i)
+                  console.log(bs)
+                  if (bs) {
+                    for (let b of bs) {
+                      b.innerText = players[i]
+                    }
+                  }
+                }
+              })
+            })
+          })
+      }
     }
-
-
-
-
-</script>
-
-
+  </script>
 </html>
