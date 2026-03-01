@@ -184,6 +184,7 @@
         });
       });
     });
+      getPlayByPlay(drivers.series_id, drivers.race_id)
   });
 }
 
@@ -198,9 +199,8 @@ setInterval(function () {
     </script>
 
     <script>
-
-        getLeaderboard().then(function (res) {
-            getLapNotes(res.race_id).then(function (res) {
+        function getPlayByPlay(x) {
+            getLapNotes(x).then(function (res) {
                 t4.innerHTML = null
                 res.forEach(function (each) {
                     let tr = t4.insertRow()
@@ -208,7 +208,8 @@ setInterval(function () {
                     tr.insertCell().innerHTML = "<small>" + each[1] + "</small>"
                 })
             })
-        })
+        
+        }
 
     </script>
 
@@ -216,6 +217,7 @@ setInterval(function () {
 
 
 </html>
+
 
 
 
