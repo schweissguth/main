@@ -136,53 +136,63 @@
 
     </script>
 
+    <script> //DISPLAY LEADERBOARD
+        function displayLeaderboard() {
+  getLeaderboard().then(function (drivers) {
+    t3.innerHTML = null;
+    drivers.vehicles.forEach(function (each) {
+      const tr = t3.insertRow();
+      tr.id = each.driver.driver_id;
+      tr.insertCell().innerText = each.running_position;
+      tr.insertCell().innerHTML =
+        each.driver.full_name +
+        " <small>" +
+        -Math.abs(each.delta).toFixed(2) +
+        "</small>";
+      tr.insertCell();
+      tr.insertCell();
+    });
+    getPicks(find.race_id).then(function (picks) {
+      picks.forEach(function (each) {
+        const tr = document.getElementById(each.driverid);
+        if (tr) {
+          const td = tr.cells[2 + Number(each.groupid)];
+          td.innerText = each.playerid;
+          td.classList.add(each.playerid);
+        }
+      });
+      getPlayers().then(function (players) {
+        for (let i in players) {
+          let tds = t3.getElementsByClassName(i);
+          if (tds) {
+            for (let td of tds) {
+              td.innerHTML = "<b>" + players[i] + "</b>";
+            }
+          }
+        }
+        [2, 3].forEach(function (each) {
+          let counter = 1;
+          for (let i = t3.rows.length - 1; i >= 0; i--) {
+            let td = t3.rows[i].cells[each];
+            if (td.innerText)
+              td.innerHTML += " <small>" + counter++ + "</small>";
+            if (td.innerText && i == 0) {
+              td.querySelector("SMALL").innerText++;
+              td.querySelector("SMALL").innerText++;
+            }
+          }
+        });
+      });
+    });
+  });
+}
 
-    <script>
-        getLeaderboard().then(function (drivers) {
-  drivers.vehicles.forEach(function (each) {
-    const tr = t3.insertRow()
-    tr.id = each.driver.driver_id
-    tr.insertCell().innerText = each.running_position
-    tr.insertCell().innerHTML =
-      each.driver.full_name +
-      ' <small>' +
-      -Math.abs(each.delta).toFixed(2) +
-      '</small>'
-    tr.insertCell()
-    tr.insertCell()
-  })
-  getPicks(5598).then(function (picks) {
-    picks.forEach(function (each) {
-      const tr = document.getElementById(each.driverid)
-      if (tr) {
-        const td = tr.cells[2 + Number(each.groupid)]
-        td.innerText = each.playerid
-        td.classList.add(each.playerid)
-      }
-    })
-    getPlayers().then(function (players) {
-      for (let i in players) {
-        let tds = t3.getElementsByClassName(i)
-        if (tds) {
-          for (let td of tds) {
-            td.innerHTML = "<b>" + players[i] + "</b>"
-          }
-        }
-      };
-      [2, 3].forEach(function (each) {
-        let counter = 1
-        for (let i = t3.rows.length - 1; i >= 0; i--) {
-          let td = t3.rows[i].cells[each]
-          if (td.innerText) td.innerHTML += " <small>" + counter++ + "</small>"
-          if (td.innerText && i == 0) {
-            td.querySelector("SMALL").innerText++
-            td.querySelector("SMALL").innerText++
-          }
-        }
-      })
-    })
-  })
-})
+displayLeaderboard();
+
+setInterval(function () {
+  displayLeaderboard();
+}, 30000);
+
 
         
     </script>
@@ -206,6 +216,7 @@
 
 
 </html>
+
 
 
 
