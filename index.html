@@ -56,7 +56,65 @@
 
 
     <script>
-        getT1()
+  t1.innerHTML = null
+  getSchedule().then(function (res) {
+  const find = res.find((each) => !each.winner_driver_id);
+  getPickOrder(find.race_id).then(function (res2) {
+    console.log(res2);
+    res2.sort(function (a, b) {
+      return a.groupid - b.groupid;
+    });
+    getGroups().then(function (res6) {
+      res6.forEach(function (each) {
+        const tb = t1.createTBody();
+        tb.id = each.gid;
+        const tr = tb.insertRow();
+        const th = document.createElement('TH');
+        th.innerText = each.name;
+        th.setAttribute('colspan', 2);
+        tr.append(th);
+      });
+      res2.forEach(function (each) {
+        const tb = document.getElementById(each.groupid);
+        const tr = tb.insertRow();
+        tr.id = each.playerid;
+        tr.insertCell().innerHTML =
+          '<b>' +
+          each.playerid +
+          '</b> ' +
+          '<small>' +
+          Math.floor(each.rank) +
+          '</small>';
+        tr.insertCell();
+      });
+      getPicks(find.race_id).then(function (res3) {
+        res3.forEach(function (item) {
+          const tr = document.getElementById(item.playerid);
+          if (tr) {
+            tr.cells[1].innerHTML +=
+              "<div class='" + item.driverid + "'>" + item.driverid + '</div>';
+          }
+        });
+        getDrivers().then(function (res4) {
+          res4.forEach(function (forr) {
+            let div = t1.getElementsByClassName(forr.driver_id);
+            if (div) {
+              for (let i = 0; i < div.length; i++) {
+                div[i].innerText = forr.driver_name;
+              }
+            }
+          });
+          getPlayers().then(function (res5) {
+            for (let i in res5) {
+              document.getElementById(i).cells[0].querySelector('B').innerText =
+                res5[i];
+            }
+          });
+        });
+      });
+    });
+  });
+});
         
     </script>
 
@@ -114,5 +172,6 @@
 
 
 </html>
+
 
 
