@@ -138,7 +138,7 @@ function getLapNotes() {
 }
 
 
-function getLapNotes(x) {
+function getLapNotes(x, y) {
   return fetch("https://cf.nascar.com/cacher/2026/" + x + "/" + y + "/lap-notes.json").then(
     function (res) {
       return res.json()
@@ -155,5 +155,6 @@ function getLapNotes(x) {
       return res
     })
 }
+
 
 
