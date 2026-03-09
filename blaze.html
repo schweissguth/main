@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<video id="iframe" src="https://ff4179c5de2f.ngrok.app/videos/Blaze/" title="W3Schools Free Online Web Tutorials" width="100%" startAt="0:30" controls>
+</video>
+
+<br>
+
+<textarea id="ta" style="display: none;">
+1-01.mp4, 1-02.mp4, 1-03.mp4, 1-04.mp4, 1-06.mp4, 1-07.mp4, 1-08.mp4, 1-09.mp4, 2-01.mp4, 2-02.mp4, 2-03.mp4, 2-04.mp4, 2-05.mp4, 2-06.mp4, 2-07.mp4, 2-08.mp4, 2-09.mp4,2-10.mp4
+</textarea>
+
+<script>
+
+
+let values = ta.value
+values = values.split(",")
+let rand = Math.floor(Math.random() * values.length)
+let value = values[rand].trim()
+iframe.src += value
+iframe.currentTime = Math.random() * 60 * 21
+iframe.play()
+
+</script>
+
+</body>
+</html>
