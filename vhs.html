@@ -36,18 +36,29 @@
   </head>
   <body>
     
+  <video id="v" playsinline preload="metadata">
+  <source src="https://schweissguth.ngrok.app/VHS/VHS.mp4" type="video/mp4">
+</video>
+<br>
 
-
-<video src="https://schweissguth.ngrok.app/VHS/VHS.mp4" id="v" controls></video>
+<button id="go">Play Live</button>
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 
     <script type="text/javascript">
 
-v.addEventListener("loadeddata", () => {
+const v = document.getElementById("v");
+const go = document.getElementById("go");
+
+const once = (el, ev) => new Promise(r => el.addEventListener(ev, r, { once: true }));
+
+go.addEventListener("click", async () => {
+  if (v.readyState < 1) await once(v, "loadedmetadata");
   v.currentTime = (Date.now()/1000) % v.duration
-  v.play()
-}, { once: true });
+
+  await once(v, "seeked");          // confirm the seek actually applied
+  await v.play();                   // user gesture = allowed on iPhone
+});
 
   </script>
 
