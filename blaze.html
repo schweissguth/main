@@ -1,1 +1,105 @@
-<meta http-equiv="refresh" content="1;url=https://schweissguth.ngrok.app/Blaze/live.m3u8">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Live Episodes Channel</title>
+  <style>
+    body { margin:0; background:#000; }
+    video { width:100vw; height:100vh; background:#000; }
+  </style>
+</head>
+<body>
+
+<video id="player" controls autoplay playsinline preload="metadata"></video>
+
+<script>
+  // --- CONFIG ---
+  const BASE_PATH = "https://schweissguth.ngrok.app/Blaze/";        // where your mp4 files live
+  const SLOT_SECONDS = 21 * 60;         // ~21 minutes per episode (adjust if needed)
+
+  // Your episode files (exact names)
+  const EPISODES = [
+    "1-01.mp4",
+    "1-02.mp4",
+    "1-03.mp4",
+    "1-04.mp4",
+    "1-06.mp4",
+    "1-07.mp4",
+    "1-08.mp4",
+    "1-09.mp4",
+    "2-01.mp4",
+    "2-02.mp4",
+    "2-03.mp4",
+    "2-04.mp4",
+    "2-05.mp4",
+    "2-06.mp4",
+    "2-07.mp4",
+    "2-08.mp4",
+    "2-09.mp4",
+    "2-10.mp4",
+  ];
+
+  // --- Helpers ---
+  function secondsIntoLocalDay(nowMs) {
+    const d = new Date(nowMs);
+    return d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds();
+  }
+
+  function dayNumberLocal(nowMs) {
+    // Integer day number in local time (so schedule changes with local midnight)
+    const d = new Date(nowMs);
+    const midnight = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    return Math.floor(midnight.getTime() / 86400000);
+  }
+
+  function pickEpisodeAndOffset(nowMs) {
+    const dayNum = dayNumberLocal(nowMs);
+    const secDay = secondsIntoLocalDay(nowMs);
+
+    const slotIndexToday = Math.floor(secDay / SLOT_SECONDS);  // which 21-min block today
+    const offsetInSlot = secDay % SLOT_SECONDS;                // seconds into the block
+
+    // Make schedule deterministic by day + slot
+    const episodeIndex = (dayNum + slotIndexToday) % EPISODES.length;
+
+    return {
+      episodeIndex,
+      filename: EPISODES[episodeIndex],
+      offset: offsetInSlot,
+      slotIndexToday,
+      dayNum
+    };
+  }
+
+  // --- Player logic ---
+  const video = document.getElementById("player");
+  let current = null;
+
+  function loadCurrentFromClock() {
+    current = pickEpisodeAndOffset(Date.now());
+    video.src = BASE_PATH + current.filename;
+  }
+
+  // Initial tune-in
+  loadCurrentFromClock();
+
+  // Seek once metadata is available, then play
+  video.addEventListener("loadedmetadata", () => {
+    // As requested: no padding/guards/corrections — direct set.
+    video.currentTime = current.offset;
+  });
+
+  // When an episode ends, go to the next one (loop forever)
+  video.addEventListener("ended", () => {
+    current.episodeIndex = (current.episodeIndex + 1) % EPISODES.length;
+    current.filename = EPISODES[current.episodeIndex];
+    current.offset = 0;
+
+    video.src = BASE_PATH + current.filename;
+    video.play();
+  });
+</script>
+
+</body>
+</html>
