@@ -1,114 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Live Channel</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  body { margin:0; background:#000; }
+  video { width:100vw; height:100vh; background:#000; }
+</style>
+</head>
+<body>
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Disney video</title>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta name="robots" content="noindex, nofollow">
-    <meta name="googlebot" content="noindex, nofollow">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<video id="player" controls autoplay muted playsinline preload="metadata"></video>
 
-
-
-    <script
-      type="text/javascript"
-      src="/js/lib/dummy.js"
-      
-    ></script>
-
-
-
-    <style id="compiled-css" type="text/css">
-      
-
-      /* EOS */
-    </style>
-
-    <style type="text/css">
-      :root {
-        color-scheme: light;
-      }
-    </style>
-
-    <script id="insert"></script>
-
-  </head>
-  <body>
-    <video src="" width="100%" controls="true" autoplay="true"></video>
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-</body>
-
-    <script type="text/javascript">
-
-
-
-let arr = [
+<script>
+const PLAYLIST = [
   ["Formula Student Germany 2012", 15*60+22],
-  ["Aladdin", 1*60*60+59*60+4],
-  ["Monsters University", 8940],
   ["Snow White", 6480],
   ["Pocahontas", 6904],
+  ["Aladdin", 1*60*60+59*60+4],
+  ["Monsters University", 8940],
   ["Mulan", 7166],
-]
+];
 
-let sum = 0
-let newarr = []
-arr.forEach(function(each) {
-  newarr.push([each[0], sum, sum + each[1]])
-  sum += each[1]
-})
-console.log("newarr", newarr)
-console.log("sum", sum)
+// ---- helpers ----
+const totalDuration = PLAYLIST.reduce((s, [,d]) => s + d, 0);
 
+function urlForTitle(title) {
+  return "https://schweissguth.ngrok.app/Disney/" + encodeURIComponent(title) + ".mp4";
+}
 
-let elapsed = (Date.now()/1000 - 1775542791)
-console.log("elapsed", elapsed)
-let modu = elapsed % sum
-console.log("modulus", modu)
+function pickFromTime(t) {
+  for (let i = 0; i < PLAYLIST.length; i++) {
+    const [title, dur] = PLAYLIST[i];
+    if (t < dur) return { index:i, title, offset:t };
+    t -= dur;
+  }
+  return { index:0, title:PLAYLIST[0][0], offset:0 };
+}
 
-let index = -1
-newarr.forEach(function(each, i) {
-  if (modu > each[1] && modu < each[2]) index = i
-})
+// ---- initial tune‑in ----
+const video = document.getElementById("player");
 
-document.querySelector("video").src = "https://schweissguth.ngrok.app/Disney/" + arr[index][0] + ".mp4"
-document.querySelector("video").currentTime = modu - newarr[index][1]
+// global channel position
+const channelSeconds = (Date.now() / 1000) % totalDuration;
 
+// pick video + offset
+let current = pickFromTime(channelSeconds);
 
+// load
+video.src = urlForTitle(current.title);
 
-  </script>
+// once metadata exists, seek directly
+video.addEventListener("loadedmetadata", () => {
+  video.currentTime = current.offset;
+});
 
-  <script>
-    // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent){
-      window.parent.parent.postMessage(["resultsFrame", {
-        height: document.body.getBoundingClientRect().height,
-        slug: "prwndsf1"
-      }], "*")
-    }
+// advance naturally
+video.addEventListener("ended", () => {
+  current.index = (current.index + 1) % PLAYLIST.length;
+  current.title = PLAYLIST[current.index][0];
+  current.offset = 0;
 
-    // always overwrite window.name, in case users try to set it manually
-    window.name = "result"
-  </script>
+  video.src = urlForTitle(current.title);
+  video.play();
+});
+</script>
 
-  <script>
-    const allLines = []
-    const cssElement = document.querySelector("#compiled-css")
-
-    window.addEventListener("message", (message) => {
-
-      if (message.data.css){
-        cssElement.textContent = message.data.css.payload
-      }
-
-      if (message.data.html){
-        document.body.innerHTML = message.data.html.payload
-      }
-    })
-
-    if (window.parent){
-      window.parent.postMessage({loaded: true}, "*")
-    }
-  </script>
+</body>
 </html>
