@@ -16,6 +16,12 @@
 <script>
 const PLAYLIST = [
   ["Monsters University_149.mp4",8940],
+  ["Aristocats_82.mp4",4920],
+  ["Cinderella_118.mp4",7080],
+  ["Hunchback_89.mp4",5340],
+  ["Lion King_87.mp4",5220],
+  ["Pocahontas_115.mp4",6900],
+  ["Snow White_108.mp4",6480],
   ["Mulan_119.mp4",7140],
   ["Aladdin_119.mp4",7140],
   ["Beauty and the Beast_119.mp4",7140],
@@ -25,12 +31,6 @@ const PLAYLIST = [
   ["Tangled_97.mp4",5820],
   ["Sleeping Beauty_88.mp4",5280],
   ["Fox and the Hound_85.mp4",5100],
-  ["Aristocats_82.mp4",4920],
-  ["Cinderella_118.mp4",7080],
-  ["Hunchback_89.mp4",5340],
-  ["Lion King_87.mp4",5220],
-  ["Pocahontas_115.mp4",6900],
-  ["Snow White_108.mp4",6480],
   ["Toy Story_82.mp4",4920],
   ["Formula Student Germany_15.mp4",900],
 ]
@@ -39,7 +39,7 @@ const PLAYLIST = [
 const totalDuration = PLAYLIST.reduce((s, [,d]) => s + d, 0);
 
 function urlForTitle(title) {
-  return "https://schweissguth.ngrok.app/Disney/" + encodeURIComponent(title) + ".mp4";
+  return "https://schweissguth.ngrok.app/Disney/" + encodeURIComponent(title);
 }
 
 function pickFromTime(t) {
