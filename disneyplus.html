@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>detelte me</title>
+    <title>Disney+</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
@@ -35,11 +35,37 @@
 
   </head>
   <body>
-    <a href="https://www.disneyplus.com/browse/entity-d4b87168-7d0b-49bc-b138-457ab7723feb">test</a>
+    
+
+<center>
+  <h1>
+<a href="" id="a" target="_blank" style="text-decoration: none">Go Disney! 🐭</a>
+</h1>
+</center>
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 
     <script type="text/javascript">
+
+
+
+
+fetch("https://docs.google.com/spreadsheets/d/1EZdM6CERLzIYXAoPq8lTSdyiW8iVy6enuggciMDoXx4/gviz/tq?tqx=out:csv&sheet=DISNEY&range=A:B").then(function(res) {
+  return res.text()
+}).then(function(res) {
+  res = res.replace(/\"/g, "")
+  res = res.split("\n")
+  res = res.map(function(each) {
+    return each.split(",")
+  })
+  console.log(res)
+  let rand = Math.floor(Math.random() * res.length)
+  rand = res[rand]
+  console.log(rand[1])
+  document.querySelector("A").href = rand[0]
+
+})
+
 
   </script>
 
@@ -48,7 +74,7 @@
     if (window.parent && window.parent.parent){
       window.parent.parent.postMessage(["resultsFrame", {
         height: document.body.getBoundingClientRect().height,
-        slug: "8kf1u5gb"
+        slug: "4ub02xo3"
       }], "*")
     }
 
