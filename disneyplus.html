@@ -22,6 +22,10 @@
     <style id="compiled-css" type="text/css">
       
 
+a {
+  display: block;
+}
+
       /* EOS */
     </style>
 
@@ -40,6 +44,7 @@
 <center>
   <h1>
 <a href="" id="a" target="_blank" style="text-decoration: none">Go Disney! 🐭</a>
+<a href="" id="psych" target="_blank" style="text-decoration: none">Go Psych! 🐭</a>
 </h1>
 </center>
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
@@ -63,6 +68,23 @@ fetch("https://docs.google.com/spreadsheets/d/1EZdM6CERLzIYXAoPq8lTSdyiW8iVy6enu
   rand = res[rand]
   console.log(rand[1])
   document.querySelector("A").href = rand[0]
+
+})
+
+
+fetch("https://docs.google.com/spreadsheets/d/1EZdM6CERLzIYXAoPq8lTSdyiW8iVy6enuggciMDoXx4/gviz/tq?tqx=out:csv&sheet=PSYCH&range=A:B").then(function(res) {
+  return res.text()
+}).then(function(res) {
+  res = res.replace(/\"/g, "")
+  res = res.split("\n")
+  res = res.map(function(each) {
+    return each.split(",")
+  })
+  console.log(res)
+  let rand = Math.floor(Math.random() * res.length)
+  rand = res[rand]
+  console.log(rand[1])
+  psych.href = rand[0]
 
 })
 
