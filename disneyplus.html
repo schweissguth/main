@@ -69,7 +69,7 @@
 
     </center>
     <center>
-      <a href="javascript: location.reload();">Reload</a>
+      <a href="javascript: init();">Reload</a>
     </center>
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
@@ -81,35 +81,39 @@
 
     <script type="text/javascript">
 
-fetch(
-  'https://docs.google.com/spreadsheets/d/1EZdM6CERLzIYXAoPq8lTSdyiW8iVy6enuggciMDoXx4/gviz/tq?tqx=out:csv&sheet=INFO&range=A:B',
-)
-  .then(function (res) {
-    return res.text()
-  })
-  .then(function (res) {
-    res = res.replace(/\"/g, '')
-    res = res.split('\n')
-    res = res.map(function (each) {
-      return each.split(',')
+function init() {
+  document.querySelector('CENTER').innerHTML = ""
+  fetch(
+    'https://docs.google.com/spreadsheets/d/1EZdM6CERLzIYXAoPq8lTSdyiW8iVy6enuggciMDoXx4/gviz/tq?tqx=out:csv&sheet=INFO&range=A:B',
+  )
+    .then(function (res) {
+      return res.text()
     })
-    console.log(res)
-    res.forEach(function (each) {
-      let a = document.createElement('A')
-      a.id = each[0]
-      a.target = '_blank'
-      let img = document.createElement('IMG')
-      img.src = each[1]
-      img.style.display = 'block'
-      img.width = '213'
-      img.style.borderRadius = "10px"
-      img.style.margin = "15px"
-      a.append(img)
-      document.querySelector('CENTER').append(a)
-    })
+    .then(function (res) {
+      res = res.replace(/\"/g, '')
+      res = res.split('\n')
+      res = res.map(function (each) {
+        return each.split(',')
+      })
+      console.log(res)
+      res.forEach(function (each) {
+        let a = document.createElement('A')
+        a.id = each[0]
+        a.target = '_blank'
+        let img = document.createElement('IMG')
+        img.src = each[1]
+        img.style.display = 'block'
+        img.width = '400'
+        img.style.borderRadius = '10px'
+        img.style.margin = '15px'
+        a.append(img)
+        document.querySelector('CENTER').append(a)
+      })
 
-    getProgram(res)
-  })
+      getProgram(res)
+    })
+}
+init()
 
 function getProgram(array) {
   array.forEach(function (each) {
@@ -134,7 +138,6 @@ function getProgram(array) {
       })
   })
 }
-
 
 
   </script>
