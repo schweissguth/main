@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Disney+</title>
+    <title>DisneyPlus</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
@@ -21,9 +21,6 @@
 
     <style id="compiled-css" type="text/css">
       
-a {
-  display: block;
-}
 
       /* EOS */
     </style>
@@ -38,73 +35,103 @@ a {
 
   </head>
   <body>
-    
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Disney+</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex, nofollow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<center>
-  <h1>
-<a href="" id="a" target="_blank" style="text-decoration: none"><img src="https://assets.nintendo.eu/image/upload/f_auto/q_auto/v1707111445/NAL/Articles/2024/02-February/disney-games/16x9-Disney_Games_Hero.jpg" alt="" width="213" style="border-radius: 10px;"></a>
-<a href="" id="psych" target="_blank" style="text-decoration: none"><img src="https://dfwfis.prod.dtvcdn.com/catalog/image/imageserver/v1/service/series/f218c836-b165-4cae-955e-6be790956638/poster/213/120" alt="" style="border-radius: 10px;"></a>
+    <script type="text/javascript" src="/js/lib/dummy.js"></script>
 
-<a href="" id="pr" target="_blank" style="text-decoration: none"><img src="https://dfwfis.prod.dtvcdn.com/catalog/image/imageserver/v1/service/series/f2b36d20-44c5-4907-b21e-84260f6df595/poster/213/120" alt="" style="border-radius: 10px;"></a>
-</h1>
-</center>
+    <style id="compiled-css" type="text/css">
+
+      a {
+        display: block;
+      }
+
+            /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+  </head>
+  <body>
+    <center>
+
+    </center>
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 
+  <script type="text/javascript"></script>
+</html>
+
+  </body>
+
     <script type="text/javascript">
 
-
-
-
-fetch("https://docs.google.com/spreadsheets/d/1EZdM6CERLzIYXAoPq8lTSdyiW8iVy6enuggciMDoXx4/gviz/tq?tqx=out:csv&sheet=DISNEY&range=A:B").then(function(res) {
-  return res.text()
-}).then(function(res) {
-  res = res.replace(/\"/g, "")
-  res = res.split("\n")
-  res = res.map(function(each) {
-    return each.split(",")
+fetch(
+  'https://docs.google.com/spreadsheets/d/1EZdM6CERLzIYXAoPq8lTSdyiW8iVy6enuggciMDoXx4/gviz/tq?tqx=out:csv&sheet=INFO&range=A:B',
+)
+  .then(function (res) {
+    return res.text()
   })
-  console.log(res)
-  let rand = Math.floor(Math.random() * res.length)
-  rand = res[rand]
-  console.log(rand[1])
-  document.querySelector("A").href = rand[0]
+  .then(function (res) {
+    res = res.replace(/\"/g, '')
+    res = res.split('\n')
+    res = res.map(function (each) {
+      return each.split(',')
+    })
+    console.log(res)
+    res.forEach(function (each) {
+      let a = document.createElement('A')
+      a.id = each[0]
+      a.target = '_blank'
+      let img = document.createElement('IMG')
+      img.src = each[1]
+      img.style.display = 'block'
+      img.width = '213'
+      img.style.borderRadius = "10px"
+      img.style.margin = "15px"
+      a.append(img)
+      document.querySelector('CENTER').append(a)
+    })
 
-})
-
-
-fetch("https://docs.google.com/spreadsheets/d/1EZdM6CERLzIYXAoPq8lTSdyiW8iVy6enuggciMDoXx4/gviz/tq?tqx=out:csv&sheet=PSYCH&range=A:B").then(function(res) {
-  return res.text()
-}).then(function(res) {
-  res = res.replace(/\"/g, "")
-  res = res.split("\n")
-  res = res.map(function(each) {
-    return each.split(",")
+    getProgram(res)
   })
-  console.log(res)
-  let rand = Math.floor(Math.random() * res.length)
-  rand = res[rand]
-  console.log(rand[1])
-  psych.href = rand[0]
 
-})
-
-
-fetch("https://docs.google.com/spreadsheets/d/1EZdM6CERLzIYXAoPq8lTSdyiW8iVy6enuggciMDoXx4/gviz/tq?tqx=out:csv&sheet=PR&range=A:B").then(function(res) {
-  return res.text()
-}).then(function(res) {
-  res = res.replace(/\"/g, "")
-  res = res.split("\n")
-  res = res.map(function(each) {
-    return each.split(",")
+function getProgram(array) {
+  array.forEach(function (each) {
+    fetch(
+      'https://docs.google.com/spreadsheets/d/1EZdM6CERLzIYXAoPq8lTSdyiW8iVy6enuggciMDoXx4/gviz/tq?tqx=out:csv&sheet=' +
+        each[0] +
+        '&range=A:A',
+    )
+      .then(function (res) {
+        return res.text()
+      })
+      .then(function (res) {
+        res = res.replace(/\"/g, '')
+        res = res.split('\n')
+        res = res.map(function (item) {
+          return item.split(',')
+        })
+        let a = document.getElementById(each[0])
+        let len = res.length
+        let rand = Math.floor(Math.random() * len)
+        a.href = res[rand][0]
+      })
   })
-  console.log(res)
-  let rand = Math.floor(Math.random() * res.length)
-  rand = res[rand]
-  console.log(rand[1])
-  pr.href = rand[0]
+}
 
-})
 
 
   </script>
@@ -114,7 +141,7 @@ fetch("https://docs.google.com/spreadsheets/d/1EZdM6CERLzIYXAoPq8lTSdyiW8iVy6enu
     if (window.parent && window.parent.parent){
       window.parent.parent.postMessage(["resultsFrame", {
         height: document.body.getBoundingClientRect().height,
-        slug: "4ub02xo3"
+        slug: "gf6ne0jL"
       }], "*")
     }
 
