@@ -115,7 +115,11 @@ function getDrivers() {
     function (res) {
       return res.json()
     },
-  )
+  ).then(function(res) {
+    return res.sort(function(a, b) {
+      return a.position - b.position
+    })
+  })
 }
 
 
