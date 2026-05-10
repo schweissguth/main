@@ -1,1 +1,74 @@
-<meta http-equiv="refresh" content="1;url=https://script.google.com/macros/s/AKfycbyplxsmqNrWlnBXV8nEytFaNxXxaOKMYaDtqgHWvtw/exec">
+<!DOCTYPE html>
+<html>
+
+<body>
+  
+  <br>
+  <center>
+  <button onclick="next(false)">Back</button>
+  <button onclick="next(true)">Next</button>
+  <button onclick="yo()">Delete</button>
+  <input id="inp">
+</center>
+  <br>
+
+  <img src="" id="img" style="height: 90vh; width: 90vw; object-fit: contain;">
+  <br><br>
+  <br><Br>
+
+  <script>
+    let RES = []
+    let counter = 0
+
+
+    fetch("https://schweissguth.ngrok.app").then(function (res) {
+      return res.json()
+    }).then(function (res) {
+      RES = res.filter(function(each) {
+        let name = each.name.toLowerCase()
+        return !name.includes(".mov")
+      })
+      RES.sort(function(a, b) {
+        return new Date(a.date) - new Date(b.date)
+      })
+      console.log(RES)
+      counter = Math.floor(Math.random() * RES.length)
+next(true)
+    })
+
+    function yo() {
+      let file = "https://schweissguth.ngrok.app/" + inp.value;
+
+      fetch(file, {
+        method: "POST"
+      })
+        .then(x => x.text())
+        .then(y => {
+          RES.splice(counter, 1)
+          next(false)
+        });
+    }
+
+    function next(bool) {
+      img.src = "https://i.sstatic.net/kOnzy.gif"
+      if (bool) {
+        counter++
+      } else {
+        counter--
+      }
+      let item = RES[counter]
+      
+      img.title = new Date(item.date).toLocaleDateString()
+      let preload = new Image()
+      preload.onload = function() {
+        img.src = "https://schweissguth.ngrok.app/" + item.name
+      }
+      preload.src = "https://schweissguth.ngrok.app/" + item.name
+      inp.value = item.name
+    }
+
+  </script>
+
+</body>
+
+</html>
