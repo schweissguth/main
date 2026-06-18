@@ -1,2 +1,161 @@
 
-<meta http-equiv="refresh" content="1;url=https://script.google.com/macros/s/AKfycbww3tyjNL4RM7OPNgK1o3OYf7JxnGI8Fxg4YSlHdYw/dev">
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Load and edit local storage table</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
+
+
+    <style id="compiled-css" type="text/css">
+      html,
+body {
+  font-size: 1em;
+}
+
+textarea {
+  font-size: 1.2em;
+}
+
+tr {
+  height: 20px;
+}
+
+tr.done {
+  text-decoration: line-through;
+}
+
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+  </head>
+  <body>
+    
+
+<center>
+  <center>
+    <h1>Me todo</h1>
+    <table id="t"></table>
+
+    <br />
+
+    <textarea
+      id="ta"
+      onchange="toTable(this.value)"
+      cols="50"
+      rows="9"
+    ></textarea>
+
+    <br /><br />
+  </center>
+</center>
+
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+
+    <script type="text/javascript">
+
+function loadAll() {
+  const ls = localStorage.getItem('tasks')
+  console.log(ls)
+  ta.value = ls
+  toTable(ta.value)
+}
+loadAll()
+
+function saveAll(x) {
+  localStorage.setItem('tasks', x)
+}
+
+function toTable(x) {
+  saveAll(x)
+  t.innerText = null
+  const split = x.split('\n')
+  split.forEach(function (each) {
+    const tr = t.insertRow()
+    let td = tr.insertCell()
+    const split2 = each.split(' -')
+    td.innerText = split2[0]
+    td.ondblclick = function () {
+      findItem(split2[0])
+    }
+    td = tr.insertCell()
+    if (split2[1] && split2[1].includes('done')) {
+      tr.classList.add('done')
+    }
+  })
+  ta.rows = split.length
+}
+
+function findItem(x) {
+  const split = ta.value.split('\n')
+  const fi = split.findIndex(function (each) {
+    return each.includes(x)
+  })
+  if (split[fi].includes('done')) {
+    let str = split[fi].replace(' -done', '').replace(' - done', '')
+    split[fi] = str.trim()
+  } else {
+    split[fi] = x + ' - done'
+  }
+  const join = split.join('\n')
+  console.log(join)
+  ta.value = join
+  toTable(ta.value)
+}
+
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "174bL93f"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
+</html>
