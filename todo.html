@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Load and edit local storage table</title>
+    <title>Todo post</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
@@ -18,24 +18,7 @@
 
 
     <style id="compiled-css" type="text/css">
-      html,
-body {
-  font-size: 1em;
-}
-
-textarea {
-  font-size: 1.2em;
-}
-
-tr {
-  height: 20px;
-}
-
-tr.done {
-  text-decoration: line-through;
-  color: gray;
-}
-
+      
 
       /* EOS */
     </style>
@@ -52,76 +35,53 @@ tr.done {
   <body>
     
 
-<center>
-  <center>
-    <h1>Me todo</h1>
-    <table id="t"></table>
 
-    <br />
 
-    <textarea
-      id="ta"
-      onchange="toTable(this.value)"
-      cols="50"
-      rows="9"
-    ></textarea>
-
-    <br /><br />
-  </center>
-</center>
-
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<table id="t"></table>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1}' crossorigin="anonymous"></script>
 </body>
 
     <script type="text/javascript">
 
-function loadAll() {
-  const ls = localStorage.getItem('tasks')
-  console.log(ls)
-  ta.value = ls
-  toTable(ta.value)
-}
-loadAll()
 
-function saveAll(x) {
-  localStorage.setItem('tasks', x)
-}
+let ARR = []
 
-function toTable(x) {
-  saveAll(x)
-  t.innerText = null
-  const split = x.split('\n')
-  split.forEach(function (each) {
+fetch("https://script.google.com/macros/s/AKfycbyYcTuCZ5VyFR1_l_vsQ2zPfbf_HHiV1wQxEktz6CfNhhgvInfucNySBB0Nu3yGkQTjyA/exec?TODO").then(function(res) {
+  return res.json()
+}).then(function(res) {
+  console.log(res)
+  ARR = res
+  makeTable()
+})
+
+
+function makeTable() {
+  t.innerHTML = null
+  ARR.forEach(function(each) {
     const tr = t.insertRow()
     let td = tr.insertCell()
-    const split2 = each.split(' -')
-    td.innerText = split2[0]
-    td.ondblclick = function () {
-      findItem(split2[0])
-    }
-    td = tr.insertCell()
-    if (split2[1] && split2[1].includes('done')) {
-      tr.classList.add('done')
+    td.innerText = each.name
+    td.onclick = function() {
+      const p = prompt(each.name, each.name)
+      if (p !== null && p !== each.name) {
+      postData([
+        [each.id, "name", p, Date.now()]
+      ])
+
+      }
     }
   })
-  ta.rows = split.length
 }
 
-function findItem(x) {
-  const split = ta.value.split('\n')
-  const fi = split.findIndex(function (each) {
-    return each.includes(x)
+function postData(arr) {
+  fetch("https://script.google.com/macros/s/AKfycbyYcTuCZ5VyFR1_l_vsQ2zPfbf_HHiV1wQxEktz6CfNhhgvInfucNySBB0Nu3yGkQTjyA/exec?TODO", {
+    method: "post",
+    body: JSON.stringify(arr),
+  }).then(function(res) {
+    return res.json()
+  }).then(function(res) {
+    console.log(res)
   })
-  if (split[fi].includes('done')) {
-    let str = split[fi].replace(' -done', '').replace(' - done', '')
-    split[fi] = str.trim()
-  } else {
-    split[fi] = x + ' - done'
-  }
-  const join = split.join('\n')
-  console.log(join)
-  ta.value = join
-  toTable(ta.value)
 }
 
 
@@ -132,7 +92,7 @@ function findItem(x) {
     if (window.parent && window.parent.parent){
       window.parent.parent.postMessage(["resultsFrame", {
         height: document.body.getBoundingClientRect().height,
-        slug: "174bL93f"
+        slug: "ce635ytf"
       }], "*")
     }
 
