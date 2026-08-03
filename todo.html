@@ -37,7 +37,17 @@
 
 
 
-<table id="t"></table>
+<table>
+  <tbody id="t"></tbody>
+  <tfoot id="tfoot">
+    <tr>
+      <td ondblclick="doIt(this.innerText)">Insert new</td>
+    </tr>
+  </tfoot>
+</table>
+
+
+
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1}' crossorigin="anonymous"></script>
 </body>
 
@@ -46,6 +56,7 @@
 
 let ARR = []
 
+function init() {
 fetch("https://script.google.com/macros/s/AKfycbyYcTuCZ5VyFR1_l_vsQ2zPfbf_HHiV1wQxEktz6CfNhhgvInfucNySBB0Nu3yGkQTjyA/exec?TODO").then(function(res) {
   return res.json()
 }).then(function(res) {
@@ -53,6 +64,8 @@ fetch("https://script.google.com/macros/s/AKfycbyYcTuCZ5VyFR1_l_vsQ2zPfbf_HHiV1w
   ARR = res
   makeTable()
 })
+}
+init()
 
 
 function makeTable() {
@@ -74,15 +87,29 @@ function makeTable() {
 }
 
 function postData(arr) {
+  t.innerHTML = null
   fetch("https://script.google.com/macros/s/AKfycbyYcTuCZ5VyFR1_l_vsQ2zPfbf_HHiV1wQxEktz6CfNhhgvInfucNySBB0Nu3yGkQTjyA/exec?TODO", {
     method: "post",
     body: JSON.stringify(arr),
   }).then(function(res) {
     return res.json()
   }).then(function(res) {
-    console.log(res)
+    init()
   })
 }
+
+
+function doIt(x) {
+      const p = prompt(x, x)
+      if (p !== null && p !== x) {
+      postData([
+        [Date.now(), "name", p, Date.now()]
+      ])
+      }
+}
+
+localStorage.setItem("test", "test")
+alert(localStorage.getItem("test"))
 
 
   </script>
