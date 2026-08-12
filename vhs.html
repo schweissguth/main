@@ -26,11 +26,11 @@
     console.log("current index: ", idx - 1)
     console.log("current video", res[idx - 1])
     console.log("Name of current video: ", res[idx - 1].title)
-    const start = mod - sumarr[idx - 1]
+    const start = Math.round(mod - sumarr[idx - 1])
     console.log("Start time: ", start)
 
     
-    const url = "https://www.youtube.com/watch?v=" + res[idx - 1].contentId + "&list=PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G&index=" + idx + "&start=" + start
+    const url = "youtube://www.youtube.com/watch?v=" + res[idx - 1].contentId + "&list=PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G&index=" + idx + "&t=" + start
     window.location.href = url
 
 
