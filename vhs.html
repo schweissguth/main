@@ -1,4 +1,9 @@
 <html>
+  <style>
+    html, body {
+      height: 100%;
+    }
+  </style>
 
 <body>
 
@@ -34,8 +39,8 @@
 
         const iframe = document.createElement("IFRAME")
         iframe.width = "100%"
-        //iframe.height = "315"
-        iframe.src = "http://www.youtube.com/watch?v=" + res[idx - 1].contentId + "&list=PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G&index=" + idx + "&start=" + start
+        iframe.height = "100%"
+        iframe.src = "https://www.youtube.com/embed/" + res[idx - 1].contentId + "?list=PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G&si=De-mDCdP3_cF0We1&start=" + start
         iframe.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share")
         iframe.setAttribute("referrerpolicy", "strict-origin-when-cross-origin")
         iframe.setAttribute("allowfullscreen", true)
@@ -43,10 +48,7 @@
 
 
         /*
-
-        //"https://www.youtube.com/embed/" + res[idx - 1].contentId + "?si=De-mDCdP3_cF0We1&start=" + start
-
-
+        
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         if (isIOS) {
           window.location.href = "youtube://www.youtube.com/watch?v=" + res[idx - 1].contentId + "&list=PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G&index=" + idx + "&t=" + start
