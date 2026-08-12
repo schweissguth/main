@@ -1,69 +1,122 @@
+
+<!DOCTYPE html>
 <html>
-  <style>
-    html, body {
-      height: 100%;
-    }
-  </style>
-
-<body>
-
-  <script>
-
-    function init() {
-      fetch("https://script.google.com/macros/s/AKfycbwAcKSXC1EqLhgK_VW2JuQ9dU-X5uCa_TMr6-ozArbDC2_O6XfxVj7YYZG1OXyerm15/exec?PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G").then(function (res) {
-        return res.json()
-      }).then(function (res) {
-        console.log(res)
-        res = res.filter(function (each) {
-          return each.duration > 0
-        })
-        let sum = 0
-        let sumarr = []
-        res.forEach(function (each) {
-          sumarr.push(sum)
-          sum += each.duration
-        })
-        console.log("summar", sumarr)
-        const datenow = Date.now() / 1000
-        const mod = datenow % sum
-        console.log("mod", mod)
-        const idx = sumarr.findIndex(function (each) {
-          return mod < each
-        })
-        console.log("current index: ", idx - 1)
-        console.log("current video", res[idx - 1])
-        console.log("Name of current video: ", res[idx - 1].title)
-        const start = Math.round(mod - sumarr[idx - 1])
-        console.log("Start time: ", start)
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>VHS live stream</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-        const iframe = document.createElement("IFRAME")
-        iframe.width = "100%"
-        iframe.height = "100%"
-        iframe.src = "https://www.youtube.com/embed/" + res[idx - 1].contentId + "?list=PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G&si=De-mDCdP3_cF0We1&start=" + start
-        iframe.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share")
-        iframe.setAttribute("referrerpolicy", "strict-origin-when-cross-origin")
-        iframe.setAttribute("allowfullscreen", true)
-        document.querySelector("body").append(iframe)
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
 
 
-        /*
-        
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        if (isIOS) {
-          window.location.href = "youtube://www.youtube.com/watch?v=" + res[idx - 1].contentId + "&list=PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G&index=" + idx + "&t=" + start
-        } else {
-          window.location.href = "http://www.youtube.com/watch?v=" + res[idx - 1].contentId + "&list=PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G&index=" + idx + "&start=" + start
-        }
-          */
+    <style id="compiled-css" type="text/css">
+      body, html {
+  height: 100%;
+}
 
-      })
-    }
+      /* EOS */
+    </style>
 
-    init()
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
 
+    <script id="insert"></script>
 
-  </script>
+  </head>
+  <body>
+    <iframe src="" id="iframe" frameborder="0" width="100%" height="100%"></iframe>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1}' crossorigin="anonymous"></script>
 </body>
 
+    <script type="text/javascript">
+
+
+
+
+
+
+fetch("https://docs.google.com/spreadsheets/d/1iBMHN5rsiDr5kKc8QireAtq-o1Q59z5ud761icMNfsk/gviz/tq?tqx=out:json&gid=250105083").then(function(res) {
+  return res.text()
+}).then(function(res) {
+  res = res.split("google.visualization.Query.setResponse(")[1]
+  res = res.split(");")[0]
+  res = JSON.parse(res).table.rows
+  res = res.map(function(each) {
+    return each.c.map(function(item) {
+      return item.v
+    })
+  })
+  console.log("RES", res)
+  let sum = 0
+  const sumarr = []
+  res.forEach(function(each) {
+    sumarr.push(sum)
+    sum += each[3]
+  })
+  console.log("sum", sum)
+  console.log("sumarr", sumarr)
+  let mod = Date.now() / 1000
+  mod = mod % sum
+  mod = Math.round(mod)
+  console.log("mod", mod)
+
+  const fi = sumarr.findLastIndex(function(each) {
+    return mod > each
+  })
+  console.log("fi", fi)
+  const start = mod - sumarr[fi]
+  console.log("start", start)
+
+  const url = res[fi][4] + "&start=" + start
+  console.log(url)
+  iframe.src = url
+
+
+})
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "vzhodxp1"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
 </html>
