@@ -30,8 +30,12 @@
     console.log("Start time: ", start)
 
     
-    const url = "youtube://www.youtube.com/watch?v=" + res[idx - 1].contentId + "&list=PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G&index=" + idx + "&t=" + start
-    window.location.href = url
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (isIOS) {
+      window.location.href = "youtube://www.youtube.com/watch?v=" + res[idx - 1].contentId + "&list=PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G&index=" + idx + "&t=" + start
+    } else {
+      window.location.href = "http://www.youtube.com/watch?v=" + res[idx - 1].contentId + "&list=PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G&index=" + idx + "&start=" + start
+    }
 
 
   })
