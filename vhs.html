@@ -1,2 +1,48 @@
-<!--meta http-equiv="refresh" content="1;url=https://schweissguth.ngrok.app/VHS"-->
-<meta http-equiv="refresh" content="1;url=https://www.youtube.com/playlist?list=PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G">
+<html>
+  <body>
+    <script>
+
+  function init() {
+  fetch("https://script.google.com/macros/s/AKfycbwAcKSXC1EqLhgK_VW2JuQ9dU-X5uCa_TMr6-ozArbDC2_O6XfxVj7YYZG1OXyerm15/exec?PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G").then(function(res) {
+    return res.json()
+  }).then(function(res) {
+    console.log(res)
+    res = res.filter(function(each) {
+      return each.duration > 0
+    })
+    let sum = 0
+    let sumarr = []
+    res.forEach(function(each) {
+      sumarr.push(sum)
+      sum += each.duration
+    })
+    console.log("summar", sumarr)
+    const datenow = Date.now() / 1000
+    const mod = datenow % sum
+    console.log("mod", mod)
+    const idx = sumarr.findIndex(function(each) {
+      return mod < each
+    })
+    console.log("current index: ", idx - 1)
+    console.log("current video", res[idx - 1])
+    console.log("Name of current video: ", res[idx - 1].title)
+    const start = mod - sumarr[idx - 1]
+    console.log("Start time: ", start)
+
+    
+    const url = "https://www.youtube.com/watch?v=" + res[idx - 1].contentId + "&list=PLhFKYDtOQJiWxZ2yXx0MnPDGSDWJp8H3G&index=" + idx + "&start=" + start
+    window.location.href = url
+
+
+  })
+}
+
+init()
+
+  
+</script>
+  </body>
+</html>
+
+
+
