@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title></title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <script
+      type="text/javascript"
+      src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"
+      
+    ></script>
+
+
+    <style id="compiled-css" type="text/css">
+      
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+  </head>
+  <body>
+    <head>
+  <style>
+    body {
+      font-size: 5em;
+      text-align: center;
+      font-family: "Comic Sans MS";
+    }
+
+    td {
+      width: 150px;
+      height: 150px
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: auto;
+    }
+
+    button {
+      font-size: .5em;
+      width: 50%;
+      height: 100px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div id="big" style="text-align: center; font-size:300px; color: blue;">
+
+  </div>
+  <button id="bttn" onclick="random()">
+      <span style="font-size: 2em;">✰</span> 
+  </button>
+  <br>
+  <ol id="div">
+
+  </ol>
+
+
+
+  <script>
+    var alpha = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "♡", "✰", "♪", "→", "∆", "∞", "○", "☞", "❄", "❀", "☠", "♘", "♛"];
+
+    var beta = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "♡", "✰", "♪", "→", "∆", "∞", "○", "☞", "❄", "❀", "☠", "♘", "♛"];
+    console.log(alpha);
+    var number = 0
+
+    function random() {
+      document.getElementById("bttn").disabled = true
+      setTimeout(function(){ document.getElementById("bttn").disabled = false }, 1500);
+      number += 1;
+      var length = alpha.length;
+      var random = Math.floor(Math.random() * alpha.length);
+      console.log(random);
+      var period = 50; // ms
+      var endTime = 1000; // ms
+      var counter = 0;
+      var increment = 0;
+      var sleepyAlert = setInterval(function() {
+        document.getElementById("big").innerHTML = beta[increment];
+        increment++;
+        if (counter === endTime) {
+          clearInterval(sleepyAlert);
+          document.getElementById("big").innerHTML = alpha[random];
+
+          document.getElementById("div").innerHTML += '<li>' + alpha[random] + '</li>';
+
+
+          alpha.splice(random, 1)
+          console.log(alpha)
+        }
+        counter += period;
+      }, period);
+      
+      
+
+    }
+    var number2 = 0;
+
+
+  </script>
+
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1}' crossorigin="anonymous"></script>
+</body>
+
+  </body>
+
+    <script type="text/javascript">
+
+$(document).keyup(function(e) {
+	if (e.which == 13) {
+		$("button").click()
+	}
+})
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "t0nw397d"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
+</html>
