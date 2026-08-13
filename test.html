@@ -45,15 +45,15 @@
 const v = document.querySelector("video");
 
 v.addEventListener("error", () => {
-  console.log("Video error:", v.error);
+  alert("Video error:", v.error);
 });
 
 v.addEventListener("loadedmetadata", () => {
-  console.log("Loaded");
+  alert("Loaded");
 });
 
 v.addEventListener("canplay", () => {
-  console.log("Can play");
+  alert("Can play");
 });
 </script>
 </html>
