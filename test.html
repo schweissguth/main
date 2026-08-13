@@ -42,35 +42,18 @@
   </script>
 
   <script>
-    // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent){
-      window.parent.parent.postMessage(["resultsFrame", {
-        height: document.body.getBoundingClientRect().height,
-        slug: "xq7fw8L0"
-      }], "*")
-    }
+const v = document.querySelector("video");
 
-    // always overwrite window.name, in case users try to set it manually
-    window.name = "result"
-  </script>
+v.addEventListener("error", () => {
+  console.log("Video error:", v.error);
+});
 
-  <script>
-    const allLines = []
-    const cssElement = document.querySelector("#compiled-css")
+v.addEventListener("loadedmetadata", () => {
+  console.log("Loaded");
+});
 
-    window.addEventListener("message", (message) => {
-
-      if (message.data.css){
-        cssElement.textContent = message.data.css.payload
-      }
-
-      if (message.data.html){
-        document.body.innerHTML = message.data.html.payload
-      }
-    })
-
-    if (window.parent){
-      window.parent.postMessage({loaded: true}, "*")
-    }
-  </script>
+v.addEventListener("canplay", () => {
+  console.log("Can play");
+});
+</script>
 </html>
