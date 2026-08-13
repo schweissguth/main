@@ -3,19 +3,18 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title></title>
+    <title>delet eme</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://stupid-fast.com/server.js"></script>
-    
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://stupid-fast.com/css.css"
-    />
 
+
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
 
 
     <style id="compiled-css" type="text/css">
@@ -30,103 +29,48 @@
       }
     </style>
 
-    
+    <script id="insert"></script>
+
   </head>
   <body>
-    <center>
-  <br /><br />
-  <a href="https://stupid-fast.com">
-    <img src="https://stupid-fast.com/sfbanner.png" alt="" />
-  </a>
-
-  <br />
-
-  <a href="https://stupid-fast.com/picks" class="heading"
-    >Click HERE to Make Picks</a
-  >
-  <a href="https://www.driveraverages.com/">DriverAverages.com</a>
-  <a href="https://stupid-fast.com/results">Results and schedule</a>
-  <a href="https://stupid-fast.com/season" class="heading">Season standings</a>
-
-  <br /><br />
-
-<table id="PICKS" cellpadding="3">
-  <tr><th>LOADING...</th></tr>
-</table>
-
-<br><br>
-
-<p id="TRACK"></p>
-<p id="BROADCAST"></p>
-<p id="RADIO"></p>
-<p id="LAPS"></p>
-<p id="STAGE"></p>
-
-<br>
-
-<table id="LIVEFEED" cellpadding="3"></table>
-
-<br><br>
-
-<table id="LAPNOTES" cellpadding="3"></table>
-
-
-</center>
-
-
+    <video src="https://www.dropbox.com/scl/fi/ehuk3iqbbb5occduwam0i/2-01.mp4?rlkey=6pju70ivnp6o04bimrymk9gpy&raw=1" conrols></video>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1}' crossorigin="anonymous"></script>
 </body>
 
     <script type="text/javascript">
-      
-  getPickOrder().then(function(pickers) {
-    console.log("Pickers", pickers)
-  PICKS.innerHTML = null
-  pickers.sort(function(a, b) {
-    return a.PICKORDER - b.PICKORDER
-  })
-  pickers.forEach(function(picker) {
-    let tr = PICKS.insertRow()
-    tr.id = picker.PLAYERID
-    let td = tr.insertCell()
-    let span = document.createElement("SPAN")
-    span.innerText = picker.PLAYERID
-    span.style.fontWeight = "bold"
-    td.append(span)
-    let small = document.createElement("SMALL")
-    small.innerText = " (" + Math.round(picker.PICKORDER) + ")"
-    td.append(small)
-    tr.insertCell().setAttribute("class", "drivers")
-  })
-  getPlayers().then(function(players) {
-    players.forEach(function(player) {
-      let tr = document.getElementById(player.PLAYERID)
-      if (tr) {
-        tr.getElementsByTagName("SPAN")[0].innerText = player.PLAYERNAME
-      }
-    })
-  })
-  getCurrentRace().then(function(currentrace) {
-    getPicks(currentrace).then(function(picks) {
-      console.log("Picks", picks)
-      getStandings().then(function(standings) {
-        standings = standings.map(function(standing) {
-          standing.playerid = picks.findLast(function(pick) {
-            return pick.DRIVERID == standing.driver_id
-          })?.PLAYERID || ""
-          return standing
-        })
-        console.log("Standings", standings)
-        standings.forEach(function(standing) {
-        })
-      })
-
-    })
-  })
-})
-
 
   </script>
 
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "xq7fw8L0"
+      }], "*")
+    }
 
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
 
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
 </html>
