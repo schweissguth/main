@@ -1,90 +1,140 @@
+
 <!DOCTYPE html>
 <html>
-
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <title>Vimeo</title>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="googlebot" content="noindex, nofollow">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <style id="compiled-css" type="text/css">
-    html,
-    body {
-      height: 100%
-    }
-  </style>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Blaze</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-</head>
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
 
-<body>
 
-  <script type="text/javascript">
+    <style id="compiled-css" type="text/css">
+      html, body {
+  height: 100%
+}
 
-    const arr = [
-      ['https://vimeo.com/showcase/12364529?video=1217792714', 1320],
-      ['https://vimeo.com/showcase/12364529?video=1217792713', 2724],
-      ['https://vimeo.com/showcase/12364529?video=1217792717', 1312],
-      ['https://vimeo.com/showcase/12364529?video=1217793437', 1332],
-      ['https://vimeo.com/showcase/12364529?video=1217793949', 1332],
-      ['https://vimeo.com/showcase/12364529?video=1217794405', 1309],
-      ['https://vimeo.com/showcase/12364529?video=1217794420', 1312],
-      ['https://vimeo.com/showcase/12364529?video=1217794929', 1308],
-      ['https://vimeo.com/showcase/12364529?video=1217795013', 1304],
-      ['https://vimeo.com/showcase/12364529?video=1217795358', 2728],
-      ['https://vimeo.com/showcase/12364529?video=1217795985', 1332],
-      ['https://vimeo.com/showcase/12364529?video=1217796504', 1332],
-      ['https://vimeo.com/showcase/12364529?video=1217796555', 1336],
-      ['https://vimeo.com/showcase/12364529?video=1217792716', 1316],
-      ['https://vimeo.com/showcase/12364529?video=1217793022', 1332],
-      ['https://vimeo.com/showcase/12364529?video=1217793436', 1316],
-      ['https://vimeo.com/showcase/12364529?video=1217793551', 1328],
-      ['https://vimeo.com/showcase/12364529?video=1217794019', 1336],
-      ['https://vimeo.com/showcase/12364529?video=1217794032', 1296],
-      ['https://vimeo.com/showcase/12364529?video=1217794034', 1296],
-      ['https://vimeo.com/showcase/12364529?video=1217794403', 1328],
-      ['https://vimeo.com/showcase/12364529?video=1217794453', 1292],
-      ['https://vimeo.com/showcase/12364529?video=1217794939', 1312],
-      ['https://vimeo.com/showcase/12364529?video=1217794996', 1308],
-      ['https://vimeo.com/showcase/12364529?video=1217795311', 1324],
-      ['https://vimeo.com/showcase/12364529?video=1217795425', 1308],
-      ['https://vimeo.com/showcase/12364529?video=1217796074', 1316],
-      ['https://vimeo.com/showcase/12364529?video=1217796505', 1312],
-      ['https://vimeo.com/showcase/12364529?video=1217796753', 1328],
+      /* EOS */
+    </style>
 
-    ]
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
 
-    let s = 0
-    arr.forEach(function (each) {
-      each[3] = s + each[1]
-      each[2] = s
-      s += each[1]
-    })
+    <script id="insert"></script>
 
-    const sum = arr.reduce(function (total, item) {
-      return total + item[1]
-    }, 0)
+  </head>
+  <body>
+    
 
-    const datenow = Math.round(Date.now() / 1000)
-    const mod = datenow % sum
-
-    const fi = arr.findIndex(function (each) {
-      return mod > each[2] && mod < each[3]
-    })
-
-    const start = mod - arr[fi][2]
-    const url = arr[fi][0] + "#t=" + start
-    location.href = url
-
-    console.log("Arr", arr)
-    console.log("sum", sum)
-    console.log("mod", mod)
-    console.log("Start", start)
-    console.log(url)
-  </script>
+<video id="video" src="https://www.dropbox.com/scl/fi/u6yji82yr87n5jiiqlde4/Sandlot.mp4?rlkey=ftm0nkst1nwhi44s7f6o3pe36&dl=1" controls></video>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1}' crossorigin="anonymous"></script>
 </body>
 
+    <script type="text/javascript">
 
+const playlist = [
+  [
+    "https://www.dropbox.com/scl/fi/ehuk3iqbbb5occduwam0i/2-01.mp4?rlkey=6pju70ivnp6o04bimrymk9gpy&dl=1",
+    1136,
+  ],
+  [
+    "https://www.dropbox.com/scl/fi/xwjwohvqf294lrginnujx/2-02.mp4?rlkey=wjia1jn0h2nrr6alhhwhysxzn&dl=1",
+    1296,
+  ],
+  [
+    "https://www.dropbox.com/scl/fi/frr41v1fwbuh6dzgrfpha/2-03.mp4?rlkey=yorl7ozlliytnd3wpfunsngnb&dl=1",
+    1296,
+  ],
+  [
+    "https://www.dropbox.com/scl/fi/syuyoxoageei6u436j3m1/2-04.mp4?rlkey=c40aedt6b2hr0o2leff96gyd6&dl=1",
+    1328,
+  ],
+  [
+    "https://www.dropbox.com/scl/fi/t0o7g29emoqw2pt9aazy1/2-05.mp4?rlkey=73pplvssx0mhc2bjfk2gsash8&dl=1",
+    1309,
+  ],
+];
+
+let counter = 0;
+playlist.forEach(function (each) {
+  each[2] = counter;
+  each[3] = counter + each[1];
+  counter += each[1];
+});
+
+  const sum = playlist.reduce(function (total, each) {
+    return total + each[1];
+  }, 0);
+
+function startVideo() {
+
+  console.log("playlist", playlist);
+
+  const datenow = Math.round(Date.now() / 1000);
+  const mod = datenow % sum;
+  const find = playlist.find(function (each) {
+    return mod > each[2] && mod < each[3];
+  });
+  console.log("find", find);
+  const start = mod - find[2];
+  console.log("start", start);
+
+  video.src = find[0];
+  video.onloadedmetadata = function () {
+    video.currentTime = start;
+    video.play();
+  };
+}
+startVideo();
+
+video.addEventListener("ended", () => {
+  startVideo();
+});
+
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "40Lt5pnh"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
 </html>
