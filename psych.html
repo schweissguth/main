@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Psych</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
+
+
+    <style id="compiled-css" type="text/css">
+      
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+  </head>
+  <body>
+    
+
+
+<video id="v" style="width: 100%" controls></video>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1}' crossorigin="anonymous"></script>
+</body>
+
+    <script type="text/javascript">
+
+
+
+
+const arr = [
+  "https://www.dropbox.com/scl/fi/38p1j3fja7h881h6ut0jh/1-02_42.mp4?rlkey=84mbbahz8cbaqzh67kslvo6jm&raw=1", 
+  "https://www.dropbox.com/scl/fi/57y3e5a91s9gfcq9e9x7n/1-03_42.mp4?rlkey=22h21yfd2s1iaxi6ty7lgkhf8&raw=1",
+  "https://www.dropbox.com/scl/fi/lzty74b7bu06399qrouo2/1-04_41.mp4?rlkey=lb2azdj8nxslvymeg8ibvhxrh&raw=1",
+  "https://www.dropbox.com/scl/fi/680r7vfjgtfgnm4n67lkg/1-05_42.mp4?rlkey=c76kahzbtb14cz949zsu17i5f&raw=1",
+  "https://www.dropbox.com/scl/fi/5dg0wdrihoqf1g2mfv7dh/1-06_42.mp4?rlkey=o8c57ptf8y3c34eegpbckp9kb&raw=1",
+  "https://www.dropbox.com/scl/fi/j61es3vblb1ca488brwaz/1-07_42.mp4?rlkey=kh6kgm4m4vhp15mwjhm6xpks1&raw=1"
+]
+
+
+function init() {
+  let start = 0
+  let end = 42
+  let map = arr.map(function(each) {
+    const array = [each, start, end]
+    start += 42
+    end += 42
+    return array
+  })
+  const last = map[map.length - 1][2]
+  console.log(last)
+  const date = Date.now()/1000/60
+  const mod = Math.round(date % last); console.log("mod", mod)
+  const fi = map.findLastIndex(function(each) {
+    return mod > each[1]
+  }); console.log("find", fi)
+  const diff = mod - map[fi][1]; console.log("diff", diff)
+  v.src = map[fi][0]
+  v.currentTime = diff*60
+}
+
+init()
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "hsqyfort"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    window.addEventListener("message", (message) => {
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
+</html>
