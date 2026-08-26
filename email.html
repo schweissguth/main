@@ -3,22 +3,23 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
+<body style="zoom: 2;">
 <center>
-<h1>Send self email</h1>
 
-<textarea onchange="submitEmail(this.value)" style="width: 90%;" rows="10"></textarea>
+<textarea id="ta" onchange="submitEmail(this.value)" style="width: 90%;" rows="10"></textarea>
 <br><br>
-<button>Placebo button</button>
+<button>Placebo button</button>	
 <br><br>
 </center>
 
 <script>
 
 function submitEmail(x) {
+ta.disabled = true;
 fetch("https://script.google.com/macros/s/AKfycbzSDaFKv0kxxSg_L4eRjVruEAle7ckDUWRio45mSST2U_lFSIbiUIzTuJGP5WkTLBeN/exec?" + x).then(function() {
-  document.querySelector("textarea").value = ""
   alert("Submitted");
+  ta.value = "";
+  ta.disabled = false;
 })
 }
 
