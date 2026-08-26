@@ -16,7 +16,10 @@
 <script>
 
 function submitEmail(x) {
-fetch("https://script.google.com/macros/s/AKfycbzSDaFKv0kxxSg_L4eRjVruEAle7ckDUWRio45mSST2U_lFSIbiUIzTuJGP5WkTLBeN/exec?" + x)
+fetch("https://script.google.com/macros/s/AKfycbzSDaFKv0kxxSg_L4eRjVruEAle7ckDUWRio45mSST2U_lFSIbiUIzTuJGP5WkTLBeN/exec?" + x).then(function() {
+  document.querySelector("textarea").value = ""
+  alert("Submitted");
+})
 }
 
 </script>
