@@ -36,68 +36,41 @@
     
 
 
-<video id="v" style="width: 100%" controls ></video>
+<video id="video" style="width: 100%" controls autoplay></video>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v3d52b47920f24c319d37e2661827c42b1787588026925" integrity="sha512-d9sL6GJLXn6fInD1+TVXhTcQOsmxeHfmHAvwGDIxp5TO+uo1fiWW7mHomMj4MLRlCsJDTqXzWLHJFFlPCEIj/A==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1}' crossorigin="anonymous"></script>
 </body>
 
     <script type="text/javascript">
 
-
-
-
-/*const arr = [
-  "https://www.dropbox.com/scl/fi/38p1j3fja7h881h6ut0jh/1-02_42.mp4?rlkey=84mbbahz8cbaqzh67kslvo6jm&raw=1", 
-  "https://www.dropbox.com/scl/fi/57y3e5a91s9gfcq9e9x7n/1-03_42.mp4?rlkey=22h21yfd2s1iaxi6ty7lgkhf8&raw=1",
-  "https://www.dropbox.com/scl/fi/lzty74b7bu06399qrouo2/1-04_41.mp4?rlkey=lb2azdj8nxslvymeg8ibvhxrh&raw=1",
-  "https://www.dropbox.com/scl/fi/680r7vfjgtfgnm4n67lkg/1-05_42.mp4?rlkey=c76kahzbtb14cz949zsu17i5f&raw=1",
-  "https://www.dropbox.com/scl/fi/5dg0wdrihoqf1g2mfv7dh/1-06_42.mp4?rlkey=o8c57ptf8y3c34eegpbckp9kb&raw=1",
-  "https://www.dropbox.com/scl/fi/j61es3vblb1ca488brwaz/1-07_42.mp4?rlkey=kh6kgm4m4vhp15mwjhm6xpks1&raw=1"
-]*/
-const arr = []
-
-
-fetch("https://script.google.com/macros/s/AKfycbzhrrJP491UZB54aOSV_4aFOtti_Qqml4pQ6vNB7lhCaZnAOt91ZbgFnHXHWid2XHEMmw/exec?psych").then(function(res) {
+fetch("https://schweissguth.ngrok.app/psych/").then(function(res) {
   return res.json()
 }).then(function(res) {
-  console.log("res", res)
-  res.forEach(function(each) {
-    
-  arr.push(["https://www.googleapis.com/drive/v3/files/" + each[0] + "?key=AIzaSyCpLqW-caztJEqt4svoED3PA1JaOW8EG3Q&alt=media", each[1]])
-  })
-  init()
-})
-
-
-function init() {
-  console.log("arr", arr)
+  const path = res.path
+  console.log(res)
+  res = res.items
   let start = 0
-  let map = arr.map(function(each) {
-    const dur = parseInt(each[1].split("_")[1])
-    const array = [each[0], start, (start+dur)]
-    start += dur
-    return array
+  res.forEach(function(each) {
+    each.len = each.name.split("_")[1].split(".")[0]
+    each.len = Math.round(each.len)
+    each.start = start
+    each.end = start + each.len
+    start += each.len
   })
-  const last = map[map.length - 1][2]
-  console.log(last)
-  const date = Date.now()/1000/60
-  const mod = Math.round(date % last); console.log("mod", mod)
-  const fi = map.findLastIndex(function(each) {
-    return mod > each[1]
-  }); console.log("find", fi)
-  console.log(find, map[fi])
-  const diff = mod - map[fi][1]; console.log("diff", diff)
+  console.log("res", res)
+  const totallen = res[res.length - 1].end
+  console.log("totallen", totallen)
+  const mod = Math.round((Date.now()/1000/60) % totallen)
+  console.log("mod", mod)
+  const find = res.find(function(each) {
+    return mod > each.start && mod < each.end
+  })
+  console.log("find", find)
+  const delta = mod - find.start; console.log("delta", delta)
+  video.src = "https://schweissguth.ngrok.app" + path + "/" + find.name
+  video.currentTime = delta * 60
 
 
-v.addEventListener("loadedmetadata", function seek() {
-  v.currentTime = diff*60;
-  v.removeEventListener("loadedmetadata", seek);
-}, { once: true });
-
-v.src = map[fi][0];
-v.load();
-}
-
-
+})
 
   </script>
 
