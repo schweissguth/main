@@ -67,7 +67,9 @@ fetch("https://schweissguth.ngrok.app/psych/").then(function(res) {
   console.log("find", find)
   const delta = mod - find.start; console.log("delta", delta)
   video.src = "https://schweissguth.ngrok.app" + path + "/" + find.name
-  video.currentTime = delta * 60
+    video.addEventListener("loadedmetadata", () => {
+      video.currentTime = delta * 60
+    });
 
 
 })
