@@ -93,6 +93,15 @@ function getSeason() {
   });
 }
 
+function getChase() {
+  return getData('CHASE').then(function (res) {
+    res.forEach(function (each) {
+      each.sum = Number(each.sum);
+    });
+    return res;
+  });
+}
+
 function getSchedule() {
   return fetch('https://cf.nascar.com/cacher/2026/1/race_list_basic.json').then(
     function (res) {
