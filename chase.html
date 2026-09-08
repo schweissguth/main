@@ -22,17 +22,30 @@
 
 <script>
     
-    getChase().then(async function(res) {
-        console.log("res", res)
-        const players = await getPlayers()
-        res.forEach(function(each, i) {
-            let tr = t.insertRow()
-            tr.insertCell().innerText = i + 1
-            tr.insertCell().innerHTML = "<b>" + players[each.id] + "</b>"
-            tr.insertCell().innerText = each.sum
-            tr.insertCell().innerHTML = "<small><i>" + (each.delta || "") + "</i></small>"
-        })
+    getChase().then(async function (res) {
+  console.log('res', res)
+  res.forEach(function (each, i) {
+    let tr = t.insertRow()
+    tr.insertCell().innerText = i + 1
+    const td = tr.insertCell()
+    td.id = each.id
+    td.style.fontWeight = 'bold'
+    td.innerHTML = each.id
+    tr.insertCell().innerText = each.sum
+    tr.insertCell().innerHTML =
+      '<small><i>' + (each.delta || '') + '</i></small>'
+  })
+  setTimeout(function () {
+    getPlayers().then(function (players) {
+      players = Object.entries(players)
+      console.log('players', players)
+      players.forEach(function (each) {
+        document.getElementById(each[0]).innerText = each[1]
+      })
     })
+  }, 1000)
+})
+
 
 </script>
 
