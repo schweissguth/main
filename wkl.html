@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>WKL</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <script
+      type="text/javascript"
+      src="/js/lib/dummy.js"
+      
+    ></script>
+
+
+    <style id="compiled-css" type="text/css">
+      
+
+      /* EOS */
+    </style>
+
+    <style type="text/css">
+      :root {
+        color-scheme: light;
+      }
+    </style>
+
+    <script id="insert"></script>
+
+  </head>
+  <body>
+    
+
+
+<ul id="ul" contenteditable>
+  <li>Enter new line here...</li>
+</ul>
+
+
+
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+
+    <script type="text/javascript">
+
+const items = JSON.parse(localStorage.getItem('wkl'))
+if (items) {
+  ul.innerHTML = ''
+  items.forEach(function (each) {
+    const li = document.createElement('LI')
+    li.innerText = each
+    ul.append(li)
+  })
+}
+
+setInterval(function () {
+  const lis = document.querySelectorAll('li')
+  const map = [...lis].map(function (each) {
+    return each.innerText
+  })
+  localStorage.setItem('wkl', JSON.stringify(map))
+  const item = localStorage.getItem('wkl')
+  //console.log(item)
+}, 10000)
+
+
+  </script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "La2go9hf"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+  <script>
+    const allLines = []
+    const cssElement = document.querySelector("#compiled-css")
+
+    // The editor's AI chat asking what the fiddle rendered. Only a selector reaches the
+    // DOM API - nothing here evaluates code - and every match is capped, so a page-sized
+    // body cannot flood the chat's context.
+    const INSPECT_STYLES = ["display", "position", "width", "height", "margin", "padding", "color", "background-color", "font-size", "overflow", "z-index", "visibility", "opacity"]
+    const INSPECT_HTML_LIMIT = 3000
+    const INSPECT_MAX_MATCHES = 20
+
+    function inspectHtml(element){
+      let clone = element.cloneNode(true)
+
+      clone.querySelectorAll("script, style").forEach((node) => node.remove())
+
+      let html = clone.outerHTML.replace(/\s+/g, " ")
+
+      return html.length > INSPECT_HTML_LIMIT ? `${html.slice(0, INSPECT_HTML_LIMIT)}… (truncated)` : html
+    }
+
+    function inspect({ id, selector, styles, limit }){
+      let elements
+
+      try {
+        elements = Array.from(document.querySelectorAll(selector || "body"))
+      } catch (error){
+        return { id, error: `"${selector}" is not a valid selector.` }
+      }
+
+      let shown = Math.min(Math.max(Number(limit) || 5, 1), INSPECT_MAX_MATCHES)
+
+      let matches = elements.slice(0, shown).map((element) => {
+        let rect = element.getBoundingClientRect()
+        let match = { html: inspectHtml(element), box: [rect.left, rect.top, rect.width, rect.height].map(Math.round) }
+
+        if (styles){
+          let computed = getComputedStyle(element)
+
+          match.styles = Object.fromEntries(INSPECT_STYLES.map((name) => [name, computed.getPropertyValue(name)]))
+        }
+
+        return match
+      })
+
+      return { id, count: elements.length, matches, viewport: [window.innerWidth, window.innerHeight] }
+    }
+
+    window.addEventListener("message", (message) => {
+      if (message.data && message.data.inspect){
+        window.parent.postMessage({ inspect: inspect(message.data.inspect) }, "*")
+      }
+
+
+      if (message.data.css){
+        cssElement.textContent = message.data.css.payload
+      }
+
+      if (message.data.html){
+        document.body.innerHTML = message.data.html.payload
+      }
+    })
+
+    if (window.parent){
+      window.parent.postMessage({loaded: true}, "*")
+    }
+  </script>
+</html>
