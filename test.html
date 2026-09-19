@@ -6,7 +6,7 @@
 const v = document.getElementById("v");
 v.src = "https://schweissguth.ngrok.app/fmp4/Incredibles.mp4"
 
-v.addEventListener("loadedmetadata", () => {
+v.addEventListener("canplay", () => {
     console.log("Duration:", v.duration);
     v.currentTime = 900;
 });
