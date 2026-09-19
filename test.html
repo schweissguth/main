@@ -1,1 +1,14 @@
-<meta http-equiv="refresh" content="1;url=https://jsfiddle.net/schweissguth/0ocsqku5/show">
+<video id="v" controls width="800">
+    
+</video>
+
+<script>
+const v = document.getElementById("v");
+v.src = "https://schweissguth.ngrok.app/fmp4/Incredibles.mp4"
+
+v.addEventListener("loadedmetadata", () => {
+    console.log("Duration:", v.duration);
+    v.currentTime = 900;
+});
+
+</script>
