@@ -1,1 +1,69 @@
-<meta http-equiv="refresh" content="0; url=https://tv.schweissguth.workers.dev?blaze">
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Disney</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head>
+  <body>
+    <video src="" id="video" style="width: 100%" controls></video>
+</body>
+
+    <script type="text/javascript">
+
+
+let str = `Aladdin_90.mp4
+Aristocats_81.mp4
+Cars_112.mp4
+Cinderella_76.mp4
+Frozen_98.mp4
+Lion King_89.mp4
+Little Mermaid_80.mp4
+Mulan_87.mp4
+Pocahontas_81.mp4
+Sleeping Beauty_78.mp4
+Toy Story_81.mp4`
+
+const folder = "disney"
+let arr = str.split("\n")
+console.log("arr", arr)
+let delta = 0
+
+function init() {
+  let start = 0
+  arr = arr.map(function(each) {
+    let len = each.split("_").reverse()[0]
+    len = len.split(".")[0]
+    len = parseInt(len)
+    let arr = [each, start, start + len]
+    start += len
+    return arr
+  })
+
+  console.log("arr", arr)
+  console.log("duration", start)
+  const datenow = Date.now()/1000/60
+  const mod = Math.round(datenow % start)
+  console.log("mod", mod)
+  const find = arr.find(function(each) {
+    return mod > each[1] && mod < each[2]
+  })
+  console.log("find", find)
+  video.src = "https://schweissguth.ngrok.app/" + folder + "/" + find[0]
+  delta = mod - find[1]
+}
+
+init()
+
+video.addEventListener("canplay", () => {
+    video.currentTime = delta*60;
+}, {once: true});
+
+
+  </script>
+</html>
