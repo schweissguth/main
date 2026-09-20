@@ -3,66 +3,67 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Psych</title>
+    <title>Disney</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
-    <script
-      type="text/javascript"
-      src="/js/lib/dummy.js"
-      
-    ></script>
-
   </head>
   <body>
-    
-
-
-<video id="video" style="width: 100%" controls autoplay></video>
-  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v3d52b47920f24c319d37e2661827c42b1787588026925" integrity="sha512-d9sL6GJLXn6fInD1+TVXhTcQOsmxeHfmHAvwGDIxp5TO+uo1fiWW7mHomMj4MLRlCsJDTqXzWLHJFFlPCEIj/A==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1}' crossorigin="anonymous"></script>
+    <video src="" id="video" style="width: 100%" controls></video>
 </body>
 
     <script type="text/javascript">
 
-fetch("https://schweissguth.ngrok.app/psych/").then(function(res) {
-  return res.json()
-}).then(function(res) {
-  const path = res.path
-  console.log(res)
-  res = res.items
+
+let str = `Aladdin_90.mp4
+Aristocats_81.mp4
+Cars_112.mp4
+Cinderella_76.mp4
+Frozen_98.mp4
+Lion King_89.mp4
+Little Mermaid_80.mp4
+Mulan_87.mp4
+Pocahontas_81.mp4
+Sleeping Beauty_78.mp4
+Toy Story_81.mp4`
+
+const folder = "disney"
+let arr = str.split("\n")
+console.log("arr", arr)
+let delta = 0
+
+function init() {
   let start = 0
-  res.forEach(function(each) {
-    each.len = each.name.split("_")[1].split(".")[0]
-    each.len = Math.round(each.len)
-    each.start = start
-    each.end = start + each.len
-    start += each.len
+  arr = arr.map(function(each) {
+    let len = each.split("_").reverse()[0]
+    len = len.split(".")[0]
+    len = parseInt(len)
+    let arr = [each, start, start + len]
+    start += len
+    return arr
   })
-  console.log("res", res)
-  const totallen = res[res.length - 1].end
-  console.log("totallen", totallen)
-  const mod = Math.round((Date.now()/1000/60) % totallen)
+
+  console.log("arr", arr)
+  console.log("duration", start)
+  const datenow = Date.now()/1000/60
+  const mod = Math.round(datenow % start)
   console.log("mod", mod)
-  const find = res.find(function(each) {
-    return mod > each.start && mod < each.end
+  const find = arr.find(function(each) {
+    return mod > each[1] && mod < each[2]
   })
   console.log("find", find)
-  const delta = mod - find.start; console.log("delta", delta)
-  video.src = "https://schweissguth.ngrok.app" + path + "/" + find.name
-    video.addEventListener("loadedmetadata", () => {
-      video.currentTime = delta * 60
-    });
-  video.addEventListener("canplay", () => {
-    video.play()
-  });
+  video.src = "https://schweissguth.ngrok.app/" + folder + "/" + find[0]
+  delta = mod - find[1]
+}
 
+init()
 
-})
+video.addEventListener("canplay", () => {
+    video.currentTime = delta*60;
+}, {once: true});
+
 
   </script>
-
-
 </html>
