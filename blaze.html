@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Disney</title>
+    <title>Psych</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
@@ -17,19 +17,37 @@
     <script type="text/javascript">
 
 
-let str = `Aladdin_90.mp4
-Aristocats_81.mp4
-Cars_112.mp4
-Cinderella_76.mp4
-Frozen_98.mp4
-Lion King_89.mp4
-Little Mermaid_80.mp4
-Mulan_87.mp4
-Pocahontas_81.mp4
-Sleeping Beauty_78.mp4
-Toy Story_81.mp4`
+let str = `1-01.mp4
+1-02.mp4
+1-03.mp4
+1-04.mp4
+1-05.mp4
+1-06.mp4
+1-07.mp4
+1-08.mp4
+1-09.mp4
+2-01.mp4
+2-02.mp4
+2-03.mp4
+2-04.mp4
+2-05.mp4
+2-06.mp4
+2-07.mp4
+2-08.mp4
+2-09.mp4
+2-10.mp4
+3-01.mp4
+3-02.mp4
+3-03.mp4
+3-04.mp4
+3-05.mp4
+3-06.mp4
+3-07.mp4
+3-08.mp4
+3-09.mp4
+3-10.mp4`
 
-const folder = "disney"
+const folder = "psych"
 let arr = str.split("\n")
 console.log("arr", arr)
 let delta = 0
@@ -37,11 +55,11 @@ let delta = 0
 function init() {
   let start = 0
   arr = arr.map(function(each) {
-    let len = each.split("_").reverse()[0]
-    len = len.split(".")[0]
-    len = parseInt(len)
-    let arr = [each, start, start + len]
-    start += len
+    //let len = each.split("_").reverse()[0]
+    //len = len.split(".")[0]
+    //len = parseInt(len)
+    let arr = [each, start, start + 21]
+    start += 21
     return arr
   })
 
