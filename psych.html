@@ -103,11 +103,11 @@ let delta = 0
 function init() {
   let start = 0
   arr = arr.map(function(each) {
-    let len = each.split("_").reverse()[0]
-    len = len.split(".")[0]
-    len = parseInt(len)
-    let arr = [each, start, start + len]
-    start += len
+    //let len = each.split("_").reverse()[0]
+    //len = len.split(".")[0]
+    //len = parseInt(len)
+    let arr = [each, start, start + 42]
+    start += 42
     return arr
   })
 
