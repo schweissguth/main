@@ -39,55 +39,12 @@
 
     <script type="text/javascript">
 
-let arr = [
-'https://schweissguth.ngrok.app/disney/Aladdin_90.mp4',
-'https://schweissguth.ngrok.app/disney/Aristocats_81.mp4',
-'https://schweissguth.ngrok.app/disney/Cars_112.mp4',
-'https://schweissguth.ngrok.app/disney/Cinderella_76.mp4',
-'https://schweissguth.ngrok.app/disney/Frozen_98.mp4',
-'https://schweissguth.ngrok.app/disney/Lion King_89.mp4',
-'https://schweissguth.ngrok.app/disney/Little Mermaid_80.mp4',
-'https://schweissguth.ngrok.app/disney/Mulan_87.mp4',
-'https://schweissguth.ngrok.app/disney/Pocahontas_81.mp4',
-'https://schweissguth.ngrok.app/disney/Sleeping Beauty_78.mp4',
-'https://schweissguth.ngrok.app/disney/Toy Story_81.mp4',
-
-]
-
-let delta = 0
-
-
-function init() {
-  let start = 0
-  arr = arr.map(function(each) {
-    let len = each.split("_").reverse()[0]
-    len = len.split(".")[0]
-    len = parseInt(len)
-    let arr = [each, start, start + len]
-    start += len
-    return arr
-  })
-
-  console.log("arr", arr)
-  console.log("duration", start)
-  const datenow = Date.now()/1000/60
-  const mod = Math.round(datenow % start)
-  console.log("mod", mod)
-  const find = arr.find(function(each) {
-    return mod > each[1] && mod < each[2]
-  })
-  console.log("find", find)
-  video.src = find[0]
-  delta = mod - find[1]
-}
-
-init()
-
-video.addEventListener("canplay", () => {
-    video.currentTime = delta*60;
-}, {once: true});
-
-
+fetch("https://script.google.com/macros/s/AKfycbwaVr1QigQGAxSe0-moMymnb2K3p9uaCZnZjOkLzPVaNCgqiO5wMYuCOBGMU0VZWMoWtw/exec").then(function(res) {
+  return res.text()
+}).then(function(res) {
+  console.log(res)
+  location.replace(res, "_top")
+})
 
 
 
