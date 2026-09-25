@@ -71,8 +71,9 @@ function makeSeek(arr) {
   console.log("delta", delta)
 
   video.src = "https://pub-0a9c78b0cf264bb2bc4e7c47fb221c1f.r2.dev/" + selectchannel.value + "/" + find[0]
-  video.onloadedmetadata = () => {
+  video.oncanplay = () => {
     video.currentTime = delta*60;
+    video.oncanplay = null
 };
 
 
