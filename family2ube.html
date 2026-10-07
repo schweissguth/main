@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Family2ube</title>
+    <title>FT</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
@@ -33,71 +32,67 @@
 
   </head>
   <body>
-    
-<center>
-  <br>
-<select id="selectchannel" onchange="init()">
-  <option value="disney">Disney</option>
-  <option value="psych">Psych</option>
-  <option value="family2ube">Family2ube</option>
-  <option value="movies">Movies</option>
-  <option value="blaze">Blaze & the Monster Machines</option>
-  <option value="vhs">VHS</option>
+    <select id="selectsheet" onchange="selectChannel(this.value)">
+  <option disabled selected>LOADING...</option>
 </select>
-<br><br>
-
-<video src="" id="video" style="max-width: 854px; height: auto; width: 90%;" controls></video>
-</center>
+<main id="main"></main>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"spa":2}' crossorigin="anonymous"></script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a46adaedfcf00041',t:'MTc5MTM1NDYwNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 
     <script type="text/javascript">
 
-function init() {
-  video.src = ""
+fetch(
+  "https://sheets.googleapis.com/v4/spreadsheets/1EZdM6CERLzIYXAoPq8lTSdyiW8iVy6enuggciMDoXx4?fields=sheets.properties.title&key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
+)
+  .then(function (res) {
+    return res.json()
+  })
+  .then(function (res) {
+    document.querySelector("OPTION").text = "Select channel"
+    console.log(res)
+    res = res.sheets
+    res.forEach(function (each) {
+      const o = document.createElement("OPTION")
+      o.text = each.properties.title
+      selectsheet.add(o)
+    })
+  })
+
+function selectChannel(x) {
+  main.innerText = "LOADING..."
   fetch(
-    'https://tv.schweissguth.workers.dev/' + selectchannel.value,
+    "https://sheets.googleapis.com/v4/spreadsheets/1EZdM6CERLzIYXAoPq8lTSdyiW8iVy6enuggciMDoXx4/values/" + x + "?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
   )
     .then(function (res) {
       return res.json()
     })
-    .then(function (res) {
-      console.log(res)
-      makeSeek(res.files)
+    .then(function (arr) {
+      arr = arr.values
+      let count = 0
+      arr = arr.map(function (each) {
+        each[1] = Number(each[1])
+        let num = count + each[1]
+        let array = [each[0], count, num]
+        count += each[1]
+        return array
+      })
+      console.log("arr", arr)
+
+      const datenow = Date.now() / 1000 / 60
+      const dur = arr[arr.length - 1][2]
+      console.log("dur", dur)
+      const mod = datenow % dur
+
+      console.log("mod", mod)
+      const fi = arr.findIndex(function (each) {
+        return mod > each[1] && mod < each[2]
+      })
+
+      const delta = mod - arr[fi][1]
+      alert(Math.round(delta) + " min")
+      main.innerHTML = ""
+      window.open(arr[fi][0], '_blank')
     })
-}
-
-init()
-
-
-function makeSeek(arr) {
-  let count = 0
-  arr = arr.map(function(each) {
-    let split = each.split("_").reverse()[0]
-    split = split.split(".mp4")[0]
-    split = parseInt(split)
-    let newarr = [each, count, count + split]
-    count += split
-    return newarr
-  })
-  const datenow = Date.now()/1000/60
-  const len = arr[arr.length - 1][2]
-  console.log("len", len)
-  const mod = datenow % len
-  console.log("mod", mod)
-  const find = arr.find(function(each) {
-    return mod > each[1] && mod < each[2]
-  })
-  console.log("find", find)
-  const delta = Math.floor(mod) - find[1]
-  console.log("delta", delta)
-
-  video.src = "https://pub-0a9c78b0cf264bb2bc4e7c47fb221c1f.r2.dev/" + selectchannel.value + "/" + find[0]
-  video.onloadedmetadata = () => {
-    video.currentTime = delta*60;
-};
-
-
 }
 
 
@@ -108,7 +103,7 @@ function makeSeek(arr) {
     if (window.parent && window.parent.parent){
       window.parent.parent.postMessage(["resultsFrame", {
         height: document.body.getBoundingClientRect().height,
-        slug: "wr0Lsocj"
+        slug: "ok5v790w"
       }], "*")
     }
 
