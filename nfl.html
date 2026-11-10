@@ -1,14 +1,12 @@
-
 <!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>NFL football fantasy</title>
+    <title>NFL</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
 
 
     <script
@@ -18,20 +16,20 @@
     ></script>
 
 
-
     <style id="compiled-css" type="text/css">
-      center {
-  margin: auto;
-  max-width: 290px;
+      body {
+  background-color: white;
 }
 
-* {
-  
+table {
+  border-collapse: collapse;
+}
+tbody:nth-child(even) td {
+  background-color: whitesmoke;
+}
+
+img {
   vertical-align: middle;
-}
-
-td {
-  padding: 10px 5px 10px 5px;
 }
 
       /* EOS */
@@ -47,127 +45,88 @@ td {
 
   </head>
   <body>
-    
-<center>
-  <link rel="stylesheet" href="https://stupid-fast.com/css.css">
-
-<h1 style="display: inline-block;">🏈 NFL Draft</h1>
-
-<p>Each picker selects one team per turn.  After making a pick, the picker notifies the next person to go.  This continues until every picker has made one selection.  Once the first round is complete, the order reverses: the last picker now selects first.  The draft continues in this back-and-forth (snake) pattern—forward, then backward—until all teams are chosen.</p>
-<br>
-
-
-
-<table id="table"></table>
-
-<table id="g"></table>
-
-
-<iframe frameborder="0"></iframe>
-
+    <center>
+Today's date: <span id="span"></span>
+<table id="table" border="0" cellpadding="5" style="text-align: left;"></table>
 </center>
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"95d4af946c9a4d229ea725f950960b54","r":1,"spa":2}' crossorigin="anonymous"></script>
 </body>
 
     <script type="text/javascript">
 
-Array.prototype.makeObj = function () {
-  let header = this.shift()
-  return this.map(function (each) {
-    let obj = {}
-    for (let i = 0; i < header.length; i++) {
-      obj[header[i]] = each[i] || null
-    }
-    return obj
-  })
-}
+const ARR = []
 
-function getPlayers() {
-  return fetch(
-    "https://sheets.googleapis.com/v4/spreadsheets/1DJ0d2YDxPNN38v7uCgU-Netkvl-betAGEvM8TsCOBGw/values/PLAYERS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
-  )
-    .then(function (res) {
-      return res.json()
-    })
-    .then(function (res) {
-      return res.values.makeObj()
-    })
-}
+span.innerText = new Date().toLocaleDateString()
 
-function getPicks() {
-  return fetch(
-    "https://sheets.googleapis.com/v4/spreadsheets/1DJ0d2YDxPNN38v7uCgU-Netkvl-betAGEvM8TsCOBGw/values/TEAMS?key=AIzaSyDIEdL4EcBenrWDkh03oFYmFvHT_VNH3AI",
-  )
-    .then(function (res) {
-      return res.json()
-    })
-    .then(function (res) {
-      return res.values.makeObj()
-    })
-}
-
-function getTeams() {
-  return fetch("https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams").then(function(res) {
+fetch("https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard")
+  .then(function (res) {
     return res.json()
-  }).then(function(res) {
-    res = res.sports[0].leagues[0].teams
-    return res.map(function(team) {
-      return team.team
+  })
+  .then(function (res) {
+    console.log("res", res)
+
+    res.events.forEach(function (each) {
+      const home = each.competitions[0].competitors[0]
+      const away = each.competitions[0].competitors[1]
+      let obj = {
+        id: each.id,
+        date: each.date,
+        home_name: home.team.abbreviation,
+        home_score: Number(home.score),
+        home_logo: home.team.logo,
+        home_record: home.records[0].summary,
+        away_name: away.team.abbreviation,
+        away_score: Number(away.score),
+        away_logo: away.team.logo,
+        away_record: away.records[0].summary,
+        time: each.status.displayClock,
+        qtr: each.status.period,
+      }
+
+      ARR.push(obj)
+    })
+    console.log("ARR", ARR)
+
+    ARR.forEach(function (each) {
+      const t = document.createElement("TBODY")
+      let tr = t.insertRow()
+      let td = tr.insertCell()
+      td.innerHTML =
+        "<small>" + new Date(each.date).toLocaleDateString() + "</small>"
+      tr.insertCell().innerHTML =
+        "<img src='" +
+        each.away_logo +
+        "' height='35' />" +
+        " <small>(" +
+        each.away_record +
+        ")</small>"
+      td = tr.insertCell()
+      td.innerHTML = each.away_score
+      if (each.away_score > each.home_score) td.style.fontWeight = "bold"
+      tr.insertCell().innerHTML = "<small>Q" + each.qtr + "</small>"
+      tr = t.insertRow()
+      tr.insertCell().innerHTML =
+        "<small>" +
+        new Date(each.date).toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+        }) +
+        "</small>"
+      tr.insertCell().innerHTML =
+        "<img src='" +
+        each.home_logo +
+        "' height='35' />" +
+        " <small>(" +
+        each.home_record +
+        ")</small>"
+      td = tr.insertCell()
+      td.innerHTML = each.home_score
+      if (each.home_score > each.away_score) td.style.fontWeight = "bold"
+      tr.insertCell().innerHTML = "<small>" + each.time
+      table.append(t) + "</small>"
     })
   })
-}
-getTeams().then(function(res) {
-  console.log(res)
-})
-
-function post(teamid, playerid) {
-  fetch(
-    "https://script.google.com/macros/s/AKfycbymkB_0-cVqloMZ2iBRnjQ2rvpgoB1IKLWIAjFdaMHKK8vyZ0JBI0AZ49pbQY7_tBVU/exec?NFLPICKS",
-    {
-      method: "post",
-      body: JSON.stringify([teamid, playerid]),
-    },
-  )
-}
-
-//-------------------------
-
-
-function init() {
-  getPicks().then(function(picks) {
-    getPlayers().then(function(players) {
-      picks = picks.map(function(pick) {
-        pick.PLAYERNAME = players.find(function(player) {
-          return player.ID == pick.PLAYERID
-        })?.NAME
-        return pick
-      })
-      console.log("Picks", picks)
-      picks.forEach(function(pick) {
-        let tr = table.insertRow()
-        tr.insertCell().innerHTML = "<img src='" + pick.LOGO + "' width='45' />"
-        tr.insertCell().innerText = pick.NAME
-        let td = tr.insertCell()
-        let select = document.createElement("SELECT")
-        let option = document.createElement("OPTION")
-        select.add(option)
-        players.forEach(function(player) {
-          let opt = document.createElement("OPTION")
-          opt.value = player.ID
-          opt.text = player.NAME
-          select.add(opt)
-        })
-        select.onchange = function() {
-          post(pick.ID, this.value)
-        }
-        select.value = pick.PLAYERID
-        td.append(select)
-      })
-    })
-  })
-}
-init()
-
 
 
   </script>
@@ -177,7 +136,7 @@ init()
     if (window.parent && window.parent.parent){
       window.parent.parent.postMessage(["resultsFrame", {
         height: document.body.getBoundingClientRect().height,
-        slug: "cfn9d1sm"
+        slug: "ran7pym0"
       }], "*")
     }
 
@@ -189,7 +148,55 @@ init()
     const allLines = []
     const cssElement = document.querySelector("#compiled-css")
 
+    // The editor's AI chat asking what the fiddle rendered. Only a selector reaches the
+    // DOM API - nothing here evaluates code - and every match is capped, so a page-sized
+    // body cannot flood the chat's context.
+    const INSPECT_STYLES = ["display", "position", "width", "height", "margin", "padding", "color", "background-color", "font-size", "overflow", "z-index", "visibility", "opacity"]
+    const INSPECT_HTML_LIMIT = 3000
+    const INSPECT_MAX_MATCHES = 20
+
+    function inspectHtml(element){
+      let clone = element.cloneNode(true)
+
+      clone.querySelectorAll("script, style").forEach((node) => node.remove())
+
+      let html = clone.outerHTML.replace(/\s+/g, " ")
+
+      return html.length > INSPECT_HTML_LIMIT ? `${html.slice(0, INSPECT_HTML_LIMIT)}… (truncated)` : html
+    }
+
+    function inspect({ id, selector, styles, limit }){
+      let elements
+
+      try {
+        elements = Array.from(document.querySelectorAll(selector || "body"))
+      } catch (error){
+        return { id, error: `"${selector}" is not a valid selector.` }
+      }
+
+      let shown = Math.min(Math.max(Number(limit) || 5, 1), INSPECT_MAX_MATCHES)
+
+      let matches = elements.slice(0, shown).map((element) => {
+        let rect = element.getBoundingClientRect()
+        let match = { html: inspectHtml(element), box: [rect.left, rect.top, rect.width, rect.height].map(Math.round) }
+
+        if (styles){
+          let computed = getComputedStyle(element)
+
+          match.styles = Object.fromEntries(INSPECT_STYLES.map((name) => [name, computed.getPropertyValue(name)]))
+        }
+
+        return match
+      })
+
+      return { id, count: elements.length, matches, viewport: [window.innerWidth, window.innerHeight] }
+    }
+
     window.addEventListener("message", (message) => {
+      if (message.data && message.data.inspect){
+        window.parent.postMessage({ inspect: inspect(message.data.inspect) }, "*")
+      }
+
 
       if (message.data.css){
         cssElement.textContent = message.data.css.payload
