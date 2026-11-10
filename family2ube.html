@@ -48,12 +48,15 @@
 fetch("https://script.google.com/macros/s/AKfycbwH5DRCCoSK7frRUWxpgRP871O_00yvkQr4hS9SohsYig7h57Tlh53xSZq92T9WJO1y/exec").then(function(res) {
   return res.json()
 }).then(function(res) {
+  console.log("res", res)
   res.forEach(function(each) {
     const a = document.createElement("A")
-    a.innerText = each[0] + "\n\n"
+    a.innerHTML = each[0] + "  <huge style='font-size: 2em;'>" + each[2] + "</huge><br><br>"
     a.href = each[1]
     a.target = "_blank"
     a.style.display = "table"
+    a.style.textDecoration = "none"
+    a.style.verticalAlign = "top"
     c.append(a)
   })
 })
